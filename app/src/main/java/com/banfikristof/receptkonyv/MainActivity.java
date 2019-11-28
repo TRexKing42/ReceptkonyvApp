@@ -5,6 +5,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -16,6 +17,8 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout dl;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private NavigationView nv;
+
+    private SQLiteDBHelper DBManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +33,9 @@ public class MainActivity extends AppCompatActivity {
                 switch(menuItem.getItemId())
                 {
                     case R.id.menu_receptek:
-                        Toast.makeText(MainActivity.this, "Receptek Menü!",Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(MainActivity.this,ReceptekActivity.class);
+                        startActivity(intent);
+                        finish();
                         break;
                     default:
                         Toast.makeText(MainActivity.this, "Még nem",Toast.LENGTH_SHORT).show();
@@ -44,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
     private void init() {
         dl = findViewById(R.id.drawerlayout);
         nv = findViewById(R.id.mainmenu);
+
+        DBManager = new SQLiteDBHelper(this);
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(this,dl,R.string.drawer_open,R.string.drawer_close);
         dl.addDrawerListener(actionBarDrawerToggle);

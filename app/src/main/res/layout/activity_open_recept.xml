@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        tools:context=".OpenReceptActivity">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/receptNevSelected"
+            android:text="Recept neve jön ide"
+            android:textSize="45dp"
+            android:textAlignment="center" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/receptLeirasSelected"
+            android:text="Leírás helye. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur aliquet eros non mauris vestibulum."
+            android:textSize="25dp"
+            android:textAlignment="center" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hozzávalók"
+            android:textSize="35dp"
+            android:textAlignment="center" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/receptHozzavalokSelected"
+            android:text="Hozzávalók lista\nLorem\nIpsum\nDolor\nSit amet"
+            android:textSize="25dp" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Elkészítés"
+            android:textSize="35dp"
+            android:textAlignment="center" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/receptElkeszitesSelected"
+            android:text="Hozzávalók lista\nLorem\nIpsum\nDolor\nSit amet"
+            android:textSize="25dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/backButtonSelectedRecept"
+            android:text="Vissza"
+            android:textSize="25dp" />
+
+    </LinearLayout>
+</ScrollView>

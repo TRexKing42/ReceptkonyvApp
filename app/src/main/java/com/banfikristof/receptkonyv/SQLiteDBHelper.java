@@ -1,8 +1,10 @@
 package com.banfikristof.receptkonyv;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -16,6 +18,7 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
     private static final String[] COL = {
             "id",
             "nev",
+            "leiras",
             "hozzavalok",
             "elkeszites"
     };
@@ -27,18 +30,24 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(
-                "CREATE TABLE ? (" +
-                        "? INTEGER PRIMARY KEY AUTOINCREMENT," +
-                        "? TEXT," +
-                        "? TEXT," +
-                        "? TEXT," +
-                        ")",
-                new String[]{TABLE_NAME,COL[0],COL[1],COL[2],COL[3]}
+                "CREATE TABLE " +TABLE_NAME+ " (" +
+                        COL[0]+ " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        COL[1]+ " TEXT, " +
+                        COL[2]+ " TEXT, " +
+                        COL[3]+ " TEXT, " +
+                        COL[4]+ " TEXT " +
+                        ");"
         );
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+    }
+
+    public Cursor getRecipes(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor result = db.rawQuery("SELECT * FROM " + TABLE_NAME,null);
+        return result;
     }
 }
