@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
-    <color name="colorRecipeDivider">#34b4eb</color>
+    <color name="colorPrimary">#D2632A</color>
+    <color name="colorPrimaryDark">#994112</color>
+    <color name="colorAccent">#98B727</color>
+    <color name="colorRecipeDivider">#003896</color>
 </resources>
