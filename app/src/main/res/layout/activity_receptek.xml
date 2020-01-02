@@ -8,28 +8,7 @@
     android:layout_height="match_parent"
     tools:context=".ReceptekActivity">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/titleReceptek"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Receptek"
-            android:textAlignment="center"
-            android:textSize="50dp" />
-
-        <ListView
-            android:id="@+id/listReceptek"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/titleReceptek"
-            android:divider="@color/colorRecipeDivider"
-            android:dividerHeight="2dp"
-            />
-
-    </RelativeLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:layout_width="wrap_content"

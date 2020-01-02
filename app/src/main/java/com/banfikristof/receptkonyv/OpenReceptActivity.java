@@ -23,8 +23,6 @@ public class OpenReceptActivity extends AppCompatActivity {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(OpenReceptActivity.this,ReceptekActivity.class);
-                startActivity(intent);
                 finish();
             }
         });
