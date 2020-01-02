@@ -31,7 +31,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Hozzávalók"
+            android:text="Elkészítés"
             android:textSize="35dp"
             android:textAlignment="center" />
 
@@ -46,7 +46,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Elkészítés"
+            android:text="Hozzávalók"
             android:textSize="35dp"
             android:textAlignment="center" />
 

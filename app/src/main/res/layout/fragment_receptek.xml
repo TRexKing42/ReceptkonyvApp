@@ -17,11 +17,19 @@
             android:textAlignment="center"
             android:textSize="50dp" />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/titleReceptek"
+            android:id="@+id/ujReceptButton"
+            android:text="Új recept"/>
+
         <ListView
             android:id="@+id/listReceptek"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/titleReceptek"
+            android:layout_below="@id/ujReceptButton"
             android:divider="@color/colorRecipeDivider"
             android:dividerHeight="2dp"
             />

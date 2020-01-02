@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".UjReceptActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Új Recept"
+            android:textAlignment="center"
+            android:textSize="40dp"
+            android:paddingBottom="30dp"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Étel neve"
+            android:textSize="25dp"
+            android:id="@+id/ujReceptNev"
+            android:inputType="text"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Étel rövid leírása"
+            android:textSize="25dp"
+            android:inputType="textMultiLine"
+            android:id="@+id/ujReceptLeiras" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hozzávalók"
+            android:textAlignment="center"
+            android:textSize="25dp"
+            android:paddingTop="30dp"/>
+
+        <com.skyhope.materialtagview.TagView
+            android:id="@+id/tagView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tag_background_color="@color/colorPrimaryDark"
+            app:tag_text_color="#fff"
+            app:tag_limit="50"
+            app:limit_error_text="Maximum 50 hozzávalót lehet kiválasztani!"
+            />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Étel elkészítése"
+            android:textSize="25dp"
+            android:inputType="textMultiLine"
+            android:id="@+id/ujReceptElkeszites" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Mentés"
+            android:id="@+id/ujReceptMentes" />
+    </LinearLayout>
+</ScrollView>

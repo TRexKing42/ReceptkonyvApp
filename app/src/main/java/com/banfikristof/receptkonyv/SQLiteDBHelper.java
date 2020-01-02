@@ -1,5 +1,6 @@
 package com.banfikristof.receptkonyv;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -49,5 +50,25 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor result = db.rawQuery("SELECT * FROM " + TABLE_NAME,null);
         return result;
+    }
+
+    public long newRecipe(String nev, String leiras, String hozzavalok, String elkeszites){
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("nev",nev);
+        cv.put("leiras",leiras);
+        cv.put("hozzavalok",hozzavalok);
+        cv.put("elkeszites",elkeszites);
+        return database.insert(TABLE_NAME,null,cv);
+    }
+
+    public long newRecipe(Recipe r){
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("nev",r.getName());
+        cv.put("leiras",r.getDescription());
+        cv.put("hozzavalok",r.getIngredientsString());
+        cv.put("elkeszites",r.getPreparation());
+        return database.insert(TABLE_NAME,null,cv);
     }
 }

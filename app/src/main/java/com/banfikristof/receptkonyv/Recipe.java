@@ -8,6 +8,20 @@ public class Recipe implements Serializable {
     private String name, description, preparation;
     private List<String> ingredients;
 
+    public Recipe(String name, String preparation, List<String> ingredients) {
+        this.name = name;
+        this.description = " ";
+        this.preparation = preparation;
+        this.ingredients = ingredients;
+    }
+
+    public Recipe(String name, String description, String preparation, List<String> ingredients) {
+        this.name = name;
+        this.description = description;
+        this.preparation = preparation;
+        this.ingredients = ingredients;
+    }
+
     public Recipe(String id, String name, String description, String preparation, List<String> ingredients) {
         this.id = id;
         this.name = name;

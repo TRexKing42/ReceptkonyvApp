@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 
@@ -19,6 +20,7 @@ public class ReceptekFragment extends Fragment {
     private ReceptekFragmentListener listener;
 
     private ListView lv;
+    private Button ujReceptBtn;
 
     public ReceptekFragment() {
         // Required empty public constructor
@@ -42,11 +44,19 @@ public class ReceptekFragment extends Fragment {
                 startActivity(intent);
             }
         });
+        ujReceptBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(),UjReceptActivity.class);
+                startActivity(intent);
+            }
+        });
         return v;
     }
 
     private void initFragment(View view){
         lv = view.findViewById(R.id.listReceptek);
+        ujReceptBtn = view.findViewById(R.id.ujReceptButton);
     }
 
     public interface ReceptekFragmentListener {

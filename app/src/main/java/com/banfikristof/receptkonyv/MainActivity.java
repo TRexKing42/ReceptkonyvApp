@@ -54,6 +54,10 @@ public class MainActivity extends AppCompatActivity implements
         actionBarDrawerToggle = new ActionBarDrawerToggle(this,dl,R.string.drawer_open,R.string.drawer_close);
         dl.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
+
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.frame, new KezdolapFragment());
+        fragmentTransaction.commit();
     }
 
 
@@ -63,6 +67,9 @@ public class MainActivity extends AppCompatActivity implements
 
         switch(menuItem.getItemId())
         {
+            case R.id.menu_fooldal:
+                selectedFragment = new KezdolapFragment();
+                break;
             case R.id.menu_receptek:
                 selectedFragment = new ReceptekFragment();
                 break;
@@ -71,9 +78,11 @@ public class MainActivity extends AppCompatActivity implements
                 break;
         }
 
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.frame, selectedFragment);
-        fragmentTransaction.commit();
+        if (selectedFragment != null) {
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.frame, selectedFragment);
+            fragmentTransaction.commit();
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawerlayout);
         drawer.closeDrawer(GravityCompat.START);
