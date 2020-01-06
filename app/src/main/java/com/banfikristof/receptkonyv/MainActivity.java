@@ -97,13 +97,13 @@ public class MainActivity extends AppCompatActivity implements
         ArrayList<Recipe> returnedList = new ArrayList<>();
         if (result != null && result.getCount() > 0) {
             while (result.moveToNext()){
-                String s = result.getString(4);
+                String s = result.getString(result.getColumnIndex(SQLiteDBHelper.COL[3]));
                 String[] s2 = s.split(","); //Egyelőre nem müködik
                 returnedList.add(new Recipe(
-                        result.getString(0),
-                        result.getString(1),
-                        result.getString(2),
-                        result.getString(3),
+                        result.getString(result.getColumnIndex(SQLiteDBHelper.COL[0])),
+                        result.getString(result.getColumnIndex(SQLiteDBHelper.COL[1])),
+                        result.getString(result.getColumnIndex(SQLiteDBHelper.COL[2])),
+                        result.getString(result.getColumnIndex(SQLiteDBHelper.COL[4])),
                         Arrays.asList(s2)
                 ));
             }

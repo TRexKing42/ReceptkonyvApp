@@ -44,6 +44,7 @@ public class ReceptekFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
         ujReceptBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,4 +86,9 @@ public class ReceptekFragment extends Fragment {
         lv.setAdapter(arrayAdapter);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        recipesIntoList();
+    }
 }

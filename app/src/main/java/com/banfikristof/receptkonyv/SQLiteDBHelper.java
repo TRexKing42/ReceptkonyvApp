@@ -16,7 +16,7 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
     public static final String TABLE_NAME = "Receptek";
 
     //Oszlopok
-    private static final String[] COL = {
+    public static final String[] COL = {
             "id",
             "nev",
             "leiras",
@@ -70,5 +70,14 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
         cv.put("hozzavalok",r.getIngredientsString());
         cv.put("elkeszites",r.getPreparation());
         return database.insert(TABLE_NAME,null,cv);
+    }
+
+    public boolean deleteRecipe(String id){
+        SQLiteDatabase database = this.getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        long result = database.delete(TABLE_NAME,"id = ?",new String[]{id});
+
+        return result != 0;
     }
 }

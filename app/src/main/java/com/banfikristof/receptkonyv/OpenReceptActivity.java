@@ -7,11 +7,15 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class OpenReceptActivity extends AppCompatActivity {
 
     private TextView receptNev,receptLeiras,receptHozzavalok,receptElkeszites;
-    private Button back;
+    private Button back, delete;
+    private SQLiteDBHelper DBManager;
+
+    private Recipe r;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +31,18 @@ public class OpenReceptActivity extends AppCompatActivity {
             }
         });
 
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (DBManager.deleteRecipe(r.getId())) {
+                    Toast.makeText(OpenReceptActivity.this, "Sikeres törlés",Toast.LENGTH_SHORT).show();
+
+                    finish();
+                } else {
+                    Toast.makeText(OpenReceptActivity.this, "Sikertelen törlés",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         displayRecipe();
     }
 
@@ -37,10 +53,14 @@ public class OpenReceptActivity extends AppCompatActivity {
         receptElkeszites = findViewById(R.id.receptElkeszitesSelected);
 
         back = findViewById(R.id.backButtonSelectedRecept);
+        delete = findViewById(R.id.deleteButtonSelectedRecept);
+        DBManager = new SQLiteDBHelper(this);
+
+        r = (Recipe) getIntent().getSerializableExtra("SelectedRecipe");
     }
 
     public void displayRecipe(){
-        Recipe r = (Recipe) getIntent().getSerializableExtra("SelectedRecipe");
+        //Recipe r = (Recipe) getIntent().getSerializableExtra("SelectedRecipe");
 
         receptNev.setText(r.getName());
         receptLeiras.setText(r.getDescription());

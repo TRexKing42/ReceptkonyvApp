@@ -54,6 +54,10 @@ public class Recipe implements Serializable {
         this.preparation = preparation;
     }
 
+    public String getId() {
+        return id;
+    }
+
     public List<String> getIngredients() {
         return ingredients;
     }
