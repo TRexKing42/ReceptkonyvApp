@@ -7,7 +7,10 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -57,11 +60,12 @@ public class ReceptekFragment extends Fragment {
 
     private void initFragment(View view){
         lv = view.findViewById(R.id.listReceptek);
+        registerForContextMenu(lv);
         ujReceptBtn = view.findViewById(R.id.ujReceptButton);
     }
 
     public interface ReceptekFragmentListener {
-        public void onRecipeSelected();
+        public void onRecipeDelete(Recipe recipe);
     }
 
     @Override
@@ -90,5 +94,37 @@ public class ReceptekFragment extends Fragment {
     public void onResume() {
         super.onResume();
         recipesIntoList();
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.setHeaderTitle("Egyéb Opciók");
+        menu.add(0,v.getId(),0,"Megnyitás");
+        menu.add(0,v.getId(),0,"Törlés");
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info;
+        Recipe s;
+        switch (item.getTitle().toString()){
+            case "Megnyitás":
+                info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+                s = (Recipe) lv.getItemAtPosition(info.position);
+                Intent intent = new Intent(getActivity(),OpenReceptActivity.class);
+                intent.putExtra("SelectedRecipe",s);
+                startActivity(intent);
+                break;
+            case "Törlés":
+                info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+                s = (Recipe) lv.getItemAtPosition(info.position);
+                listener.onRecipeDelete(s);
+                recipesIntoList();
+                break;
+            default:
+                return false;
+        }
+        return true;
     }
 }

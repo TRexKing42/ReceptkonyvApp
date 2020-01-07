@@ -112,7 +112,11 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onRecipeSelected() {
-
+    public void onRecipeDelete(Recipe recipe) {
+        if (DBManager.deleteRecipe(recipe.getId())) {
+            Toast.makeText(MainActivity.this, "Sikeres törlés",Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(MainActivity.this, "Sikertelen törlés",Toast.LENGTH_SHORT).show();
+        }
     }
 }
