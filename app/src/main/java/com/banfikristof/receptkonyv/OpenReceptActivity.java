@@ -1,5 +1,6 @@
 package com.banfikristof.receptkonyv;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -8,6 +9,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class OpenReceptActivity extends AppCompatActivity {
 
@@ -40,6 +45,26 @@ public class OpenReceptActivity extends AppCompatActivity {
                     finish();
                 } else {
                     Toast.makeText(OpenReceptActivity.this, "Sikertelen törlés",Toast.LENGTH_SHORT).show();
+                }
+                if (!r.isOnlineStored()) {
+                    if (DBManager.deleteRecipe(r.getId())) {
+                        Toast.makeText(OpenReceptActivity.this, "Sikeres törlés", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(OpenReceptActivity.this, "Sikertelen törlés", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    FirebaseFirestore fbFirestore = FirebaseFirestore.getInstance();
+                    fbFirestore.collection("recipes").document(r.getId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(OpenReceptActivity.this, "Sikeres törlés", Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(OpenReceptActivity.this, "Sikertelen törlés", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
         });

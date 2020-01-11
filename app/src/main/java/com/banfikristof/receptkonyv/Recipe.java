@@ -7,6 +7,12 @@ public class Recipe implements Serializable {
     private String id;
     private String name, description, preparation;
     private List<String> ingredients;
+    private boolean onlineStored;
+
+    public Recipe(String id){
+        this.id = id;
+        this.onlineStored = true;
+    }
 
     public Recipe(String name, String preparation, List<String> ingredients) {
         this.name = name;
@@ -72,6 +78,14 @@ public class Recipe implements Serializable {
 
     public void setIngredients(List<String> ingredients) {
         this.ingredients = ingredients;
+    }
+
+    public boolean isOnlineStored() {
+        return onlineStored;
+    }
+
+    public void setOnlineStored(boolean onlineStored) {
+        this.onlineStored = onlineStored;
     }
 
     public void addIngredient(String ingredient) {

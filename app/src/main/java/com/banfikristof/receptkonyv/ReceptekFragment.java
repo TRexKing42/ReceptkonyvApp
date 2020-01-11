@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.ContextMenu;
@@ -17,13 +18,29 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class ReceptekFragment extends Fragment {
     private ReceptekFragmentListener listener;
 
     private ListView lv;
-    private Button ujReceptBtn;
+    private Button ujReceptBtn, onlineBtn, offlineBtn;
+    private boolean onlineList;
 
     public ReceptekFragment() {
         // Required empty public constructor
@@ -55,13 +72,63 @@ public class ReceptekFragment extends Fragment {
                 startActivity(intent);
             }
         });
+        onlineBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onlineList = true;
+                onlineRecipesToList();
+            }
+        });
+        offlineBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onlineList = false;
+                recipesIntoList();
+            }
+        });
         return v;
+    }
+
+    private void onlineRecipesToList() {
+        FirebaseFirestore fbFirestore = FirebaseFirestore.getInstance();
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DocumentReference userReference = fbFirestore.collection("users").document(uid);
+        fbFirestore.collection("recipes").whereEqualTo("userID", userReference).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                        ArrayList<Recipe> listOfRecipes = new ArrayList<>();
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+
+                                Recipe r = new Recipe(documentSnapshot.getId());
+                                r.setName(documentSnapshot.get("name").toString());
+                                r.setDescription(documentSnapshot.get("description").toString());
+                                Map<String, Map<String, Object>> ingredientsData = ((Map<String, Map<String, Object>>)documentSnapshot.get("ingredients"));
+                                List<String> ingredients = new ArrayList<>();
+                                for (Map.Entry<String, Map<String, Object>> item : ingredientsData.entrySet()){
+                                    ingredients.add(item.getValue().get("iAmount").toString() + " " + item.getValue().get("iUnit").toString() + " " + item.getKey());
+                                }
+                                r.setIngredients(ingredients);
+                                r.setPreparation(documentSnapshot.get("preparation").toString());
+                                listOfRecipes.add(r);
+
+                                ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1,listOfRecipes);
+                                lv.setAdapter(arrayAdapter);
+                            }
+                        }
+                    }
+                });
     }
 
     private void initFragment(View view){
         lv = view.findViewById(R.id.listReceptek);
         registerForContextMenu(lv);
         ujReceptBtn = view.findViewById(R.id.ujReceptButton);
+        onlineBtn = view.findViewById(R.id.onlineReceptekButton);
+        offlineBtn = view.findViewById(R.id.offlineReceptekButton);
+        onlineList = false;
     }
 
     public interface ReceptekFragmentListener {
@@ -93,7 +160,11 @@ public class ReceptekFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        recipesIntoList();
+        if (onlineList){
+            onlineRecipesToList();
+        } else {
+            recipesIntoList();
+        }
     }
 
     @Override

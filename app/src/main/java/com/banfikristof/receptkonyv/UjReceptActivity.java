@@ -1,5 +1,6 @@
 package com.banfikristof.receptkonyv;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -10,21 +11,33 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.skyhope.materialtagview.TagView;
 import com.skyhope.materialtagview.enums.TagSeparator;
 import com.skyhope.materialtagview.interfaces.TagItemListener;
 import com.skyhope.materialtagview.model.TagModel;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class UjReceptActivity extends AppCompatActivity {
 
     private TagView tv;
-    private Button saveBtn;
+    private Button saveBtn, saveOnlineBtn;
     private EditText etNev, etLeiras, etElkeszites;
 
     private SQLiteDBHelper DBManager;
+    private FirebaseFirestore fbFirestore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,25 +61,8 @@ public class UjReceptActivity extends AppCompatActivity {
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (TextUtils.isEmpty(etNev.getText())){
-                    Toast.makeText(UjReceptActivity.this, "Étel neve nem lehet üres!",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (TextUtils.isEmpty(etElkeszites.getText())){
-                    Toast.makeText(UjReceptActivity.this, "Étel elkészítése nem lehet üres!",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                List<TagModel> selectedTags = tv.getSelectedTags();
-                if (selectedTags.isEmpty()) {
-                    Toast.makeText(UjReceptActivity.this, "Szükség van legalább egy hozzávalóra!",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                Recipe recipe;
-                if (TextUtils.isEmpty(etLeiras.getText())){
-                    recipe = new Recipe(etNev.getText().toString(),etElkeszites.getText().toString(),tagsToString(selectedTags));
-                } else {
-                    recipe = new Recipe(etNev.getText().toString(),etLeiras.getText().toString(),etElkeszites.getText().toString(),tagsToString(selectedTags));
-                }
+                Recipe recipe = formToRecipe();
+                if (recipe == null) return;
                 if (DBManager.newRecipe(recipe) == 1) {
                     Toast.makeText(UjReceptActivity.this, "Sikertelen mentés!",Toast.LENGTH_SHORT).show();
                 } else {
@@ -75,6 +71,86 @@ public class UjReceptActivity extends AppCompatActivity {
                 }
             }
         });
+
+        saveOnlineBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Recipe recipe = formToRecipe();
+                if (recipe == null) return;
+
+                Map<String, Object> recipeData;
+
+                recipeData = recipeToDocument(recipe);
+                fbFirestore.collection("recipes").add(recipeData).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Toast.makeText(UjReceptActivity.this, "Sikeres mentés!",Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                        Toast.makeText(UjReceptActivity.this, "Sikertelen mentés!",Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+    }
+
+    private Map<String, Object> recipeToDocument(Recipe recipe) {
+        Map<String, Object> recipeData;
+        Map<String, Object> ingredientsData = new HashMap<>();
+        Map<String,Map<String, Object>> ingredients = new HashMap<>();
+        for (String item : recipe.getIngredients()){
+            ingredientsData.clear();
+            //ingredientsData.put("iName",item); Valami miatt nem működik rendesen TODO: kideríteni miért
+            ingredientsData.put("iAmount", /*Currently using placeholder value TODO*/ 1);
+            ingredientsData.put("iUnit", /*Currently using placeholder value TODO*/ "db");
+            ingredients.put(item,ingredientsData);
+        }
+        //for (int i = 0; i < recipe.getIngredients().size(); i++) {
+        //    ingredientsData.clear();
+        //    ingredientsData.put("iName", recipe.getIngredients().get(i));
+        //    ingredientsData.put("iAmount", /*Currently using placeholder value TODO*/ 1);
+        //    ingredientsData.put("iUnit", /*Currently using placeholder value TODO*/ "db");
+        //    ingredients.put(String.valueOf(i),ingredientsData);
+        //}
+        List<String> tagList = new ArrayList<>();
+        tagList.add("teszt tag"); //TODO
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DocumentReference userReference = fbFirestore.collection("users").document(uid);
+        recipeData = new HashMap<>();
+        recipeData.put("name",recipe.getName());
+        recipeData.put("description",recipe.getDescription());
+        recipeData.put("preparation",recipe.getPreparation());
+        recipeData.put("ingredients",ingredients);
+        recipeData.put("tags",tagList);
+        recipeData.put("creationDate",new Timestamp(new Date()));
+        recipeData.put("userID",userReference);
+        return recipeData;
+    }
+
+    private Recipe formToRecipe() {
+        if (TextUtils.isEmpty(etNev.getText())){
+            Toast.makeText(UjReceptActivity.this, "Étel neve nem lehet üres!",Toast.LENGTH_SHORT).show();
+            return null;
+        }
+        if (TextUtils.isEmpty(etElkeszites.getText())){
+            Toast.makeText(UjReceptActivity.this, "Étel elkészítése nem lehet üres!",Toast.LENGTH_SHORT).show();
+            return null;
+        }
+        List<TagModel> selectedTags = tv.getSelectedTags();
+        if (selectedTags.isEmpty()) {
+            Toast.makeText(UjReceptActivity.this, "Szükség van legalább egy hozzávalóra!",Toast.LENGTH_SHORT).show();
+            return null;
+        }
+        Recipe recipe;
+        if (TextUtils.isEmpty(etLeiras.getText())){
+            recipe = new Recipe(etNev.getText().toString(),etElkeszites.getText().toString(),tagsToString(selectedTags));
+        } else {
+            recipe = new Recipe(etNev.getText().toString(),etLeiras.getText().toString(),etElkeszites.getText().toString(),tagsToString(selectedTags));
+        }
+        return recipe;
     }
 
     private void init() {
@@ -84,12 +160,15 @@ public class UjReceptActivity extends AppCompatActivity {
         tv.setTagList(tagList);
 
         saveBtn = findViewById(R.id.ujReceptMentes);
+        saveOnlineBtn = findViewById(R.id.ujReceptMentesOnline);
 
         etNev = findViewById(R.id.ujReceptNev);
         etLeiras = findViewById(R.id.ujReceptLeiras);
         etElkeszites = findViewById(R.id.ujReceptElkeszites);
 
         DBManager = new SQLiteDBHelper(this);
+        fbFirestore = FirebaseFirestore.getInstance();
+
     }
 
     private List<String> tagsToString(List<TagModel> tags) {

@@ -26,14 +26,22 @@ import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
@@ -47,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements
     private TextView headerName, headerEmail;
     private ImageView headerPicture;
 
+    private FirebaseFirestore fbFirestore;
     private SQLiteDBHelper DBManager;
 
     @Override
@@ -68,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements
         headerEmail = header.findViewById(R.id.menu_header_email);
         headerPicture = header.findViewById(R.id.menu_header_pic);
 
+        fbFirestore = FirebaseFirestore.getInstance();
         DBManager = new SQLiteDBHelper(this);
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(this,dl,R.string.drawer_open,R.string.drawer_close);
@@ -109,6 +119,24 @@ public class MainActivity extends AppCompatActivity implements
                 headerName.setText(user.getDisplayName());
                 headerPicture.setImageURI(user.getPhotoUrl());
                 headerEmail.setText(user.getEmail());
+
+                // Save user into Firestore
+
+                fbFirestore.collection("users").document(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()){
+                            if (task.getResult().exists()) {
+                                Toast.makeText(MainActivity.this, "Üdv újra, " + user.getDisplayName() + "!",Toast.LENGTH_SHORT).show();
+                            } else {
+                                Map<String, Object> userData = new HashMap<>();
+                                userData.put("displayName",user.getDisplayName());
+                                fbFirestore.collection("users").document(user.getUid()).set(userData);
+                                Toast.makeText(MainActivity.this, "Üdv, " + user.getDisplayName() + "!",Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
             } else {
                 // Sign in failed. If response is null the user canceled the
                 // sign-in flow using the back button. Otherwise check
@@ -173,10 +201,24 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onRecipeDelete(Recipe recipe) {
-        if (DBManager.deleteRecipe(recipe.getId())) {
-            Toast.makeText(MainActivity.this, "Sikeres törlés",Toast.LENGTH_SHORT).show();
+        if (!recipe.isOnlineStored()) {
+            if (DBManager.deleteRecipe(recipe.getId())) {
+                Toast.makeText(MainActivity.this, "Sikeres törlés", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(MainActivity.this, "Sikertelen törlés", Toast.LENGTH_SHORT).show();
+            }
         } else {
-            Toast.makeText(MainActivity.this, "Sikertelen törlés",Toast.LENGTH_SHORT).show();
+            fbFirestore.collection("recipes").document(recipe.getId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Toast.makeText(MainActivity.this, "Sikeres törlés", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(MainActivity.this, "Sikertelen törlés", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 }

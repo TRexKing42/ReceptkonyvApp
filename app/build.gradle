@@ -8,6 +8,7 @@ android {
         applicationId "com.banfikristof.receptkonyv"
         minSdkVersion 17
         targetSdkVersion 29
+        multiDexEnabled true
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -29,11 +30,13 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
     implementation 'com.google.android.material:material:1.0.0'
-    implementation 'com.google.android:flexbox:1.0.0'           //TagView
-    implementation 'com.github.mahimrocky:TagView:1.0.3'        //TagView https://github.com/mahimrocky/TagView
+    implementation 'androidx.multidex:multidex:2.0.1'               //Multidex
+    implementation 'com.google.android:flexbox:1.0.0'               //TagView
+    implementation 'com.github.mahimrocky:TagView:1.0.3'            //TagView https://github.com/mahimrocky/TagView
     implementation 'com.google.firebase:firebase-analytics:17.2.0'  //Firebase
     implementation 'com.google.firebase:firebase-auth:17.0.0'       //Firebase Auth
     implementation 'com.firebaseui:firebase-ui-auth:4.3.1'          //Firebase UI
-    implementation 'com.google.firebase:firebase-database:17.0.0'   //Firebase StackOverflow-os FIX
+    implementation 'com.google.firebase:firebase-database:19.2.0'   //Firebase Realtime Database
+    implementation 'com.google.firebase:firebase-firestore:21.3.1'  //Firebase Firestore
 
 }
