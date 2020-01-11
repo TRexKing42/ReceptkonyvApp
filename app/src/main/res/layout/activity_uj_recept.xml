@@ -25,7 +25,8 @@
             android:hint="Étel neve"
             android:textSize="25dp"
             android:id="@+id/ujReceptNev"
-            android:inputType="text"/>
+            android:inputType="text"
+            android:maxLength="50"/>
 
         <EditText
             android:layout_width="match_parent"
@@ -33,7 +34,8 @@
             android:hint="Étel rövid leírása"
             android:textSize="25dp"
             android:inputType="textMultiLine"
-            android:id="@+id/ujReceptLeiras" />
+            android:id="@+id/ujReceptLeiras"
+            android:maxLength="1024"/>
 
         <TextView
             android:layout_width="match_parent"

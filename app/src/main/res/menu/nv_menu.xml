@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/menu_login"
+        android:title="Bejelentkezés"/>
     <item android:id="@+id/menu_fooldal"
         android:title="Kezdőlap"/>
     <item android:id="@+id/menu_receptek"
         android:title="Receptek"/>
-    <item android:id="@+id/menu_teszt2"
-        android:title="Menü2"/>
     <item android:id="@+id/menu_teszt3"
         android:title="Menü3"/>
     <item android:id="@+id/menu_teszt4"
