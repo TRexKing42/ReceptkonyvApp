@@ -127,7 +127,7 @@ public class UjReceptActivity extends AppCompatActivity {
                 });
 
                 DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-                db.child("recipes").push().setValue(recipe);
+                db.child("recipes").child(FirebaseAuth.getInstance().getUid()).push().setValue(recipe);
             }
         });
     }

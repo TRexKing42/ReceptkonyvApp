@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -24,11 +25,18 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.core.Tag;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.Console;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,7 +61,7 @@ public class ReceptekFragment extends Fragment {
 
         initFragment(v);
 
-        /*recipesIntoList();*/
+        onlineRecipesToList();
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -90,6 +98,30 @@ public class ReceptekFragment extends Fragment {
     }
 
     private void onlineRecipesToList() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getUid());
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<Recipe> listOfRecipes = new ArrayList<>();
+                Recipe r;
+                for (DataSnapshot item : dataSnapshot.getChildren()) {
+                    r = item.getValue(Recipe.class);
+                    r.key = item.getKey();
+                    listOfRecipes.add(r);
+                }
+                ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1,listOfRecipes);
+                lv.setAdapter(arrayAdapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                System.out.println(databaseError.getMessage());
+            }
+        });
+
+
+        /*
+        //   FIRESTORE
         FirebaseFirestore fbFirestore = FirebaseFirestore.getInstance();
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DocumentReference userReference = fbFirestore.collection("users").document(uid);
@@ -119,7 +151,7 @@ public class ReceptekFragment extends Fragment {
                             }
                         }
                     }
-                });
+                });*/
     }
 
     private void initFragment(View view){
@@ -132,7 +164,7 @@ public class ReceptekFragment extends Fragment {
     }
 
     public interface ReceptekFragmentListener {
-        public void onRecipeDelete(Recipe recipe);
+        public void onRecipeDelete(Recipe recipe, String id);
     }
 
     @Override
@@ -190,7 +222,7 @@ public class ReceptekFragment extends Fragment {
             case "Törlés":
                 info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
                 s = (Recipe) lv.getItemAtPosition(info.position);
-                listener.onRecipeDelete(s);
+                listener.onRecipeDelete(s, s.key);
                 recipesIntoList();
                 break;
             default:

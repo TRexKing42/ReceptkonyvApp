@@ -1,14 +1,24 @@
 package com.banfikristof.receptkonyv;
 
+import com.google.firebase.database.Exclude;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
 public class Recipe implements Serializable {
+
+    @Exclude
+    public String key;
+
     private String id, uid;
     private String name, description, preparation;
     private List<Map<String,String>> ingredients;
     private boolean onlineStored;
+
+    public Recipe() {
+
+    }
 
     public Recipe(String id){
         this.id = id;
@@ -72,6 +82,10 @@ public class Recipe implements Serializable {
 
     public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public List<Map<String,String>> getIngredients() {

@@ -209,25 +209,14 @@ public class MainActivity extends AppCompatActivity implements
     }*/
 
     @Override
-    public void onRecipeDelete(Recipe recipe) {
-        if (!recipe.isOnlineStored()) {
+    public void onRecipeDelete(Recipe recipe, String id) {
+        /*if (!recipe.isOnlineStored()) {
             if (DBManager.deleteRecipe(recipe.getId())) {
                 Toast.makeText(MainActivity.this, "Sikeres törlés", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(MainActivity.this, "Sikertelen törlés", Toast.LENGTH_SHORT).show();
             }
-        } else {
-            fbFirestore.collection("recipes").document(recipe.getId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    Toast.makeText(MainActivity.this, "Sikeres törlés", Toast.LENGTH_SHORT).show();
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(MainActivity.this, "Sikertelen törlés", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
+        }*/
+        fbDatabase.getReference().child("recipes").child(FirebaseAuth.getInstance().getUid()).child(recipe.key).removeValue();
     }
 }
