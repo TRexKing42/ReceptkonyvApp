@@ -120,6 +120,9 @@ public class MainActivity extends AppCompatActivity implements
                 headerPicture.setImageURI(user.getPhotoUrl());
                 headerEmail.setText(user.getEmail());
 
+                MenuItem loginMenu = nv.getMenu().findItem(R.id.menu_login);
+                loginMenu.setEnabled(false);
+
                 // Save user data
                 DatabaseReference db = fbDatabase.getReference("/users");
                 db.child(user.getUid()).child("displayName").setValue(user.getDisplayName());
