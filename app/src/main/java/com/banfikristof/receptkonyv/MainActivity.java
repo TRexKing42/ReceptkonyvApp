@@ -33,6 +33,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -56,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements
     private ImageView headerPicture;
 
     private FirebaseFirestore fbFirestore;
+    private FirebaseDatabase fbDatabase;
     private SQLiteDBHelper DBManager;
 
     @Override
@@ -78,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements
         headerPicture = header.findViewById(R.id.menu_header_pic);
 
         fbFirestore = FirebaseFirestore.getInstance();
+        fbDatabase = FirebaseDatabase.getInstance();
         DBManager = new SQLiteDBHelper(this);
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(this,dl,R.string.drawer_open,R.string.drawer_close);
@@ -100,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements
         startActivityForResult(
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
+                        .setIsSmartLockEnabled(!BuildConfig.DEBUG,true)
                         .setAvailableProviders(providers)
                         .build(),
                 RC_SIGN_IN);
@@ -120,8 +125,12 @@ public class MainActivity extends AppCompatActivity implements
                 headerPicture.setImageURI(user.getPhotoUrl());
                 headerEmail.setText(user.getEmail());
 
-                // Save user into Firestore
+                // Save user into Firestore/RTDB
+                //Realtime DB
+                DatabaseReference db = fbDatabase.getReference("/users");
+                db.child(user.getUid()).child("displayName").setValue(user.getDisplayName());
 
+                //Firestore
                 fbFirestore.collection("users").document(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -180,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements
     ////
     // ReceptekFragment
     ////
-    public ArrayList<Recipe> getRecipes() {
+    /*public ArrayList<Recipe> getRecipes() {
         Cursor result = DBManager.getRecipes();
         ArrayList<Recipe> returnedList = new ArrayList<>();
         if (result != null && result.getCount() > 0) {
@@ -197,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements
             }
         }
         return returnedList;
-    }
+    }*/
 
     @Override
     public void onRecipeDelete(Recipe recipe) {

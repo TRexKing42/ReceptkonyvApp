@@ -53,7 +53,7 @@ public class ReceptekFragment extends Fragment {
 
         initFragment(v);
 
-        recipesIntoList();
+        /*recipesIntoList();*/
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -110,7 +110,7 @@ public class ReceptekFragment extends Fragment {
                                 for (Map.Entry<String, Map<String, Object>> item : ingredientsData.entrySet()){
                                     ingredients.add(item.getValue().get("iAmount").toString() + " " + item.getValue().get("iUnit").toString() + " " + item.getKey());
                                 }
-                                r.setIngredients(ingredients);
+                                //r.setIngredients(ingredients);
                                 r.setPreparation(documentSnapshot.get("preparation").toString());
                                 listOfRecipes.add(r);
 
@@ -153,8 +153,8 @@ public class ReceptekFragment extends Fragment {
     }
 
     public void recipesIntoList(){
-        ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1,((MainActivity) getActivity()).getRecipes());
-        lv.setAdapter(arrayAdapter);
+        /*ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1,((MainActivity) getActivity()).getRecipes());
+        lv.setAdapter(arrayAdapter);*/
     }
 
     @Override

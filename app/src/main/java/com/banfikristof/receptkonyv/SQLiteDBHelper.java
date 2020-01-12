@@ -5,9 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.Toast;
-
-import androidx.annotation.Nullable;
 
 public class SQLiteDBHelper extends SQLiteOpenHelper {
 
@@ -67,7 +64,7 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put("nev",r.getName());
         cv.put("leiras",r.getDescription());
-        cv.put("hozzavalok",r.getIngredientsString());
+        cv.put("hozzavalok",r.ingredientsToString());
         cv.put("elkeszites",r.getPreparation());
         return database.insert(TABLE_NAME,null,cv);
     }

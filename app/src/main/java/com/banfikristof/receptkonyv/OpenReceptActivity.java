@@ -3,7 +3,6 @@ package com.banfikristof.receptkonyv;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -89,7 +88,7 @@ public class OpenReceptActivity extends AppCompatActivity {
 
         receptNev.setText(r.getName());
         receptLeiras.setText(r.getDescription());
-        receptHozzavalok.setText(r.getIngredientsString());
+        receptHozzavalok.setText(r.ingredientsToString());
         receptElkeszites.setText(r.getPreparation());
     }
 }

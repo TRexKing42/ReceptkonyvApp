@@ -2,11 +2,12 @@ package com.banfikristof.receptkonyv;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 public class Recipe implements Serializable {
-    private String id;
+    private String id, uid;
     private String name, description, preparation;
-    private List<String> ingredients;
+    private List<Map<String,String>> ingredients;
     private boolean onlineStored;
 
     public Recipe(String id){
@@ -14,26 +15,35 @@ public class Recipe implements Serializable {
         this.onlineStored = true;
     }
 
-    public Recipe(String name, String preparation, List<String> ingredients) {
+    public Recipe(String name, String preparation, List<Map<String,String>> ingredients) {
         this.name = name;
         this.description = " ";
         this.preparation = preparation;
         this.ingredients = ingredients;
     }
 
-    public Recipe(String name, String description, String preparation, List<String> ingredients) {
+    public Recipe(String name, String description, String preparation, List<Map<String,String>> ingredients) {
         this.name = name;
         this.description = description;
         this.preparation = preparation;
         this.ingredients = ingredients;
     }
 
-    public Recipe(String id, String name, String description, String preparation, List<String> ingredients) {
+    public Recipe(String id, String name, String description, String preparation, List<Map<String,String>> ingredients) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.preparation = preparation;
         this.ingredients = ingredients;
+    }
+
+    public Recipe(String id, String name, String description, String preparation, List<Map<String,String>> ingredients, String uid) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.preparation = preparation;
+        this.ingredients = ingredients;
+        this.uid = uid;
     }
 
     public String getName() {
@@ -64,20 +74,31 @@ public class Recipe implements Serializable {
         return id;
     }
 
-    public List<String> getIngredients() {
+    public List<Map<String,String>> getIngredients() {
         return ingredients;
     }
 
-    public String getIngredientsString() {
+    public String ingredientsToString() {
         String s = "";
-        for (String i : ingredients) {
-            s += i+"\n";
+        for (Map<String,String> i : ingredients) {
+            s += i.get("amount") + " ";
+            s += i.get("unit") + " ";
+            s += i.get("name");
+            s += "\n";
         }
         return s;
     }
 
-    public void setIngredients(List<String> ingredients) {
+    public void setIngredients(List<Map<String,String>> ingredients) {
         this.ingredients = ingredients;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public boolean isOnlineStored() {
@@ -88,11 +109,11 @@ public class Recipe implements Serializable {
         this.onlineStored = onlineStored;
     }
 
-    public void addIngredient(String ingredient) {
+    public void addIngredient(Map<String,String> ingredient) {
         this.ingredients.add(ingredient);
     }
 
-    public boolean removeIngredient(String ingredient) {
+    public boolean removeIngredient(Map<String,String> ingredient) {
         if(!this.ingredients.contains(ingredient)) {
             return false;
         } else {
