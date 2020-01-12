@@ -9,16 +9,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Map;
 
 public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.ViewHolder> {
-
     public List<Map<String,String>> ingredientsList;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView tvIngName,tvIngAmount,tvIngUnit;
         public Button btnIngDel;
+        private WeakReference<UjReceptActivity.RvClickListener> listenerWeakReference;
 
         public ViewHolder(View v) {
             super(v);
@@ -44,7 +45,7 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     }
 
     @Override
-    public void onBindViewHolder(IngredientsAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(IngredientsAdapter.ViewHolder holder, final int position) {
         Map<String,String> ing = ingredientsList.get(position);
         TextView ingName = holder.tvIngName;
         ingName.setText(ing.get("name")); //Név
@@ -53,10 +54,21 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
         TextView ingUnit = holder.tvIngUnit;
         ingUnit.setText(ing.get("unit")); // Mértékegység
         Button btnDelete = holder.btnIngDel;
+        btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Map<String,String> item = ingredientsList.get(position);
+                int ind = ingredientsList.indexOf(item);
+                ingredientsList.remove(ind);
+                notifyItemRemoved(ind);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         return ingredientsList.size();
     }
+
+
 }

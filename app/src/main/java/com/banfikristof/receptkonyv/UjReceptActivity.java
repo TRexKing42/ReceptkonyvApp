@@ -10,26 +10,19 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.skyhope.materialtagview.TagView;
 import com.skyhope.materialtagview.enums.TagSeparator;
 import com.skyhope.materialtagview.interfaces.TagItemListener;
 import com.skyhope.materialtagview.model.TagModel;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -106,6 +99,12 @@ public class UjReceptActivity extends AppCompatActivity {
                 });
             }
         });
+
+
+    }
+
+    public interface RvClickListener {
+        void onDeleteClicked(int position);
     }
 
     private Recipe formToRecipe(boolean setUid) {
