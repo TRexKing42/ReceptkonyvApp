@@ -25,16 +25,13 @@
             android:id="@+id/recFragmentButtonBar"
             android:gravity="center">
 
+            <!-- Ebben a layoutban lesz majd a keresés !-->
+
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/offlineReceptekButton"
-                android:text="Offline Receptek"/>
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/onlineReceptekButton"
-                android:text="Online Receptek"/>
+                android:id="@+id/refreshReceptekButton"
+                android:text="Frissítés"/>
 
         </LinearLayout>
 

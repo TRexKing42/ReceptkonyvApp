@@ -101,7 +101,7 @@
             app:tag_background_color="@color/colorPrimaryDark"
             app:tag_text_color="#fff"
             app:tag_limit="50"
-            app:limit_error_text="Maximum 50 hozzávalót lehet kiválasztani!"
+            app:limit_error_text="Maximum 50 címkét lehet kiválasztani!"
             />
 
         <EditText
@@ -115,14 +115,7 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Lokális Mentés"
+            android:text="Recept Mentése"
             android:id="@+id/ujReceptMentes" />
-
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Online Mentés"
-            android:id="@+id/ujReceptMentesOnline" />
     </LinearLayout>
 </ScrollView>

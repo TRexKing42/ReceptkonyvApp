@@ -53,13 +53,10 @@ public class MainActivity extends AppCompatActivity implements
     private DrawerLayout dl;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private NavigationView nv;
-    public FirebaseUser user;
     private TextView headerName, headerEmail;
     private ImageView headerPicture;
 
-    private FirebaseFirestore fbFirestore;
     private FirebaseDatabase fbDatabase;
-    private SQLiteDBHelper DBManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,9 +77,7 @@ public class MainActivity extends AppCompatActivity implements
         headerEmail = header.findViewById(R.id.menu_header_email);
         headerPicture = header.findViewById(R.id.menu_header_pic);
 
-        fbFirestore = FirebaseFirestore.getInstance();
         fbDatabase = FirebaseDatabase.getInstance();
-        DBManager = new SQLiteDBHelper(this);
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(this,dl,R.string.drawer_open,R.string.drawer_close);
         dl.addDrawerListener(actionBarDrawerToggle);
@@ -120,32 +115,14 @@ public class MainActivity extends AppCompatActivity implements
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
 
-                user = FirebaseAuth.getInstance().getCurrentUser();
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 headerName.setText(user.getDisplayName());
                 headerPicture.setImageURI(user.getPhotoUrl());
                 headerEmail.setText(user.getEmail());
 
-                // Save user into Firestore/RTDB
-                //Realtime DB
+                // Save user data
                 DatabaseReference db = fbDatabase.getReference("/users");
                 db.child(user.getUid()).child("displayName").setValue(user.getDisplayName());
-
-                //Firestore
-                fbFirestore.collection("users").document(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()){
-                            if (task.getResult().exists()) {
-                                Toast.makeText(MainActivity.this, "Üdv újra, " + user.getDisplayName() + "!",Toast.LENGTH_SHORT).show();
-                            } else {
-                                Map<String, Object> userData = new HashMap<>();
-                                userData.put("displayName",user.getDisplayName());
-                                fbFirestore.collection("users").document(user.getUid()).set(userData);
-                                Toast.makeText(MainActivity.this, "Üdv, " + user.getDisplayName() + "!",Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }
-                });
             } else {
                 // Sign in failed. If response is null the user canceled the
                 // sign-in flow using the back button. Otherwise check
@@ -186,37 +163,8 @@ public class MainActivity extends AppCompatActivity implements
         return false;
     }
 
-    ////
-    // ReceptekFragment
-    ////
-    /*public ArrayList<Recipe> getRecipes() {
-        Cursor result = DBManager.getRecipes();
-        ArrayList<Recipe> returnedList = new ArrayList<>();
-        if (result != null && result.getCount() > 0) {
-            while (result.moveToNext()){
-                String s = result.getString(result.getColumnIndex(SQLiteDBHelper.COL[3]));
-                String[] s2 = s.split(","); //Egyelőre nem müködik
-                returnedList.add(new Recipe(
-                        result.getString(result.getColumnIndex(SQLiteDBHelper.COL[0])),
-                        result.getString(result.getColumnIndex(SQLiteDBHelper.COL[1])),
-                        result.getString(result.getColumnIndex(SQLiteDBHelper.COL[2])),
-                        result.getString(result.getColumnIndex(SQLiteDBHelper.COL[4])),
-                        Arrays.asList(s2)
-                ));
-            }
-        }
-        return returnedList;
-    }*/
-
     @Override
-    public void onRecipeDelete(Recipe recipe, String id) {
-        /*if (!recipe.isOnlineStored()) {
-            if (DBManager.deleteRecipe(recipe.getId())) {
-                Toast.makeText(MainActivity.this, "Sikeres törlés", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(MainActivity.this, "Sikertelen törlés", Toast.LENGTH_SHORT).show();
-            }
-        }*/
+    public void onRecipeDelete(Recipe recipe) {
         fbDatabase.getReference().child("recipes").child(FirebaseAuth.getInstance().getUid()).child(recipe.key).removeValue();
     }
 }

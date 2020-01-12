@@ -37,7 +37,7 @@ import java.util.Map;
 public class UjReceptActivity extends AppCompatActivity {
 
     private TagView tv;
-    private Button saveBtn, saveOnlineBtn;
+    private Button saveBtn;
     private EditText etNev, etLeiras, etElkeszites;
 
     private EditText ingNev, ingMennyiseg, ingMertek;
@@ -47,8 +47,6 @@ public class UjReceptActivity extends AppCompatActivity {
     IngredientsAdapter ingredientsAdapter;
 
     List<Map<String,String>> ingredients;
-    private SQLiteDBHelper DBManager;
-    private FirebaseFirestore fbFirestore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,71 +90,22 @@ public class UjReceptActivity extends AppCompatActivity {
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Recipe recipe = formToRecipe(false);
-                if (recipe == null) return;
-                if (DBManager.newRecipe(recipe) == 1) {
-                    Toast.makeText(UjReceptActivity.this, "Sikertelen mentés!",Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(UjReceptActivity.this, "Sikeres mentés!",Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-            }
-        });
-
-        saveOnlineBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
                 Recipe recipe = formToRecipe(true);
                 if (recipe == null) return;
-
-                Map<String, Object> recipeData;
-
-
-                recipeData = recipeToDocument(recipe);
-                fbFirestore.collection("recipes").add(recipeData).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+                db.child("recipes").child(FirebaseAuth.getInstance().getUid()).push().setValue(recipe).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
-                    public void onSuccess(DocumentReference documentReference) {
+                    public void onSuccess(Void aVoid) {
                         Toast.makeText(UjReceptActivity.this, "Sikeres mentés!",Toast.LENGTH_SHORT).show();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-
                         Toast.makeText(UjReceptActivity.this, "Sikertelen mentés!",Toast.LENGTH_SHORT).show();
                     }
                 });
-
-                DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-                db.child("recipes").child(FirebaseAuth.getInstance().getUid()).push().setValue(recipe);
             }
         });
-    }
-
-    private Map<String, Object> recipeToDocument(Recipe recipe) {
-        Map<String, Object> recipeData;
-        Map<String, Object> ingredientsData = new HashMap<>();
-        Map<String,Map<String, Object>> ingredients = new HashMap<>();
-
-        //for (int i = 0; i < recipe.getIngredients().size(); i++) {
-        //    ingredientsData.clear();
-        //    ingredientsData.put("iName", recipe.getIngredients().get(i));
-        //    ingredientsData.put("iAmount", /*Currently using placeholder value TODO*/ 1);
-        //    ingredientsData.put("iUnit", /*Currently using placeholder value TODO*/ "db");
-        //    ingredients.put(String.valueOf(i),ingredientsData);
-        //}
-        List<String> tagList = new ArrayList<>();
-        tagList.add("teszt tag"); //TODO
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DocumentReference userReference = fbFirestore.collection("users").document(uid);
-        recipeData = new HashMap<>();
-        recipeData.put("name",recipe.getName());
-        recipeData.put("description",recipe.getDescription());
-        recipeData.put("preparation",recipe.getPreparation());
-        recipeData.put("ingredients",recipe.getIngredients());
-        recipeData.put("tags",tagList);
-        recipeData.put("creationDate",new Timestamp(new Date()));
-        recipeData.put("userID",userReference);
-        return recipeData;
     }
 
     private Recipe formToRecipe(boolean setUid) {
@@ -168,17 +117,18 @@ public class UjReceptActivity extends AppCompatActivity {
             Toast.makeText(UjReceptActivity.this, "Étel elkészítése nem lehet üres!",Toast.LENGTH_SHORT).show();
             return null;
         }
-        List<TagModel> selectedTags = tv.getSelectedTags();
-        if (selectedTags.isEmpty()) {
-            Toast.makeText(UjReceptActivity.this, "Szükség van legalább egy hozzávalóra!",Toast.LENGTH_SHORT).show();
+        if (ingredients.isEmpty()) {
+            Toast.makeText(UjReceptActivity.this, "Válassz ki legalább egy hozzávalót!",Toast.LENGTH_SHORT).show();
             return null;
         }
+        List<TagModel> selectedTags = tv.getSelectedTags();
         Recipe recipe;
         if (TextUtils.isEmpty(etLeiras.getText())){
             recipe = new Recipe(etNev.getText().toString(),etElkeszites.getText().toString(),ingredients);
         } else {
             recipe = new Recipe(etNev.getText().toString(),etLeiras.getText().toString(),etElkeszites.getText().toString(),ingredients);
         }
+        recipe.setTags(tagsToString(selectedTags));
         if (setUid) {
             recipe.setUid(FirebaseAuth.getInstance().getCurrentUser().getUid());
             recipe.setOnlineStored(true);
@@ -189,7 +139,7 @@ public class UjReceptActivity extends AppCompatActivity {
     private void init() {
         tv = findViewById(R.id.tagView);
         tv.addTagSeparator(TagSeparator.COMMA_SEPARATOR);
-        String[] tagList = new String[]{"Tojás", "Tej", "Liszt", "Tészta", "Kenyér", "Víz"};
+        String[] tagList = new String[]{"Gluténmentes", "Laktózmentes", "Vegetáriánus", "Vegán", "Olcsó", "Leves", "Előétel", "Reggeli"};
         tv.setTagList(tagList);
 
         rvIngredients = findViewById(R.id.ingredientsListRv);
@@ -198,7 +148,6 @@ public class UjReceptActivity extends AppCompatActivity {
         rvIngredients.setLayoutManager(new LinearLayoutManager(this));
 
         saveBtn = findViewById(R.id.ujReceptMentes);
-        saveOnlineBtn = findViewById(R.id.ujReceptMentesOnline);
 
         etNev = findViewById(R.id.ujReceptNev);
         etLeiras = findViewById(R.id.ujReceptLeiras);
@@ -209,9 +158,6 @@ public class UjReceptActivity extends AppCompatActivity {
         ingMertek = findViewById(R.id.ujReceptIngUnitEt);
         ingHozzaad = findViewById(R.id.ujReceptIngButtonNew);
 
-        DBManager = new SQLiteDBHelper(this);
-        fbFirestore = FirebaseFirestore.getInstance();
-
     }
 
     private void loadIngredients() {
@@ -220,9 +166,14 @@ public class UjReceptActivity extends AppCompatActivity {
     }
 
     private List<String> tagsToString(List<TagModel> tags) {
+
         List<String> result = new ArrayList<>();
-        for (TagModel item : tags) {
-            result.add(item.getTagText());
+        if (tags.isEmpty()){
+            result.add("Nincs címke");
+        } else {
+            for (TagModel item : tags) {
+                result.add(item.getTagText());
+            }
         }
         return result;
     }

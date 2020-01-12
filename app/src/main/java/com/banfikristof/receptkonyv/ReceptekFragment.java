@@ -47,7 +47,7 @@ public class ReceptekFragment extends Fragment {
     private ReceptekFragmentListener listener;
 
     private ListView lv;
-    private Button ujReceptBtn, onlineBtn, offlineBtn;
+    private Button ujReceptBtn, refreshBtn;
     private boolean onlineList;
 
     public ReceptekFragment() {
@@ -60,8 +60,7 @@ public class ReceptekFragment extends Fragment {
         View v =inflater.inflate(R.layout.fragment_receptek, container, false);
 
         initFragment(v);
-
-        onlineRecipesToList();
+        recipesToList();
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -80,24 +79,26 @@ public class ReceptekFragment extends Fragment {
                 startActivity(intent);
             }
         });
-        onlineBtn.setOnClickListener(new View.OnClickListener() {
+        refreshBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onlineList = true;
-                onlineRecipesToList();
-            }
-        });
-        offlineBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onlineList = false;
-                recipesIntoList();
+                recipesToList();
             }
         });
         return v;
     }
 
-    private void onlineRecipesToList() {
+
+    private void initFragment(View view){
+        lv = view.findViewById(R.id.listReceptek);
+        registerForContextMenu(lv);
+        ujReceptBtn = view.findViewById(R.id.ujReceptButton);
+        refreshBtn = view.findViewById(R.id.refreshReceptekButton);
+    }
+
+
+    private void recipesToList() {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getUid());
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -118,53 +119,10 @@ public class ReceptekFragment extends Fragment {
                 System.out.println(databaseError.getMessage());
             }
         });
-
-
-        /*
-        //   FIRESTORE
-        FirebaseFirestore fbFirestore = FirebaseFirestore.getInstance();
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DocumentReference userReference = fbFirestore.collection("users").document(uid);
-        fbFirestore.collection("recipes").whereEqualTo("userID", userReference).get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-
-                        ArrayList<Recipe> listOfRecipes = new ArrayList<>();
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-
-                                Recipe r = new Recipe(documentSnapshot.getId());
-                                r.setName(documentSnapshot.get("name").toString());
-                                r.setDescription(documentSnapshot.get("description").toString());
-                                Map<String, Map<String, Object>> ingredientsData = ((Map<String, Map<String, Object>>)documentSnapshot.get("ingredients"));
-                                List<String> ingredients = new ArrayList<>();
-                                for (Map.Entry<String, Map<String, Object>> item : ingredientsData.entrySet()){
-                                    ingredients.add(item.getValue().get("iAmount").toString() + " " + item.getValue().get("iUnit").toString() + " " + item.getKey());
-                                }
-                                //r.setIngredients(ingredients);
-                                r.setPreparation(documentSnapshot.get("preparation").toString());
-                                listOfRecipes.add(r);
-
-                                ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1,listOfRecipes);
-                                lv.setAdapter(arrayAdapter);
-                            }
-                        }
-                    }
-                });*/
-    }
-
-    private void initFragment(View view){
-        lv = view.findViewById(R.id.listReceptek);
-        registerForContextMenu(lv);
-        ujReceptBtn = view.findViewById(R.id.ujReceptButton);
-        onlineBtn = view.findViewById(R.id.onlineReceptekButton);
-        offlineBtn = view.findViewById(R.id.offlineReceptekButton);
-        onlineList = false;
     }
 
     public interface ReceptekFragmentListener {
-        public void onRecipeDelete(Recipe recipe, String id);
+        public void onRecipeDelete(Recipe recipe);
     }
 
     @Override
@@ -184,19 +142,10 @@ public class ReceptekFragment extends Fragment {
         listener = null;
     }
 
-    public void recipesIntoList(){
-        /*ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1,((MainActivity) getActivity()).getRecipes());
-        lv.setAdapter(arrayAdapter);*/
-    }
-
     @Override
     public void onResume() {
         super.onResume();
-        if (onlineList){
-            onlineRecipesToList();
-        } else {
-            recipesIntoList();
-        }
+        recipesToList();
     }
 
     @Override
@@ -222,8 +171,8 @@ public class ReceptekFragment extends Fragment {
             case "Törlés":
                 info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
                 s = (Recipe) lv.getItemAtPosition(info.position);
-                listener.onRecipeDelete(s, s.key);
-                recipesIntoList();
+                listener.onRecipeDelete(s);
+                recipesToList();
                 break;
             default:
                 return false;

@@ -1,8 +1,11 @@
 package com.banfikristof.receptkonyv;
 
+import android.text.TextUtils;
+
 import com.google.firebase.database.Exclude;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +17,7 @@ public class Recipe implements Serializable {
     private String id, uid;
     private String name, description, preparation;
     private List<Map<String,String>> ingredients;
+    private List<String> tags;
     private boolean onlineStored;
 
     public Recipe() {
@@ -47,13 +51,14 @@ public class Recipe implements Serializable {
         this.ingredients = ingredients;
     }
 
-    public Recipe(String id, String name, String description, String preparation, List<Map<String,String>> ingredients, String uid) {
+    public Recipe(String id, String name, String description, String preparation, List<Map<String,String>> ingredients, String uid, List<String> tags) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.preparation = preparation;
         this.ingredients = ingredients;
         this.uid = uid;
+        this.tags = tags;
     }
 
     public String getName() {
@@ -92,6 +97,14 @@ public class Recipe implements Serializable {
         return ingredients;
     }
 
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
+
     public String ingredientsToString() {
         String s = "";
         for (Map<String,String> i : ingredients) {
@@ -100,6 +113,11 @@ public class Recipe implements Serializable {
             s += i.get("name");
             s += "\n";
         }
+        return s;
+    }
+
+    public String tagsToString() {
+        String s = TextUtils.join(", ",tags);
         return s;
     }
 
