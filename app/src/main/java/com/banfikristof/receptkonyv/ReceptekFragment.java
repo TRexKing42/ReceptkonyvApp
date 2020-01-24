@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -47,8 +48,8 @@ public class ReceptekFragment extends Fragment {
     private ReceptekFragmentListener listener;
 
     private ListView lv;
-    private Button ujReceptBtn, refreshBtn;
-    private boolean onlineList;
+    private Button ujReceptBtn, searchBtn;
+    private EditText searchEt;
 
     public ReceptekFragment() {
         // Required empty public constructor
@@ -79,11 +80,10 @@ public class ReceptekFragment extends Fragment {
                 startActivity(intent);
             }
         });
-        refreshBtn.setOnClickListener(new View.OnClickListener() {
+        searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onlineList = true;
-                recipesToList();
+                searchRecipes(searchEt.getText().toString());
             }
         });
         return v;
@@ -94,7 +94,8 @@ public class ReceptekFragment extends Fragment {
         lv = view.findViewById(R.id.listReceptek);
         registerForContextMenu(lv);
         ujReceptBtn = view.findViewById(R.id.ujReceptButton);
-        refreshBtn = view.findViewById(R.id.refreshReceptekButton);
+        searchBtn = view.findViewById(R.id.keresesReceptekButton);
+        searchEt = view.findViewById(R.id.keresesReceptekEt);
     }
 
 
@@ -117,6 +118,43 @@ public class ReceptekFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 System.out.println(databaseError.getMessage());
+            }
+        });
+    }
+
+    public void searchRecipes(final String searchText) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getUid());
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<Recipe> listOfRecipes = new ArrayList<>();
+                Recipe r;
+                for (DataSnapshot item : dataSnapshot.getChildren()) {
+                    r = item.getValue(Recipe.class);
+                    r.key = item.getKey();
+                    if (r.getName().toLowerCase().contains(searchText.toLowerCase())) {
+                        listOfRecipes.add(r);
+                    }
+                    for (String i : r.getTags()) {
+                        if (i.toLowerCase().contains(searchText.toLowerCase()) && !listOfRecipes.contains(r)){
+                            listOfRecipes.add(r);
+                        }
+                    }
+                    for (Map<String,String> i : r.getIngredients()) {
+                        if (i.get("name").toLowerCase().contains(searchText.toLowerCase()) && !listOfRecipes.contains(r)){
+                            listOfRecipes.add(r);
+                        }
+                    }
+                }
+                if (!listOfRecipes.isEmpty()) {
+                    ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1,listOfRecipes);
+                    lv.setAdapter(arrayAdapter);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
     }

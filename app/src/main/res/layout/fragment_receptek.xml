@@ -25,13 +25,19 @@
             android:id="@+id/recFragmentButtonBar"
             android:gravity="center">
 
-            <!-- Ebben a layoutban lesz majd a keresés !-->
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="9"
+                android:id="@+id/keresesReceptekEt"
+                android:hint="Recept neve, címke, hozzávaló..."/>
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/refreshReceptekButton"
-                android:text="Frissítés"/>
+                android:layout_weight="1"
+                android:id="@+id/keresesReceptekButton"
+                android:text="Keresés"/>
 
         </LinearLayout>
 
