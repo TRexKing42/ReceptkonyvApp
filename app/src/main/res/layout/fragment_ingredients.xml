@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RecipeDisplayFragments.OverviewFragment">
+    tools:context=".RecipeDisplayFragments.IngredientsFragment">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -18,19 +18,19 @@
             android:gravity="center_horizontal"
             tools:context=".OpenReceptActivity">
 
-            <ImageView
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_back_icon"
-                android:id="@+id/recipeImage"/>
+                android:text="Hozzávalók"
+                android:textSize="35dp"
+                android:textAlignment="center" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/receptLeirasSelected"
-                android:text="Leírás helye. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur aliquet eros non mauris vestibulum."
-                android:textSize="25dp"
-                android:textAlignment="center" />
+                android:id="@+id/receptHozzavalokSelected"
+                android:text="Hozzávalók lista\nLorem\nIpsum\nDolor\nSit amet"
+                android:textSize="25dp" />
 
         </LinearLayout>
     </ScrollView>

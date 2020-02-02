@@ -25,44 +25,13 @@
                 android:textSize="45dp"
                 android:textAlignment="center" />
 
-            <TextView
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/receptLeirasSelected"
-                android:text="Leírás helye. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur aliquet eros non mauris vestibulum."
-                android:textSize="25dp"
-                android:textAlignment="center" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Hozzávalók"
-                android:textSize="35dp"
-                android:textAlignment="center" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/receptHozzavalokSelected"
-                android:text="Hozzávalók lista\nLorem\nIpsum\nDolor\nSit amet"
-                android:textSize="25dp" />
+                android:id="@+id/receptFrame"/>
 
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Elkészítés"
-                android:textSize="35dp"
-                android:textAlignment="center" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/receptElkeszitesSelected"
-                android:text="Hozzávalók lista\nLorem\nIpsum\nDolor\nSit amet"
-                android:textSize="25dp"
-                android:paddingBottom="10dp"
-                />
 
             <View
                 android:layout_width="match_parent"
@@ -111,7 +80,6 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:labelVisibilityMode="selected"
         android:layout_alignParentBottom="true"
         android:id="@+id/bottomNavView"
         app:menu="@menu/open_recept_menu"/>

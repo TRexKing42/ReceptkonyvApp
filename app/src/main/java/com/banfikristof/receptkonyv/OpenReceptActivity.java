@@ -13,6 +13,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.banfikristof.receptkonyv.RecipeDisplayFragments.IngredientsFragment;
+import com.banfikristof.receptkonyv.RecipeDisplayFragments.OverviewFragment;
+import com.banfikristof.receptkonyv.RecipeDisplayFragments.PreparationFragment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -20,9 +23,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class OpenReceptActivity extends AppCompatActivity {
+public class OpenReceptActivity extends AppCompatActivity implements
+        OverviewFragment.OnFragmentInteractionListener,
+        IngredientsFragment.OnFragmentInteractionListener,
+        PreparationFragment.OnFragmentInteractionListener {
 
-    private TextView receptNev,receptLeiras,receptHozzavalok,receptElkeszites, receptCimkek;
+    private TextView receptNev, receptCimkek;
     private ImageButton back, delete;
     private BottomNavigationView bottomNavigationView;
 
@@ -69,13 +75,13 @@ public class OpenReceptActivity extends AppCompatActivity {
                 switch(menuItem.getItemId())
                 {
                     case R.id.recipeMenu_overview:
-                        selectedFragment = new KezdolapFragment();
+                        selectedFragment = new OverviewFragment();
                         break;
                     case R.id.recipeMenu_ingredients:
-                        selectedFragment = new ReceptekFragment();
+                        selectedFragment = new IngredientsFragment();
                         break;
                     case R.id.recipeMenu_preparation:
-                        selectedFragment = new SettingsFragment();
+                        selectedFragment = new PreparationFragment();
                         break;
                     default:
                         Toast.makeText(OpenReceptActivity.this, "Még nem",Toast.LENGTH_SHORT).show();
@@ -84,8 +90,9 @@ public class OpenReceptActivity extends AppCompatActivity {
 
                 if (selectedFragment != null) {
                     FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.replace(R.id.frame, selectedFragment);
+                    fragmentTransaction.replace(R.id.receptFrame, selectedFragment);
                     fragmentTransaction.commit();
+                    return true;
                 }
                 return false;
             }
@@ -95,9 +102,7 @@ public class OpenReceptActivity extends AppCompatActivity {
 
     private void init(){
         receptNev = findViewById(R.id.receptNevSelected);
-        receptLeiras = findViewById(R.id.receptLeirasSelected);
-        receptHozzavalok = findViewById(R.id.receptHozzavalokSelected);
-        receptElkeszites = findViewById(R.id.receptElkeszitesSelected);
+
         receptCimkek = findViewById(R.id.receptTagsSelected);
 
         back = findViewById(R.id.backButtonSelectedRecept);
@@ -105,14 +110,33 @@ public class OpenReceptActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottomNavView);
 
         r = (Recipe) getIntent().getSerializableExtra("SelectedRecipe");
+
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.receptFrame, new OverviewFragment());
+        fragmentTransaction.commit();
     }
 
     public void displayRecipe(){
         //Recipe r = (Recipe) getIntent().getSerializableExtra("SelectedRecipe");
-        receptCimkek.setText(r.tagsToString());
         receptNev.setText(r.getName());
-        receptLeiras.setText(r.getDescription());
-        receptHozzavalok.setText(r.ingredientsToString());
-        receptElkeszites.setText(r.getPreparation());
+        receptCimkek.setText(r.tagsToString());
+    }
+
+    //Overview Fragment
+    @Override
+    public void onFragmentDisplayed(TextView desc) {
+        desc.setText(r.getDescription());
+    }
+
+    //Ingredients Fragment
+    @Override
+    public void onIngFragmentDisplayed(TextView tv) {
+        tv.setText(r.ingredientsToString());
+    }
+
+    //Preparations Fragmentt
+    @Override
+    public void onPrepFragmentDisplayed(TextView tv) {
+        tv.setText(r.getPreparation());
     }
 }

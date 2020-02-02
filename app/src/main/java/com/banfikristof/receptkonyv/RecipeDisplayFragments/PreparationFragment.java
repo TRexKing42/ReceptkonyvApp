@@ -9,47 +9,39 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.banfikristof.receptkonyv.R;
-import com.bumptech.glide.Glide;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link OverviewFragment.OnFragmentInteractionListener} interface
+ * {@link PreparationFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  */
-public class OverviewFragment extends Fragment {
-
-    private TextView receptLeiras;
-    private ImageView recipeImage;
+public class PreparationFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public OverviewFragment() {
+    private TextView receptElkeszites;
+
+    public PreparationFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_overview, container, false);
+        View v = inflater.inflate(R.layout.fragment_preparation, container, false);
 
         initFragment(v);
-        mListener.onFragmentDisplayed(receptLeiras);
-
+        mListener.onPrepFragmentDisplayed(receptElkeszites);
         return v;
     }
 
     private void initFragment(View v) {
-        recipeImage = v.findViewById(R.id.recipeImage);
-        receptLeiras = v.findViewById(R.id.receptLeirasSelected);
-
-        Glide.with(this).load("https://baconmockup.com/400/200/").into(recipeImage);
+        receptElkeszites = v.findViewById(R.id.receptElkeszitesSelected);
     }
 
     @Override
@@ -80,6 +72,7 @@ public class OverviewFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onFragmentDisplayed(TextView desc);
+        // TODO: Update argument type and name
+        void onPrepFragmentDisplayed(TextView tv);
     }
 }
