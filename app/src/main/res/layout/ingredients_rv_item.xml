@@ -14,14 +14,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/ingredientUnitRv"
-        android:text="fej"
+        android:text="@string/exampleUnit"
         android:paddingRight="5dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/ingredientNameRv"
-        android:text="Káposzta"/>
+        android:text="@string/exampleIngredient"/>
 
     <Space
         android:layout_width="0dp"
@@ -31,7 +31,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Törlés"
+        android:text="@string/deleteButtonText"
         android:id="@+id/btnDeleteIngRv"/>
 
 </LinearLayout>

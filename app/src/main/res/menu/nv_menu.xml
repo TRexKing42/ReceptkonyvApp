@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/menu_login"
-        android:title="Bejelentkezés"/>
+        android:title="@string/loginMenuText"/>
     <item android:id="@+id/menu_fooldal"
-        android:title="Kezdőlap"/>
+        android:title="@string/homepageMenuText"/>
     <item android:id="@+id/menu_receptek"
-        android:title="Receptek"/>
-    <item android:id="@+id/menu_teszt3"
-        android:title="Menü3"/>
-    <item android:id="@+id/menu_teszt4"
-        android:title="Menü4"/>
+        android:title="@string/recipesMenuText"/>
+    <item android:id="@+id/menu_shoppinglists"
+        android:title="@string/shoppinglistsMenuText"/>
+    <item android:id="@+id/menu_settings"
+        android:title="@string/settingsMenuText"/>
+    <item android:id="@+id/menu_logout"
+        android:title="@string/logoutMenuText"/>
 </menu>

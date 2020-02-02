@@ -14,7 +14,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Új Recept"
+            android:text="@string/newRecipe"
             android:textAlignment="center"
             android:textSize="40dp"
             android:paddingBottom="30dp"/>
@@ -22,7 +22,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Étel neve"
+            android:hint="@string/foodNameHint"
             android:textSize="25dp"
             android:id="@+id/ujReceptNev"
             android:inputType="text"
@@ -31,7 +31,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Étel rövid leírása"
+            android:hint="@string/descriptionHint"
             android:textSize="25dp"
             android:inputType="textMultiLine"
             android:id="@+id/ujReceptLeiras"
@@ -40,7 +40,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Hozzávalók"
+            android:text="@string/ingredientsC"
             android:textAlignment="center"
             android:textSize="25dp"
             android:paddingTop="30dp"/>
@@ -68,7 +68,7 @@
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="szelet"
+                android:hint="@string/unitHint"
                 android:paddingLeft="5dp"
                 android:textSize="20dp"
                 android:id="@+id/ujReceptIngUnitEt"/>
@@ -76,7 +76,7 @@
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="friss kenyér"
+                android:hint="@string/ingredientHint"
                 android:paddingLeft="5dp"
                 android:textSize="20dp"
                 android:id="@+id/ujReceptIngNameEt" />
@@ -89,7 +89,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hozzáadás"
+                android:text="@string/addButtonText"
                 android:id="@+id/ujReceptIngButtonNew" />
 
         </LinearLayout>
@@ -107,7 +107,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Étel elkészítése"
+            android:hint="@string/preparationHint"
             android:textSize="25dp"
             android:inputType="textMultiLine"
             android:id="@+id/ujReceptElkeszites" />
@@ -115,7 +115,7 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Recept Mentése"
+            android:text="@string/saveRecipeButtonText"
             android:id="@+id/ujReceptMentes" />
     </LinearLayout>
 </ScrollView>

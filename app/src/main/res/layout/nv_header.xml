@@ -5,19 +5,11 @@
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@mipmap/ic_launcher"
-        android:padding="10dp"
-        android:id="@+id/menu_header_pic"
-        />
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/menu_header_nev"
-        android:text="Teszt Név"
+        android:text="@string/nameC"
         android:textSize="30dp"
         android:paddingLeft="10dp"
         android:textColor="#fff"

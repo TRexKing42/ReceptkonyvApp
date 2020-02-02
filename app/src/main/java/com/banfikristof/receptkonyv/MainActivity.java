@@ -78,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements
         View header = nv.getHeaderView(0);
         headerName = header.findViewById(R.id.menu_header_nev);
         headerEmail = header.findViewById(R.id.menu_header_email);
-        headerPicture = header.findViewById(R.id.menu_header_pic);
 
         fbDatabase = FirebaseDatabase.getInstance();
 
@@ -89,6 +88,30 @@ public class MainActivity extends AppCompatActivity implements
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frame, new KezdolapFragment());
         fragmentTransaction.commit();
+
+
+        //Login dolgok
+        userLoginChanged();
+    }
+
+    private void userLoginChanged() {
+        MenuItem loginMenu = nv.getMenu().findItem(R.id.menu_login);
+        MenuItem logoutMenu = nv.getMenu().findItem(R.id.menu_logout);
+        loginMenu.setEnabled(false);
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            loginMenu.setEnabled(true);
+            logoutMenu.setEnabled(false);
+
+            headerName.setText(getResources().getString(R.string.plsLogin));
+            headerEmail.setText("");
+        } else {
+            loginMenu.setEnabled(false);
+            logoutMenu.setEnabled(true);
+
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            headerName.setText(user.getDisplayName());
+            headerEmail.setText(user.getEmail());
+        }
     }
 
     private void firebaseSignInIntent() {
@@ -119,9 +142,8 @@ public class MainActivity extends AppCompatActivity implements
                 // Successfully signed in
 
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                headerName.setText(user.getDisplayName());
-                headerPicture.setImageURI(user.getPhotoUrl());
-                headerEmail.setText(user.getEmail());
+                userLoginChanged();
+
 
                 MenuItem loginMenu = nv.getMenu().findItem(R.id.menu_login);
                 loginMenu.setEnabled(false);
@@ -152,6 +174,11 @@ public class MainActivity extends AppCompatActivity implements
                 break;
             case R.id.menu_login:
                 firebaseSignInIntent();
+                userLoginChanged();
+                break;
+            case R.id.menu_logout:
+                FirebaseAuth.getInstance().signOut();
+                userLoginChanged();
                 break;
             default:
                 Toast.makeText(MainActivity.this, "Még nem",Toast.LENGTH_SHORT).show();

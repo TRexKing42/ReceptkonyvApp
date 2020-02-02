@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcomeMsg">Üdv!</string>
+    <string name="drawer_close">Bezárás</string>
+    <string name="drawer_open">Kinyitás</string>
+    <string name="loginMenuText">Bejelentkezés</string>
+    <string name="homepageMenuText">Kezdőlap</string>
+    <string name="recipesMenuText">Receptek</string>
+    <string name="shoppinglistsMenuText">Bevásárlólisták</string>
+    <string name="settingsMenuText">Beállítások</string>
+    <string name="logoutMenuText">Kijelentkezés</string>
+    <string name="newRecipe">Új Recept</string>
+    <string name="foodNameHint">Étel neve</string>
+    <string name="descriptionHint">Rövid leírás</string>
+    <string name="ingredientsC">Hozzávalók</string>
+    <string name="unitHint">szelet</string>
+    <string name="ingredientHint">kenyér</string>
+    <string name="addButtonText">Hozzáad</string>
+    <string name="preparationHint">Elkészítés</string>
+    <string name="saveRecipeButtonText">Mentés</string>
+    <string name="searchParamsTxt">Recept neve, címke, hozzávaló...</string>
+    <string name="searchButtonText">Keresés</string>
+    <string name="newButtonText">Új</string>
+    <string name="deleteButtonText">Törlés</string>
+    <string name="exampleUnit">fej</string>
+    <string name="exampleIngredient">Káposzta</string>
+    <string name="nameC">Név</string>
+    <string name="plsLogin">Kérem jelentkezzen be!</string>
+</resources>

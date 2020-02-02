@@ -13,7 +13,7 @@
             android:id="@+id/titleReceptek"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Receptek"
+            android:text="@string/recipesMenuText"
             android:textAlignment="center"
             android:textSize="50dp" />
 
@@ -30,14 +30,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="9"
                 android:id="@+id/keresesReceptekEt"
-                android:hint="Recept neve, címke, hozzávaló..."/>
+                android:hint="@string/searchParamsTxt"/>
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:id="@+id/keresesReceptekButton"
-                android:text="Keresés"/>
+                android:text="@string/searchButtonText"/>
 
         </LinearLayout>
 
@@ -56,7 +56,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/ujReceptButton"
-            android:text="Új"
+            android:text="@string/newButtonText"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
             android:layout_margin="30dp"
