@@ -40,7 +40,7 @@ public class OverviewFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_overview, container, false);
 
         initFragment(v);
-        mListener.onFragmentDisplayed(receptLeiras);
+        mListener.onFragmentDisplayed(receptLeiras, recipeImage);
 
         return v;
     }
@@ -80,6 +80,6 @@ public class OverviewFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onFragmentDisplayed(TextView desc);
+        void onFragmentDisplayed(TextView desc, ImageView imageView);
     }
 }

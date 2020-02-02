@@ -5,23 +5,29 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.banfikristof.receptkonyv.RecipeDisplayFragments.IngredientsFragment;
 import com.banfikristof.receptkonyv.RecipeDisplayFragments.OverviewFragment;
 import com.banfikristof.receptkonyv.RecipeDisplayFragments.PreparationFragment;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.Rotate;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 public class OpenReceptActivity extends AppCompatActivity implements
         OverviewFragment.OnFragmentInteractionListener,
@@ -31,6 +37,8 @@ public class OpenReceptActivity extends AppCompatActivity implements
     private TextView receptNev, receptCimkek;
     private ImageButton back, delete;
     private BottomNavigationView bottomNavigationView;
+
+    private StorageReference img;
 
     private Recipe r;
 
@@ -120,12 +128,17 @@ public class OpenReceptActivity extends AppCompatActivity implements
         //Recipe r = (Recipe) getIntent().getSerializableExtra("SelectedRecipe");
         receptNev.setText(r.getName());
         receptCimkek.setText(r.tagsToString());
+        img = FirebaseStorage.getInstance().getReference()
+                .child(FirebaseAuth.getInstance().getUid())
+                .child(r.key)
+                .child("main_img.jpg");
     }
 
     //Overview Fragment
     @Override
-    public void onFragmentDisplayed(TextView desc) {
+    public void onFragmentDisplayed(TextView desc, ImageView imageView) {
         desc.setText(r.getDescription());
+        Glide.with(this).load(img).into(imageView);
     }
 
     //Ingredients Fragment

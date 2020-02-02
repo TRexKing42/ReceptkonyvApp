@@ -19,6 +19,7 @@
             android:textSize="40dp"
             android:paddingBottom="30dp"/>
 
+
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -36,6 +37,32 @@
             android:inputType="textMultiLine"
             android:id="@+id/ujReceptLeiras"
             android:maxLength="1024"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fénykép készítése:"
+                android:textSize="20dp"
+                android:padding="3dp"
+                android:layout_marginRight="5dp"/>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_camera_icon"
+                android:id="@+id/newRecipePhotoIbtn"/>
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/newRecipeImgPreview" />
 
         <TextView
             android:layout_width="match_parent"

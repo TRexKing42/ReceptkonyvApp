@@ -1,11 +1,11 @@
 package com.banfikristof.receptkonyv;
 
+import android.graphics.Bitmap;
 import android.text.TextUtils;
 
 import com.google.firebase.database.Exclude;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,11 +14,14 @@ public class Recipe implements Serializable {
     @Exclude
     public String key;
 
+    @Exclude
+    public Bitmap mainImg;
+
     private String id, uid;
     private String name, description, preparation;
     private List<Map<String,String>> ingredients;
     private List<String> tags;
-    private boolean onlineStored;
+    private boolean hasMainImg;
 
     public Recipe() {
 
@@ -26,7 +29,7 @@ public class Recipe implements Serializable {
 
     public Recipe(String id){
         this.id = id;
-        this.onlineStored = true;
+        this.hasMainImg = true;
     }
 
     public Recipe(String name, String preparation, List<Map<String,String>> ingredients) {
@@ -133,12 +136,12 @@ public class Recipe implements Serializable {
         this.uid = uid;
     }
 
-    public boolean isOnlineStored() {
-        return onlineStored;
+    public boolean isHasMainImg() {
+        return hasMainImg;
     }
 
-    public void setOnlineStored(boolean onlineStored) {
-        this.onlineStored = onlineStored;
+    public void setHasMainImg(boolean hasMainImg) {
+        this.hasMainImg = hasMainImg;
     }
 
     public void addIngredient(Map<String,String> ingredient) {
