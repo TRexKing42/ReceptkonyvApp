@@ -2,8 +2,11 @@ package com.banfikristof.receptkonyv;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -12,6 +15,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -20,6 +24,7 @@ public class OpenReceptActivity extends AppCompatActivity {
 
     private TextView receptNev,receptLeiras,receptHozzavalok,receptElkeszites, receptCimkek;
     private ImageButton back, delete;
+    private BottomNavigationView bottomNavigationView;
 
     private Recipe r;
 
@@ -55,6 +60,36 @@ public class OpenReceptActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                Fragment selectedFragment = null;
+
+                switch(menuItem.getItemId())
+                {
+                    case R.id.recipeMenu_overview:
+                        selectedFragment = new KezdolapFragment();
+                        break;
+                    case R.id.recipeMenu_ingredients:
+                        selectedFragment = new ReceptekFragment();
+                        break;
+                    case R.id.recipeMenu_preparation:
+                        selectedFragment = new SettingsFragment();
+                        break;
+                    default:
+                        Toast.makeText(OpenReceptActivity.this, "Még nem",Toast.LENGTH_SHORT).show();
+                        break;
+                }
+
+                if (selectedFragment != null) {
+                    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.frame, selectedFragment);
+                    fragmentTransaction.commit();
+                }
+                return false;
+            }
+        });
         displayRecipe();
     }
 
@@ -67,6 +102,7 @@ public class OpenReceptActivity extends AppCompatActivity {
 
         back = findViewById(R.id.backButtonSelectedRecept);
         delete = findViewById(R.id.deleteButtonSelectedRecept);
+        bottomNavigationView = findViewById(R.id.bottomNavView);
 
         r = (Recipe) getIntent().getSerializableExtra("SelectedRecipe");
     }

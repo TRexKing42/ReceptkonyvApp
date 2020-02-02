@@ -26,4 +26,10 @@
     <string name="exampleIngredient">of an ingredient</string>
     <string name="nameC">Name</string>
     <string name="plsLogin">Please log in!</string>
+    <string name="language">Language</string>
+    <string name="choose">Choose</string>
+    <string name="deleteProfileBtnText">Delete Profile</string>
+    <string name="recipeOverviewText">Overview</string>
+    <string name="recipeIngredientsText">Ingredients</string>
+    <string name="recipePreparationText">Preparation</string>
 </resources>

@@ -26,4 +26,10 @@
     <string name="exampleIngredient">Káposzta</string>
     <string name="nameC">Név</string>
     <string name="plsLogin">Kérem jelentkezzen be!</string>
+    <string name="language">Language</string>
+    <string name="choose">Válasszon...</string>
+    <string name="deleteProfileBtnText">Profil Törlése</string>
+    <string name="recipeOverviewText">Áttekintés</string>
+    <string name="recipeIngredientsText">Hozzávalók</string>
+    <string name="recipePreparationText">Elkészítés</string>
 </resources>

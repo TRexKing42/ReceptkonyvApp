@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
@@ -50,7 +51,8 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
-        ReceptekFragment.ReceptekFragmentListener {
+        ReceptekFragment.ReceptekFragmentListener,
+        SettingsFragment.OnFragmentInteractionListener{
 
     private static final int RC_SIGN_IN = 123;
     private DrawerLayout dl;
@@ -58,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements
     private NavigationView nv;
     private TextView headerName, headerEmail;
     private ImageView headerPicture;
+    private androidx.appcompat.widget.Toolbar toolbar;
 
     private FirebaseDatabase fbDatabase;
 
@@ -79,9 +82,15 @@ public class MainActivity extends AppCompatActivity implements
         headerName = header.findViewById(R.id.menu_header_nev);
         headerEmail = header.findViewById(R.id.menu_header_email);
 
+        toolbar = findViewById(R.id.MainToolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
         fbDatabase = FirebaseDatabase.getInstance();
 
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this,dl,R.string.drawer_open,R.string.drawer_close);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this,dl,toolbar,R.string.drawer_open,R.string.drawer_close);
         dl.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
 
@@ -176,6 +185,9 @@ public class MainActivity extends AppCompatActivity implements
                 firebaseSignInIntent();
                 userLoginChanged();
                 break;
+            case R.id.menu_settings:
+                selectedFragment = new SettingsFragment();
+                break;
             case R.id.menu_logout:
                 FirebaseAuth.getInstance().signOut();
                 userLoginChanged();
@@ -199,5 +211,10 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onRecipeDelete(Recipe recipe) {
         fbDatabase.getReference().child("recipes").child(FirebaseAuth.getInstance().getUid()).child(recipe.key).removeValue();
+    }
+
+    @Override
+    public void onDeleteProfile() {
+
     }
 }

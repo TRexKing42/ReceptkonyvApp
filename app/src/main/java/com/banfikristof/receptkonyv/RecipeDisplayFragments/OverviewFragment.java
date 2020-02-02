@@ -1,36 +1,28 @@
-package com.banfikristof.receptkonyv;
+package com.banfikristof.receptkonyv.RecipeDisplayFragments;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.core.os.ConfigurationCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
+import com.banfikristof.receptkonyv.R;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link SettingsFragment.OnFragmentInteractionListener} interface
+ * {@link OverviewFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  */
-public class SettingsFragment extends Fragment {
+public class OverviewFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public SettingsFragment() {
+    public OverviewFragment() {
         // Required empty public constructor
     }
 
@@ -39,16 +31,14 @@ public class SettingsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_settings, container, false);
-
-        initFragment(v);
-
-
-        return v;
+        return inflater.inflate(R.layout.fragment_overview, container, false);
     }
 
-    private void initFragment(View v) {
-
+    // TODO: Rename method, update argument and hook method into UI event
+    public void onButtonPressed(Uri uri) {
+        if (mListener != null) {
+            mListener.onFragmentInteraction(uri);
+        }
     }
 
     @Override
@@ -79,6 +69,7 @@ public class SettingsFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onDeleteProfile();
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
     }
 }

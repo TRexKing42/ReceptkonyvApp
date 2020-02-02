@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/recipeMenu_overview"
+        android:icon="@drawable/ic_overview_icon"
+        android:title="@string/recipeOverviewText" />
+    <item
+        android:id="@+id/recipeMenu_ingredients"
+        android:icon="@drawable/ic_list_icon"
+        android:title="@string/recipeIngredientsText" />
+    <item
+        android:id="@+id/recipeMenu_preparation"
+        android:icon="@drawable/ic_forkandknife_icon"
+        android:title="@string/recipePreparationText" />
+
+</menu>
