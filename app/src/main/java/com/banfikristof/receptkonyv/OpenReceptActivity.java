@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -35,7 +36,7 @@ public class OpenReceptActivity extends AppCompatActivity implements
         PreparationFragment.OnFragmentInteractionListener {
 
     private TextView receptNev, receptCimkek;
-    private ImageButton back, delete;
+    private ImageButton back, delete, share, update;
     private BottomNavigationView bottomNavigationView;
 
     private StorageReference img;
@@ -59,6 +60,11 @@ public class OpenReceptActivity extends AppCompatActivity implements
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                FirebaseStorage.getInstance().getReference()
+                        .child(FirebaseAuth.getInstance().getUid())
+                        .child(r.key)
+                        .child("main_img.jpg")
+                        .delete();
                 FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getUid()).child(r.key).removeValue()
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -72,6 +78,31 @@ public class OpenReceptActivity extends AppCompatActivity implements
                     }
                 });
                 finish();
+            }
+        });
+
+        share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_SUBJECT,r.getName() + " recept");
+                intent.putExtra(Intent.EXTRA_TEXT,
+                        r.getDescription() +
+                        "\n"+ getResources().getString(R.string.ingredientsC) + "\n" +
+                        r.ingredientsToString() +
+                        "\n" + getResources().getString(R.string.recipePreparationText) + "\n" +
+                        r.getPreparation());
+                startActivity(Intent.createChooser(intent,"Megosztás"));
+            }
+        });
+
+        update.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(OpenReceptActivity.this, UjReceptActivity.class);
+                intent.putExtra("RecipeEdit", r);
+                startActivity(intent);
             }
         });
 
@@ -115,6 +146,8 @@ public class OpenReceptActivity extends AppCompatActivity implements
 
         back = findViewById(R.id.backButtonSelectedRecept);
         delete = findViewById(R.id.deleteButtonSelectedRecept);
+        share = findViewById(R.id.shareButtonSelectedRecept);
+        update = findViewById(R.id.editButtonSelectedRecept);
         bottomNavigationView = findViewById(R.id.bottomNavView);
 
         r = (Recipe) getIntent().getSerializableExtra("SelectedRecipe");
@@ -132,13 +165,18 @@ public class OpenReceptActivity extends AppCompatActivity implements
                 .child(FirebaseAuth.getInstance().getUid())
                 .child(r.key)
                 .child("main_img.jpg");
+
     }
 
     //Overview Fragment
     @Override
     public void onFragmentDisplayed(TextView desc, ImageView imageView) {
         desc.setText(r.getDescription());
-        Glide.with(this).load(img).into(imageView);
+        if (!r.isHasMainImg()){
+            Glide.with(this).load(FirebaseStorage.getInstance().getReference().child("no_picture.png")).into(imageView);
+        } else {
+            Glide.with(this).load(img).into(imageView);
+        }
     }
 
     //Ingredients Fragment

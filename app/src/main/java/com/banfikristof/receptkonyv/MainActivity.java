@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
@@ -25,6 +26,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -41,10 +44,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements
         View header = nv.getHeaderView(0);
         headerName = header.findViewById(R.id.menu_header_nev);
         headerEmail = header.findViewById(R.id.menu_header_email);
+        headerPicture = header.findViewById(R.id.profileImgView);
 
         toolbar = findViewById(R.id.MainToolbar);
         setSupportActionBar(toolbar);
@@ -113,6 +119,8 @@ public class MainActivity extends AppCompatActivity implements
 
             headerName.setText(getResources().getString(R.string.plsLogin));
             headerEmail.setText("");
+
+            headerPicture.setImageDrawable(null);
         } else {
             loginMenu.setEnabled(false);
             logoutMenu.setEnabled(true);
@@ -120,6 +128,13 @@ public class MainActivity extends AppCompatActivity implements
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             headerName.setText(user.getDisplayName());
             headerEmail.setText(user.getEmail());
+
+
+            if (user.getPhotoUrl() == null){
+                Glide.with(this).load("https://eu.ui-avatars.com/api/?size=60&uppercase=true&name="+user.getDisplayName().replace(' ','+')).apply(RequestOptions.circleCropTransform()).into(headerPicture);
+            } else {
+                Glide.with(this).load(user.getPhotoUrl()).apply(RequestOptions.circleCropTransform()).into(headerPicture);
+            }
         }
     }
 
@@ -127,7 +142,6 @@ public class MainActivity extends AppCompatActivity implements
         // Choose authentication providers
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.EmailBuilder().build(),
-                new AuthUI.IdpConfig.AnonymousBuilder().build(),
                 new AuthUI.IdpConfig.GoogleBuilder().build());
 
         // Create and launch sign-in intent
@@ -138,6 +152,8 @@ public class MainActivity extends AppCompatActivity implements
                         .setAvailableProviders(providers)
                         .build(),
                 RC_SIGN_IN);
+
+
     }
 
     @Override
@@ -158,13 +174,26 @@ public class MainActivity extends AppCompatActivity implements
                 loginMenu.setEnabled(false);
 
                 // Save user data
-                DatabaseReference db = fbDatabase.getReference("/users");
-                db.child(user.getUid()).child("displayName").setValue(user.getDisplayName());
+                User usr = new User();
+                usr.displayName = user.getDisplayName();
+                DatabaseReference db = FirebaseDatabase.getInstance().getReference("users");
+                db.child(user.getUid()).setValue(usr).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(MainActivity.this,"Sikeres regisztráció!",Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(MainActivity.this,"Sikertelen regisztráció!",Toast.LENGTH_SHORT).show();
+                    }
+                });
             } else {
                 // Sign in failed. If response is null the user canceled the
                 // sign-in flow using the back button. Otherwise check
                 // response.getError().getErrorCode() and handle the error.
                 // ...
+                Toast.makeText(MainActivity.this,"Sikertelen!",Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -210,11 +239,18 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onRecipeDelete(Recipe recipe) {
+        FirebaseStorage.getInstance().getReference()
+                .child(FirebaseAuth.getInstance().getUid())
+                .child(recipe.key)
+                .child("main_img.jpg").delete();
         fbDatabase.getReference().child("recipes").child(FirebaseAuth.getInstance().getUid()).child(recipe.key).removeValue();
     }
 
     @Override
     public void onDeleteProfile() {
-
+        FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).removeValue();
+        FirebaseDatabase.getInstance().getReference().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).removeValue();
+        FirebaseStorage.getInstance().getReference().child(FirebaseAuth.getInstance().getCurrentUser().getUid()).delete();
+        FirebaseAuth.getInstance().getCurrentUser().delete();
     }
 }

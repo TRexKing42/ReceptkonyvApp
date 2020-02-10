@@ -1,0 +1,41 @@
+<resources>
+    <string name="app_name" translatable="false">Receptkönyv</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+    <string name="welcomeMsg">Добро пожаловать!</string>
+    <string name="loginMenuText">Логин</string>
+    <string name="homepageMenuText">Домашняя страничка</string>
+    <string name="recipesMenuText">Рецепты</string>
+    <string name="shoppinglistsMenuText">Списки покупок</string>
+    <string name="settingsMenuText">Настройки</string>
+    <string name="logoutMenuText">Выйти</string>
+    <string name="newRecipe">Новый рецепт</string>
+    <string name="foodNameHint">Имя</string>
+    <string name="descriptionHint">Описание</string>
+    <string name="ingredientsC">Ингредиенты</string>
+    <string name="unitHint">кг</string>
+    <string name="ingredientHint">хлеба</string>
+    <string name="addButtonText">Добавлять</string>
+    <string name="preparationHint">Подготовка</string>
+    <string name="saveRecipeButtonText">Сохранить</string>
+    <string name="searchParamsTxt">Поиск по ключевым словам…</string>
+    <string name="searchButtonText">Искать</string>
+    <string name="newButtonText">Новый</string>
+    <string name="deleteButtonText">Удалять</string>
+    <string name="exampleUnit">кг</string>
+    <string name="exampleIngredient">хлеба</string>
+    <string name="nameC">Имя.</string>
+    <string name="plsLogin">Пожалуйста, войдите!</string>
+    <string name="language">Language</string>
+    <string name="choose">Choose</string>
+    <string name="deleteProfileBtnText">Удалить профиль</string>
+    <string name="recipeOverviewText">Обзор</string>
+    <string name="recipeIngredientsText">Ингредиенты</string>
+    <string name="recipePreparationText">Подготовка</string>
+    <string name="imgLoadErrorNew">Мы не смогли загрузить это изображение.</string>
+    <string name="photoPromptTxt">Вы хотите использовать камеру?</string>
+    <string name="photoYes">Да</string>
+    <string name="photoNo">Нет</string>
+    <string name="photoCancel">Отмена</string>
+    <string name="capture_photo">Фото:</string>
+</resources>

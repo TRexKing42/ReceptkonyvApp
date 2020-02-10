@@ -1,6 +1,7 @@
 package com.banfikristof.receptkonyv.RecipeDisplayFragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -9,11 +10,14 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.banfikristof.receptkonyv.R;
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.FirebaseStorage;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -41,7 +45,6 @@ public class OverviewFragment extends Fragment {
 
         initFragment(v);
         mListener.onFragmentDisplayed(receptLeiras, recipeImage);
-
         return v;
     }
 

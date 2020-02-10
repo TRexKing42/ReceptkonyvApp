@@ -33,8 +33,9 @@
     <string name="recipeIngredientsText">Hozzávalók</string>
     <string name="recipePreparationText">Elkészítés</string>
     <string name="imgLoadErrorNew">A kép betöltése meghiúsult.</string>
-    <string name="photoPromptTxt">Do you want to use the Camera?</string>
-    <string name="photoYes">Yes</string>
-    <string name="photoNo">No</string>
-    <string name="photoCancel">Cancel</string>
+    <string name="photoPromptTxt">Szeretné használni a kamerát?</string>
+    <string name="photoYes">Igen</string>
+    <string name="photoNo">Nem</string>
+    <string name="photoCancel">Mégse</string>
+    <string name="capture_photo">Fénykép:</string>
 </resources>

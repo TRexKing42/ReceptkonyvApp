@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
@@ -30,6 +31,8 @@ public class SettingsFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    private Button deleteProfile;
+
     public SettingsFragment() {
         // Required empty public constructor
     }
@@ -43,12 +46,18 @@ public class SettingsFragment extends Fragment {
 
         initFragment(v);
 
+        deleteProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onDeleteProfile();
+            }
+        });
 
         return v;
     }
 
     private void initFragment(View v) {
-
+        deleteProfile = v.findViewById(R.id.settingsProfileDelBtn);
     }
 
     @Override

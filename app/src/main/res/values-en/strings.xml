@@ -37,4 +37,5 @@
     <string name="photoYes">Yes</string>
     <string name="photoNo">No</string>
     <string name="photoCancel">Cancel</string>
+    <string name="capture_photo">Photo:</string>
 </resources>
