@@ -120,6 +120,7 @@ public class UjReceptActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Recipe recipe = formToRecipe(true);
+                List<String> images = new ArrayList<>();
                 if (!editmode) {
                     pushId = FirebaseDatabase.getInstance().getReference().child("recipes")
                             .child(FirebaseAuth.getInstance().getUid()).push().getKey();
@@ -130,7 +131,16 @@ public class UjReceptActivity extends AppCompatActivity {
                             .child(FirebaseAuth.getInstance().getUid())
                             .child(pushId)
                             .child("main_img.jpg"));
+                    images.add("main_img.jpg");
+                    recipe.setPictures(images);
                     recipe.setHasMainImg(true);
+
+                    //Update images list for easy delete
+                    User usr = new User();
+                    usr.setDisplayName(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+                    usr.addImgList(images,pushId);
+                    DatabaseReference db = FirebaseDatabase.getInstance().getReference("users");
+                    db.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(usr);
                 } else {
                     recipe.setHasMainImg(false);
                 }

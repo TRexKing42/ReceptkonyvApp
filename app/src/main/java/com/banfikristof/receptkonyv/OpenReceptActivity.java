@@ -60,11 +60,15 @@ public class OpenReceptActivity extends AppCompatActivity implements
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseStorage.getInstance().getReference()
-                        .child(FirebaseAuth.getInstance().getUid())
-                        .child(r.key)
-                        .child("main_img.jpg")
-                        .delete();
+                if (r.getPictures() != null) {
+                    for (int i = 0; i < r.getPictures().size(); i++) {
+                        FirebaseStorage.getInstance().getReference()
+                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                .child(r.key)
+                                .child(r.getPictures().get(i))
+                                .delete();
+                    }
+                }
                 FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getUid()).child(r.key).removeValue()
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override

@@ -239,10 +239,15 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onRecipeDelete(Recipe recipe) {
-        FirebaseStorage.getInstance().getReference()
-                .child(FirebaseAuth.getInstance().getUid())
-                .child(recipe.key)
-                .child("main_img.jpg").delete();
+        if (recipe.getPictures() != null) {
+            for (int i = 0; i < recipe.getPictures().size(); i++) {
+                FirebaseStorage.getInstance().getReference()
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(recipe.key)
+                        .child(recipe.getPictures().get(i))
+                        .delete();
+            }
+        }
         fbDatabase.getReference().child("recipes").child(FirebaseAuth.getInstance().getUid()).child(recipe.key).removeValue();
     }
 
@@ -250,6 +255,28 @@ public class MainActivity extends AppCompatActivity implements
     public void onDeleteProfile() {
         FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).removeValue();
         FirebaseDatabase.getInstance().getReference().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).removeValue();
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("users").child(FirebaseAuth.getInstance().getUid());
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<User> users = new ArrayList<>();
+                User u;
+                for (DataSnapshot item : dataSnapshot.getChildren()) {
+                    u = item.getValue(User.class);
+                    users.add(u);
+                }
+
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
         FirebaseStorage.getInstance().getReference().child(FirebaseAuth.getInstance().getCurrentUser().getUid()).delete();
         FirebaseAuth.getInstance().getCurrentUser().delete();
     }

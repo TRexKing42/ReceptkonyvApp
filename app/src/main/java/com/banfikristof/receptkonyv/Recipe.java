@@ -21,6 +21,7 @@ public class Recipe implements Serializable {
     private String name, description, preparation;
     private List<Map<String,String>> ingredients;
     private List<String> tags;
+    private List<String> pictures;
     private boolean hasMainImg;
 
     public Recipe() {
@@ -130,6 +131,14 @@ public class Recipe implements Serializable {
 
     public String getUid() {
         return uid;
+    }
+
+    public List<String> getPictures() {
+        return pictures;
+    }
+
+    public void setPictures(List<String> pictures) {
+        this.pictures = pictures;
     }
 
     public void setUid(String uid) {
