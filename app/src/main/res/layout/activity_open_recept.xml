@@ -77,6 +77,11 @@
             android:layout_height="wrap_content"
             android:id="@+id/shareButtonSelectedRecept"
             android:src="@drawable/ic_share_icon" />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/favButtonSelectedRecept"
+            android:src="@drawable/ic_favourite_icon" />
 
     </LinearLayout>
 

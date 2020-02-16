@@ -57,8 +57,10 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
         ReceptekFragment.ReceptekFragmentListener,
-        SettingsFragment.OnFragmentInteractionListener{
+        SettingsFragment.OnFragmentInteractionListener,
+        ShoppingFragment.OnShoppingFragmentInteractionListener{
 
+    public static boolean favRecipes = false;
     private static final int RC_SIGN_IN = 123;
     private DrawerLayout dl;
     private ActionBarDrawerToggle actionBarDrawerToggle;
@@ -209,6 +211,11 @@ public class MainActivity extends AppCompatActivity implements
                 break;
             case R.id.menu_receptek:
                 selectedFragment = new ReceptekFragment();
+                MainActivity.favRecipes = false;
+                break;
+            case R.id.menu_fav_receptek:
+                selectedFragment = new ReceptekFragment();
+                MainActivity.favRecipes = true;
                 break;
             case R.id.menu_login:
                 firebaseSignInIntent();
@@ -216,6 +223,9 @@ public class MainActivity extends AppCompatActivity implements
                 break;
             case R.id.menu_settings:
                 selectedFragment = new SettingsFragment();
+                break;
+            case R.id.menu_shoppinglists:
+                selectedFragment = new ShoppingFragment();
                 break;
             case R.id.menu_logout:
                 FirebaseAuth.getInstance().signOut();

@@ -38,4 +38,12 @@
     <string name="photoNo">Nem</string>
     <string name="photoCancel">Mégse</string>
     <string name="capture_photo">Fénykép:</string>
+    <string name="shoppingMenuText">Bevásárlólisták</string>
+    <string name="allRecipes">Összes</string>
+    <string name="favRecipes">Kedvencek</string>
+    <string name="profil">Profil</string>
+    <string name="others">Egyebek</string>
+    <string name="newList">New List</string>
+    <string name="searchNameTxt">Name</string>
+    <string name="list_name">List Name</string>
 </resources>

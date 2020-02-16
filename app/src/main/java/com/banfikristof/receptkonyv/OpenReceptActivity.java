@@ -36,7 +36,7 @@ public class OpenReceptActivity extends AppCompatActivity implements
         PreparationFragment.OnFragmentInteractionListener {
 
     private TextView receptNev, receptCimkek;
-    private ImageButton back, delete, share, update;
+    private ImageButton back, delete, share, update, favourite;
     private BottomNavigationView bottomNavigationView;
 
     private StorageReference img;
@@ -110,6 +110,13 @@ public class OpenReceptActivity extends AppCompatActivity implements
             }
         });
 
+        favourite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getUid()).child(r.key).child("favourite").setValue(true);
+            }
+        });
+
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -152,6 +159,8 @@ public class OpenReceptActivity extends AppCompatActivity implements
         delete = findViewById(R.id.deleteButtonSelectedRecept);
         share = findViewById(R.id.shareButtonSelectedRecept);
         update = findViewById(R.id.editButtonSelectedRecept);
+        favourite = findViewById(R.id.favButtonSelectedRecept);
+
         bottomNavigationView = findViewById(R.id.bottomNavView);
 
         r = (Recipe) getIntent().getSerializableExtra("SelectedRecipe");

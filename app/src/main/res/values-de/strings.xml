@@ -37,4 +37,12 @@
     <string name="photoNo">Nein</string>
     <string name="photoCancel">Stornieren</string>
     <string name="capture_photo">Foto:</string>
+    <string name="shoppingMenuText">Shopping Lists</string>
+    <string name="allRecipes">All</string>
+    <string name="favRecipes">Favourites</string>
+    <string name="profil">Profil</string>
+    <string name="others">Other</string>
+    <string name="newList">New List</string>
+    <string name="searchNameTxt">Name</string>
+    <string name="list_name">List Name</string>
 </resources>

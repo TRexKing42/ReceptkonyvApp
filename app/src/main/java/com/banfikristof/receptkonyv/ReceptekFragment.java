@@ -109,7 +109,11 @@ public class ReceptekFragment extends Fragment {
                 for (DataSnapshot item : dataSnapshot.getChildren()) {
                     r = item.getValue(Recipe.class);
                     r.key = item.getKey();
-                    listOfRecipes.add(r);
+                    if (!MainActivity.favRecipes) {
+                        listOfRecipes.add(r);
+                    } else if (MainActivity.favRecipes && r.isFavourite()) {
+                        listOfRecipes.add(r);
+                    }
                 }
                 ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1,listOfRecipes);
                 lv.setAdapter(arrayAdapter);
@@ -132,16 +136,16 @@ public class ReceptekFragment extends Fragment {
                 for (DataSnapshot item : dataSnapshot.getChildren()) {
                     r = item.getValue(Recipe.class);
                     r.key = item.getKey();
-                    if (r.getName().toLowerCase().contains(searchText.toLowerCase())) {
+                    if (r.getName().toLowerCase().contains(searchText.toLowerCase()) && (!MainActivity.favRecipes || r.isFavourite())) {
                         listOfRecipes.add(r);
                     }
                     for (String i : r.getTags()) {
-                        if (i.toLowerCase().contains(searchText.toLowerCase()) && !listOfRecipes.contains(r)){
+                        if (i.toLowerCase().contains(searchText.toLowerCase()) && !listOfRecipes.contains(r)  && (!MainActivity.favRecipes || r.isFavourite())){
                             listOfRecipes.add(r);
                         }
                     }
                     for (Map<String,String> i : r.getIngredients()) {
-                        if (i.get("name").toLowerCase().contains(searchText.toLowerCase()) && !listOfRecipes.contains(r)){
+                        if (i.get("name").toLowerCase().contains(searchText.toLowerCase()) && !listOfRecipes.contains(r) && (!MainActivity.favRecipes || r.isFavourite())){
                             listOfRecipes.add(r);
                         }
                     }

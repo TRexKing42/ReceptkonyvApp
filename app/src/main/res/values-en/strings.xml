@@ -38,4 +38,12 @@
     <string name="photoNo">No</string>
     <string name="photoCancel">Cancel</string>
     <string name="capture_photo">Photo:</string>
+    <string name="shoppingMenuText">Shopping Lists</string>
+    <string name="allRecipes">All</string>
+    <string name="favRecipes">Favourites</string>
+    <string name="profil">Profil</string>
+    <string name="others">Other</string>
+    <string name="newList">New List</string>
+    <string name="searchNameTxt">Name</string>
+    <string name="list_name">List Name</string>
 </resources>

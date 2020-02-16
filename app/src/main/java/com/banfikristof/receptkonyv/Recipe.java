@@ -19,16 +19,17 @@ public class Recipe implements Serializable {
 
     private String id, uid;
     private String name, description, preparation;
-    private List<Map<String,String>> ingredients;
+    private List<Map<String, String>> ingredients;
     private List<String> tags;
     private List<String> pictures;
     private boolean hasMainImg;
+    private boolean favourite;
 
     public Recipe() {
 
     }
 
-    public Recipe(String id){
+    public Recipe(String id) {
         this.id = id;
         this.hasMainImg = true;
     }
@@ -170,5 +171,13 @@ public class Recipe implements Serializable {
     @Override
     public String toString() {
         return name;
+    }
+
+    public boolean isFavourite() {
+        return favourite;
+    }
+
+    public void setFavourite(boolean favourite) {
+        this.favourite = favourite;
     }
 }

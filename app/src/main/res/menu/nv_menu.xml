@@ -2,14 +2,26 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/menu_login"
         android:title="@string/loginMenuText"/>
-    <item android:id="@+id/menu_fooldal"
-        android:title="@string/homepageMenuText"/>
-    <item android:id="@+id/menu_receptek"
-        android:title="@string/recipesMenuText"/>
-    <item android:id="@+id/menu_shoppinglists"
-        android:title="@string/shoppinglistsMenuText"/>
-    <item android:id="@+id/menu_settings"
-        android:title="@string/settingsMenuText"/>
     <item android:id="@+id/menu_logout"
         android:title="@string/logoutMenuText"/>
+    <item android:id="@+id/menu_settings"
+        android:title="@string/settingsMenuText"/>
+    <item android:id="@+id/menu_fooldal"
+        android:title="@string/homepageMenuText"/>
+
+    <item android:title="@string/recipesMenuText">
+        <menu>
+            <item android:id="@+id/menu_receptek"
+                android:title="@string/allRecipes"/>
+            <item android:id="@+id/menu_fav_receptek"
+                android:title="@string/favRecipes"/>
+        </menu>
+    </item>
+
+    <item android:title="@string/others">
+        <menu>
+            <item android:id="@+id/menu_shoppinglists"
+                android:title="@string/shoppinglistsMenuText"/>
+        </menu>
+    </item>
 </menu>
