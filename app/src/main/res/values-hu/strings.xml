@@ -43,8 +43,16 @@
     <string name="favRecipes">Kedvencek</string>
     <string name="profil">Profil</string>
     <string name="others">Egyebek</string>
-    <string name="newList">New List</string>
-    <string name="searchNameTxt">Name</string>
-    <string name="list_name">List Name</string>
-    <string name="search_tags">Search tags...</string>
+    <string name="newList">Új Bevásárlólista</string>
+    <string name="searchNameTxt">Név</string>
+    <string name="list_name">Bevásárlólista neve</string>
+    <string name="search_tags">Cimkék keresése...</string>
+    <string name="recipeOptionsText">Opciók</string>
+    <string name="share">Megosztás</string>
+    <string name="delete">Törlés</string>
+    <string name="edit">Szerkesztés</string>
+    <string name="add_to_favorites">Hozzáadás a Kedvencekhez</string>
+    <string name="newButtonTextQR">Betöltés QR Kódból</string>
+    <string name="qrUnsuccesful">Sikertelen betöltés.</string>
+    <string name="qr_share_prompt">A recept QR kóddal is könnyedén megosztható!</string>
 </resources>

@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.banfikristof.receptkonyv.RecipeDisplayFragments.IngredientsFragment;
 import com.banfikristof.receptkonyv.RecipeDisplayFragments.OverviewFragment;
 import com.banfikristof.receptkonyv.RecipeDisplayFragments.PreparationFragment;
+import com.banfikristof.receptkonyv.RecipeDisplayFragments.RecipeOptions;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.Rotate;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -29,14 +30,18 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import org.json.JSONObject;
 
 public class OpenReceptActivity extends AppCompatActivity implements
         OverviewFragment.OnFragmentInteractionListener,
         IngredientsFragment.OnFragmentInteractionListener,
-        PreparationFragment.OnFragmentInteractionListener {
+        PreparationFragment.OnFragmentInteractionListener,
+        RecipeOptions.OnFragmentInteractionListener {
 
     private TextView receptNev, receptCimkek;
-    private ImageButton back, delete, share, update, favourite;
     private BottomNavigationView bottomNavigationView;
 
     private StorageReference img;
@@ -49,73 +54,6 @@ public class OpenReceptActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_open_recept);
 
         init();
-
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-        delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (r.getPictures() != null) {
-                    for (int i = 0; i < r.getPictures().size(); i++) {
-                        FirebaseStorage.getInstance().getReference()
-                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                .child(r.key)
-                                .child(r.getPictures().get(i))
-                                .delete();
-                    }
-                }
-                FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getUid()).child(r.key).removeValue()
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(OpenReceptActivity.this, "Sikeres törlés",Toast.LENGTH_SHORT).show();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(OpenReceptActivity.this, "Sikertelen törlés",Toast.LENGTH_SHORT).show();
-                    }
-                });
-                finish();
-            }
-        });
-
-        share.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("text/plain");
-                intent.putExtra(Intent.EXTRA_SUBJECT,r.getName() + " recept");
-                intent.putExtra(Intent.EXTRA_TEXT,
-                        r.getDescription() +
-                        "\n"+ getResources().getString(R.string.ingredientsC) + "\n" +
-                        r.ingredientsToString() +
-                        "\n" + getResources().getString(R.string.recipePreparationText) + "\n" +
-                        r.getPreparation());
-                startActivity(Intent.createChooser(intent,"Megosztás"));
-            }
-        });
-
-        update.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(OpenReceptActivity.this, UjReceptActivity.class);
-                intent.putExtra("RecipeEdit", r);
-                startActivity(intent);
-            }
-        });
-
-        favourite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getUid()).child(r.key).child("favourite").setValue(true);
-            }
-        });
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -132,6 +70,9 @@ public class OpenReceptActivity extends AppCompatActivity implements
                         break;
                     case R.id.recipeMenu_preparation:
                         selectedFragment = new PreparationFragment();
+                        break;
+                    case R.id.recipeMenu_options:
+                        selectedFragment = new RecipeOptions();
                         break;
                     default:
                         Toast.makeText(OpenReceptActivity.this, "Még nem",Toast.LENGTH_SHORT).show();
@@ -152,15 +93,7 @@ public class OpenReceptActivity extends AppCompatActivity implements
 
     private void init(){
         receptNev = findViewById(R.id.receptNevSelected);
-
         receptCimkek = findViewById(R.id.receptTagsSelected);
-
-        back = findViewById(R.id.backButtonSelectedRecept);
-        delete = findViewById(R.id.deleteButtonSelectedRecept);
-        share = findViewById(R.id.shareButtonSelectedRecept);
-        update = findViewById(R.id.editButtonSelectedRecept);
-        favourite = findViewById(R.id.favButtonSelectedRecept);
-
         bottomNavigationView = findViewById(R.id.bottomNavView);
 
         r = (Recipe) getIntent().getSerializableExtra("SelectedRecipe");
@@ -202,5 +135,69 @@ public class OpenReceptActivity extends AppCompatActivity implements
     @Override
     public void onPrepFragmentDisplayed(TextView tv) {
         tv.setText(r.getPreparation());
+    }
+
+
+    //Options Fragment
+    @Override
+    public void onShare() {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_SUBJECT,r.getName() + " recept");
+        intent.putExtra(Intent.EXTRA_TEXT,
+                r.getDescription() +
+                        "\n"+ getResources().getString(R.string.ingredientsC) + "\n" +
+                        r.ingredientsToString() +
+                        "\n" + getResources().getString(R.string.recipePreparationText) + "\n" +
+                        r.getPreparation());
+        startActivity(Intent.createChooser(intent,"Megosztás"));
+    }
+
+    @Override
+    public void onDelete() {
+        if (r.getPictures() != null) {
+            for (int i = 0; i < r.getPictures().size(); i++) {
+                FirebaseStorage.getInstance().getReference()
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(r.key)
+                        .child(r.getPictures().get(i))
+                        .delete();
+            }
+        }
+        FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getUid()).child(r.key).removeValue()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(OpenReceptActivity.this, "Sikeres törlés",Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(OpenReceptActivity.this, "Sikertelen törlés",Toast.LENGTH_SHORT).show();
+            }
+        });
+        finish();
+    }
+
+    @Override
+    public void onEdit() {
+        Intent intent = new Intent(OpenReceptActivity.this, UjReceptActivity.class);
+        intent.putExtra("RecipeEdit", r);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onFavorite() {
+        FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getUid()).child(r.key).child("favourite").setValue(true);
+    }
+
+    @Override
+    public String onGetJSON() {
+        Gson gson = new Gson();
+        RecipeQr recipeToShare = new RecipeQr();
+        recipeToShare.setUid(r.getUid());
+        recipeToShare.setRid(r.key);
+        String result = gson.toJson(recipeToShare);
+        return result;
     }
 }

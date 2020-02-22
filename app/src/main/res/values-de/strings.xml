@@ -46,4 +46,12 @@
     <string name="searchNameTxt">Name</string>
     <string name="list_name">List Name</string>
     <string name="search_tags">Search tags...</string>
+    <string name="recipeOptionsText">Options</string>
+    <string name="share">Share</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="add_to_favorites">Add to Favorites</string>
+    <string name="newButtonTextQR">New Recipe From QR Code</string>
+    <string name="qrUnsuccesful">Unsuccesful scan.</string>
+    <string name="qr_share_prompt">You can also hare your recipe with the following QR code!</string>
 </resources>

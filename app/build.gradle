@@ -35,6 +35,9 @@ dependencies {
     //v7 Support Libraries (RecyclerView)
     implementation 'com.google.android:flexbox:1.0.0'               //TagView
     implementation 'com.github.mahimrocky:TagView:1.0.3'            //TagView
+    implementation 'com.google.code.gson:gson:2.8.6'                //GSON
+    implementation 'com.google.zxing:core:3.2.1'                    //QR Code
+    implementation 'com.journeyapps:zxing-android-embedded:3.2.0'   //QR Code
     //TagView https://github.com/mahimrocky/TagView
     implementation 'com.google.firebase:firebase-analytics:17.2.0'  //Firebase
     implementation 'com.google.firebase:firebase-auth:17.0.0'       //Firebase Auth

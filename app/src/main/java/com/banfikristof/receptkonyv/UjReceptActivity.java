@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -36,11 +38,17 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.gson.Gson;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.skyhope.materialtagview.TagView;
 import com.skyhope.materialtagview.enums.TagSeparator;
 import com.skyhope.materialtagview.interfaces.TagItemListener;
@@ -64,8 +72,7 @@ public class UjReceptActivity extends AppCompatActivity {
     private String pushId;
     private boolean editmode = false;
 
-    //private TagView tv;
-    private Button saveBtn;
+    private Button saveBtn,fromQRbtn;
     private EditText etNev, etLeiras, etElkeszites;
 
     private ChipGroup recipeTags, currentTags;
@@ -79,6 +86,8 @@ public class UjReceptActivity extends AppCompatActivity {
 
     private AlertDialog alertDialog;
     private AlertDialog.Builder adBuilder;
+
+    private Recipe QRrecipe;
 
     private RecyclerView rvIngredients;
     IngredientsAdapter ingredientsAdapter;
@@ -197,6 +206,19 @@ public class UjReceptActivity extends AppCompatActivity {
             }
         });
 
+        fromQRbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                IntentIntegrator integrator = new IntentIntegrator(UjReceptActivity.this);
+                integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
+                integrator.setPrompt("QR Code Scannelés");
+                integrator.setCameraId(0);
+                integrator.setBeepEnabled(false);
+                integrator.setBarcodeImageEnabled(false);
+                integrator.initiateScan();
+            }
+        });
+
     }
 
     private void uploadImg(final StorageReference reference) {
@@ -236,6 +258,9 @@ public class UjReceptActivity extends AppCompatActivity {
         } else {
             recipe = new Recipe(etNev.getText().toString(),etLeiras.getText().toString(),etElkeszites.getText().toString(),ingredients);
         }
+        if (selectedTagList.isEmpty()){
+            selectedTagList.add(""); //Fixing Bugs
+        }
        recipe.setTags(selectedTagList);
         if (setUid) {
             recipe.setUid(FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -260,6 +285,8 @@ public class UjReceptActivity extends AppCompatActivity {
         loadIngredients();
         rvIngredients.setLayoutManager(new LinearLayoutManager(this));
 
+        fromQRbtn = findViewById(R.id.fromQRbtn);
+
         saveBtn = findViewById(R.id.ujReceptMentes);
         photoIbtn = findViewById(R.id.newRecipePhotoIbtn);
         imgPreview = findViewById(R.id.newRecipeImgPreview);
@@ -278,7 +305,11 @@ public class UjReceptActivity extends AppCompatActivity {
             etNev.setText(r.getName());
             etLeiras.setText(r.getDescription());
             etElkeszites.setText(r.getPreparation());
+            selectedTagList = r.getTags();
+            loadTagsToSelected(selectedTagList);
             pushId = r.key;
+
+            fromQRbtn.setEnabled(false);
 
             int adapterSize = ingredientsAdapter.getItemCount();
             int ingNumber = r.getIngredients().size();
@@ -322,27 +353,47 @@ public class UjReceptActivity extends AppCompatActivity {
                 tChip.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        recipeTags.removeView(tChip);
-                        currentTags.addView(tChip);
-                        selectedTagList.add(chipTxt);
-                        tChip.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                if (tChip.getParent() == recipeTags) {
-                                    recipeTags.removeView(tChip);
-                                    currentTags.addView(tChip);
-                                    selectedTagList.add(chipTxt);
-                                } else if (tChip.getParent() == currentTags){
-                                    selectedTagList.remove(chipTxt);
-                                    currentTags.removeView(tChip);
-                                    recipeTags.addView(tChip);
-                                }
-                            }
-                        });
+                        if (tChip.getParent() == recipeTags) {
+                            recipeTags.removeView(tChip);
+                            currentTags.addView(tChip);
+                            selectedTagList.add(chipTxt);
+                        } else if (tChip.getParent() == currentTags){
+                            selectedTagList.remove(chipTxt);
+                            currentTags.removeView(tChip);
+                            recipeTags.addView(tChip);
+                        }
                     }
                 });
 
                 recipeTags.addView(tChip);
+            }
+        }
+    }
+
+    private void loadTagsToSelected(final List<String> tags) {
+        currentTags.removeAllViews();
+        for (int i = 0; i < tags.size(); i++) {
+            if (!selectedTagList.contains(tagList.get(i))) {
+                final Chip tChip = new Chip(UjReceptActivity.this);
+                final String chipTxt = tags.get(i);
+                tChip.setText(tags.get(i));
+
+                tChip.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (tChip.getParent() == recipeTags) {
+                            recipeTags.removeView(tChip);
+                            currentTags.addView(tChip);
+                            selectedTagList.add(chipTxt);
+                        } else if (tChip.getParent() == currentTags){
+                            selectedTagList.remove(chipTxt);
+                            currentTags.removeView(tChip);
+                            recipeTags.addView(tChip);
+                        }
+                    }
+                });
+
+                currentTags.addView(tChip);
             }
         }
     }
@@ -436,8 +487,91 @@ public class UjReceptActivity extends AppCompatActivity {
                     img = Bitmap.createScaledBitmap(img,500,500,true);
                     Glide.with(this).load(img).into(imgPreview);
                     break;
+                case IntentIntegrator.REQUEST_CODE:
+                    IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
+                    if (result == null){
+                        return;
+                    }
+                    if (result.getContents() == null){
+                        Toast.makeText(UjReceptActivity.this,getResources().getString(R.string.qrUnsuccesful),Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    else {
+                        //try {
+                            Gson gson = new Gson();
+                            RecipeQr r = gson.fromJson(result.getContents(),RecipeQr.class);
+                            Toast.makeText(UjReceptActivity.this,r.getUid() + "\\" + r.getRid(),Toast.LENGTH_SHORT).show();
+                            saveFromQR(r);
+                        /*} catch (Exception e){
+                            Toast.makeText(UjReceptActivity.this,getResources().getString(R.string.qrUnsuccesful),Toast.LENGTH_SHORT).show();
+                        }*/
+                    }
+                    break;
             }
         }
+    }
+
+    private void saveFromQR(final RecipeQr r) {
+        /*final List<Recipe> listOfRecipes = new ArrayList<>();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("recipes").child(r.getUid());
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Recipe recipe;
+                for (DataSnapshot item : dataSnapshot.getChildren()) {
+                    recipe = item.getValue(Recipe.class);
+                    if (item.getKey() == r.getRid()) {
+                        QRrecipe = recipe;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                System.out.println(databaseError.getMessage());
+            }
+        });
+
+
+        Recipe recipeToShare = QRrecipe;
+        if (recipeToShare == null) {
+            Toast.makeText(UjReceptActivity.this,"This recipe no longer exists",Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        List<String> images = new ArrayList<>();
+        pushId = FirebaseDatabase.getInstance().getReference().child("recipes")
+                .child(FirebaseAuth.getInstance().getUid()).push().getKey();
+
+        if (recipeToShare.isHasMainImg()){
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference()
+                    .child(r.getUid())
+                    .child(r.getRid())
+                    .child("main_img.jpg");
+            Glide.with(this).load(storageReference).into(imgPreview);
+            img = ((BitmapDrawable) imgPreview.getDrawable()).getBitmap();
+
+            //Update images list for easy delete
+            User usr = new User();
+            usr.setDisplayName(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+            usr.addImgList(images,pushId);
+            DatabaseReference db = FirebaseDatabase.getInstance().getReference("users");
+            db.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(usr);
+        }
+
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+        db.child("recipes").child(FirebaseAuth.getInstance().getUid()).child(pushId).setValue(recipeToShare).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(UjReceptActivity.this, "Sikeres mentés!",Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(UjReceptActivity.this, "Sikertelen mentés!",Toast.LENGTH_SHORT).show();
+            }
+        });*/
     }
 
     public void createPhotoDialog(){
