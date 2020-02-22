@@ -25,7 +25,9 @@
             android:layout_margin="5dp"
             android:text="@string/deleteProfileBtnText"
             android:textSize="17dp"
-            android:id="@+id/settingsProfileDelBtn" />
+            android:id="@+id/settingsProfileDelBtn"
+            android:background="@drawable/custom_button_1"
+            android:textColor="@color/white"/>
 
     </LinearLayout>
 

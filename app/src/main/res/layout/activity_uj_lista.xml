@@ -4,7 +4,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UjListaActivity">
+    tools:context=".UjListaActivity"
+    android:padding="5dp">
 
     <TextView
         android:layout_width="match_parent"
@@ -43,7 +44,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:id="@+id/keresesReceptekButtonList"
-            android:text="@string/searchButtonText"/>
+            android:text="@string/searchButtonText"
+            android:background="@drawable/custom_button_1"
+            android:textColor="@color/white"/>
 
     </LinearLayout>
 
@@ -68,7 +71,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:id="@+id/saveListBtn"
-        android:text="@string/saveRecipeButtonText"/>
+        android:text="@string/saveRecipeButtonText"
+        android:background="@drawable/custom_button_1"
+        android:textColor="@color/white"/>
 
 </RelativeLayout>
 
