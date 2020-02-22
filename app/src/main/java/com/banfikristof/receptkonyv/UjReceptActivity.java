@@ -12,11 +12,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -30,6 +33,8 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -45,6 +50,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,11 +64,15 @@ public class UjReceptActivity extends AppCompatActivity {
     private String pushId;
     private boolean editmode = false;
 
-    private TagView tv;
+    //private TagView tv;
     private Button saveBtn;
     private EditText etNev, etLeiras, etElkeszites;
 
-    private EditText ingNev, ingMennyiseg, ingMertek;
+    private ChipGroup recipeTags, currentTags;
+    private List<String> tagList;
+    private List<String> selectedTagList;
+
+    private EditText ingNev, ingMennyiseg, ingMertek, tagSearchEt;
     private Button ingHozzaad;
     private ImageButton photoIbtn;
     private ImageView imgPreview;
@@ -84,7 +94,7 @@ public class UjReceptActivity extends AppCompatActivity {
 
         init();
 
-        tv.initTagListener(new TagItemListener() {
+        /*tv.initTagListener(new TagItemListener() {
             @Override
             public void onGetAddedItem(TagModel tagModel) {
                 //TODO: Hozzáadni fájlhoz
@@ -94,7 +104,7 @@ public class UjReceptActivity extends AppCompatActivity {
             public void onGetRemovedItem(TagModel model) {
                 //...
             }
-        });
+        });*/
 
         ingHozzaad.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,6 +176,27 @@ public class UjReceptActivity extends AppCompatActivity {
             }
         });
 
+        tagSearchEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (tagSearchEt.getText().toString().isEmpty()){
+                    loadTags(tagList);
+                } else {
+                    loadTags(tagList,tagSearchEt.getText().toString());
+                }
+            }
+        });
+
     }
 
     private void uploadImg(final StorageReference reference) {
@@ -199,14 +230,13 @@ public class UjReceptActivity extends AppCompatActivity {
             Toast.makeText(UjReceptActivity.this, "Válassz ki legalább egy hozzávalót!",Toast.LENGTH_SHORT).show();
             return null;
         }
-        List<TagModel> selectedTags = tv.getSelectedTags();
         Recipe recipe;
         if (TextUtils.isEmpty(etLeiras.getText())){
             recipe = new Recipe(etNev.getText().toString(),etElkeszites.getText().toString(),ingredients);
         } else {
             recipe = new Recipe(etNev.getText().toString(),etLeiras.getText().toString(),etElkeszites.getText().toString(),ingredients);
         }
-        recipe.setTags(tagsToString(selectedTags));
+       recipe.setTags(selectedTagList);
         if (setUid) {
             recipe.setUid(FirebaseAuth.getInstance().getCurrentUser().getUid());
             recipe.setHasMainImg(true);
@@ -215,10 +245,15 @@ public class UjReceptActivity extends AppCompatActivity {
     }
 
     private void init() {
-        tv = findViewById(R.id.tagView);
-        tv.addTagSeparator(TagSeparator.COMMA_SEPARATOR);
-        String[] tagList = new String[]{"Gluténmentes", "Laktózmentes", "Vegetáriánus", "Vegán", "Olcsó", "Leves", "Előétel", "Reggeli"};
-        tv.setTagList(tagList);
+        //tv = findViewById(R.id.tagView);
+        recipeTags = findViewById(R.id.tagsNewRecipe);
+        currentTags = findViewById(R.id.tagsSelectedNewRecipe);
+        //tv.addTagSeparator(TagSeparator.COMMA_SEPARATOR);
+        tagSearchEt = findViewById(R.id.searchForTags);
+        tagList = new ArrayList<String>(Arrays.asList("Gluténmentes", "Laktózmentes", "Vegetáriánus", "Vegán", "Olcsó", "Leves", "Előétel", "Reggeli"));
+        selectedTagList = new ArrayList<>();
+        loadTags(tagList);
+        //tv.setTagList(tagList);
 
         rvIngredients = findViewById(R.id.ingredientsListRv);
         ingredients = new ArrayList<>();
@@ -274,6 +309,87 @@ public class UjReceptActivity extends AppCompatActivity {
             editmode = true;
         }
 
+    }
+
+    private void loadTags(final List<String> tags) {
+        recipeTags.removeAllViews();
+        for (int i = 0; i < tags.size(); i++) {
+            if (!selectedTagList.contains(tagList.get(i))) {
+                final Chip tChip = new Chip(UjReceptActivity.this);
+                final String chipTxt = tags.get(i);
+                tChip.setText(tags.get(i));
+
+                tChip.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        recipeTags.removeView(tChip);
+                        currentTags.addView(tChip);
+                        selectedTagList.add(chipTxt);
+                        tChip.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (tChip.getParent() == recipeTags) {
+                                    recipeTags.removeView(tChip);
+                                    currentTags.addView(tChip);
+                                    selectedTagList.add(chipTxt);
+                                } else if (tChip.getParent() == currentTags){
+                                    selectedTagList.remove(chipTxt);
+                                    currentTags.removeView(tChip);
+                                    recipeTags.addView(tChip);
+                                }
+                            }
+                        });
+                    }
+                });
+
+                recipeTags.addView(tChip);
+            }
+        }
+    }
+
+    private void loadTags(List<String> tags, final String search) {
+        recipeTags.removeAllViews();
+        final Chip customChip = new Chip(UjReceptActivity.this);
+        customChip.setText(search);
+        customChip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (customChip.getParent() == recipeTags) {
+                    recipeTags.removeView(customChip);
+                    currentTags.addView(customChip);
+                    selectedTagList.add(search);
+                } else if (customChip.getParent() == currentTags){
+                    selectedTagList.remove(search);
+                    currentTags.removeView(customChip);
+                }
+            }
+        });
+        recipeTags.addView(customChip);
+
+        for (int i = 0; i < tags.size(); i++) {
+            if (tags.get(i).toLowerCase().contains(search.toLowerCase()) && !selectedTagList.contains(tagList.get(i))) {
+                final Chip tChip = new Chip(UjReceptActivity.this);
+                final String chipTxt = tags.get(i);
+                tChip.setText(tags.get(i));
+
+                tChip.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (tChip.getParent() == recipeTags) {
+                            recipeTags.removeView(tChip);
+                            currentTags.addView(tChip);
+                            selectedTagList.add(chipTxt);
+                        } else if (tChip.getParent() == currentTags){
+                            selectedTagList.remove(chipTxt);
+                            currentTags.removeView(tChip);
+                            recipeTags.addView(tChip);
+                        }
+                    }
+                });
+
+                recipeTags.addView(tChip);
+            }
+        }
     }
 
     public void loadRecipe(){

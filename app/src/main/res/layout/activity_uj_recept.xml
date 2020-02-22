@@ -126,7 +126,7 @@
 
         </LinearLayout>
 
-        <com.skyhope.materialtagview.TagView
+        <!--<com.skyhope.materialtagview.TagView
             android:id="@+id/tagView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -135,12 +135,36 @@
             app:tag_limit="50"
             app:limit_error_text="Maximum 50 címkét lehet kiválasztani!"
             />
+            Kikommentelve új megoldás miatt
+            !-->
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/tagsSelectedNewRecipe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </com.google.android.material.chip.ChipGroup>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/search_tags"
+            android:id="@+id/searchForTags"
+            android:textSize="25sp" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/tagsNewRecipe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </com.google.android.material.chip.ChipGroup>
+
+
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/preparationHint"
-            android:textSize="25dp"
+            android:textSize="25sp"
             android:inputType="textMultiLine"
             android:id="@+id/ujReceptElkeszites" />
 

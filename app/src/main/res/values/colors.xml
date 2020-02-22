@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#4a7b9d</color>
     <color name="colorPrimaryDark">#54577c</color>
-    <color name="colorAccent">#98B727</color>
+    <color name="colorAccent">#4d5071</color>
     <color name="colorRecipeDivider">#003896</color>
     <color name="colorSideButtonBG">#f50000</color>
     <color name="colorSideButtonBGDark">#aa0000</color>
