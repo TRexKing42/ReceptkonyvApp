@@ -3,6 +3,7 @@ package com.banfikristof.receptkonyv;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -11,9 +12,12 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -30,6 +34,8 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -45,8 +51,11 @@ import com.google.zxing.integration.android.IntentResult;
 import com.skyhope.materialtagview.model.TagModel;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -85,6 +94,8 @@ public class UjReceptActivity extends AppCompatActivity implements
 
     Bitmap img;
     StorageReference imgRef;
+    private Uri picUri = null;
+    private String picPath = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +107,7 @@ public class UjReceptActivity extends AppCompatActivity implements
         changeToCorrectFrame();
 
         if (currentFrame == 0){ //Varázsló indítása
+            //currentFrame = 4;
             changeToCorrectFrame();
         }
     }
@@ -321,7 +333,7 @@ public class UjReceptActivity extends AppCompatActivity implements
                         Uri imgUri = data.getData();
 
                         img = MediaStore.Images.Media.getBitmap(this.getContentResolver(),imgUri);
-                        //img = Bitmap.createScaledBitmap(img,500,500,true);
+                        img = Bitmap.createScaledBitmap(img,500,500,true);
 
                         NewPhotoFragment fragment = (NewPhotoFragment) getSupportFragmentManager().findFragmentById(R.id.NewRecipeFrame);
                         fragment.loadImage();
@@ -330,8 +342,15 @@ public class UjReceptActivity extends AppCompatActivity implements
                     }
                     break;
                 case CAMERA_REQUEST:
-                    img = (Bitmap) data.getExtras().get("data");
-                    //img = Bitmap.createScaledBitmap(img,500,500,true);
+                    //img = (Bitmap) data.getExtras().get("data");
+                    if (picUri != null) {
+                        try {
+                            img = MediaStore.Images.Media.getBitmap(this.getContentResolver(),picUri);
+                        } catch (IOException e) {
+                            Toast.makeText(UjReceptActivity.this,"Hiba a kép betöltésénél!",Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
                     NewPhotoFragment fragment = (NewPhotoFragment) getSupportFragmentManager().findFragmentById(R.id.NewRecipeFrame);
                     fragment.loadImage();
                     break;
@@ -406,17 +425,33 @@ public class UjReceptActivity extends AppCompatActivity implements
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent photoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                File f = null;
+                try {
+                    f = File.createTempFile(new SimpleDateFormat("yyyyMMdd_HHmmss_").format(new Date()) + recipeToSave.getName(),
+                            ".jpg",
+                            getExternalFilesDir(Environment.DIRECTORY_PICTURES));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 if (photoIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivityForResult(photoIntent, CAMERA_REQUEST);
+                    if (f != null) {
+                        picPath = f.getAbsolutePath();
+                        picUri = FileProvider.getUriForFile(UjReceptActivity.this,"com.banfikristof.receptkonyv.provider",f);
+                        photoIntent.putExtra(MediaStore.EXTRA_OUTPUT, picUri);
+                        photoIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        startActivityForResult(photoIntent, CAMERA_REQUEST);
+                    } else {
+
+                    }
                 }
             }
         });
         adBuilder.setNegativeButton(getResources().getString(R.string.photoNo), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent photoIntent = new Intent(Intent.ACTION_PICK);
-                photoIntent.setType("image/*");
-                startActivityForResult(photoIntent, GALLERY_REQUEST);
+                Intent galleryIntent = new Intent(Intent.ACTION_PICK);
+                galleryIntent.setType("image/*");
+                startActivityForResult(galleryIntent, GALLERY_REQUEST);
             }
         });
         adBuilder.setNeutralButton(getResources().getString(R.string.photoCancel), new DialogInterface.OnClickListener() {
@@ -428,5 +463,11 @@ public class UjReceptActivity extends AppCompatActivity implements
         adBuilder.setCancelable(false);
         alertDialog = adBuilder.create();
         alertDialog.show();
+    }
+
+    public String createLocalFileName(){
+        String name = new SimpleDateFormat("yyyyMMdd_HHmmss_").format(new Date());
+        name += recipeToSave.getName() + "_.jpg";
+        return name;
     }
 }

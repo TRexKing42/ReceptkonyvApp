@@ -132,6 +132,11 @@ public class OpenReceptActivity extends AppCompatActivity implements
         bigImage.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    public boolean recipeHasMainImg() {
+        return r.isHasMainImg();
+    }
+
     //Ingredients Fragment
     @Override
     public void onIngFragmentDisplayed(TextView tv) {

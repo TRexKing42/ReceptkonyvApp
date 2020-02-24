@@ -33,7 +33,7 @@
     <string name="recipeIngredientsText">Hozzávalók</string>
     <string name="recipePreparationText">Elkészítés</string>
     <string name="imgLoadErrorNew">A kép betöltése meghiúsult.</string>
-    <string name="photoPromptTxt">Szeretné használni a kamerát?</string>
+    <string name="photoPromptTxt">Szeretné használni a kamerát? Lehetséges hogy fekvő módba kerül a kép.</string>
     <string name="photoYes">Igen</string>
     <string name="photoNo">Nem</string>
     <string name="photoCancel">Mégse</string>

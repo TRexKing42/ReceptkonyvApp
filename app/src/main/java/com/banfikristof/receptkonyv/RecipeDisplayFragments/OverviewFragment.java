@@ -44,8 +44,10 @@ public class OverviewFragment extends Fragment {
         recipeImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.showBigImage();
-                visibleImage(false);
+                if (mListener.recipeHasMainImg()) {
+                    mListener.showBigImage();
+                    visibleImage(false);
+                }
             }
         });
 
@@ -100,5 +102,7 @@ public class OverviewFragment extends Fragment {
         void onFragmentDisplayed(TextView desc, ImageView imageView, TextView receptTags);
 
         void showBigImage();
+
+        boolean recipeHasMainImg();
     }
 }

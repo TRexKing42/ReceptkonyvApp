@@ -33,7 +33,7 @@
     <string name="recipeIngredientsText">Ingredients</string>
     <string name="recipePreparationText">Preparation</string>
     <string name="imgLoadErrorNew">We couldn\'t load that image.</string>
-    <string name="photoPromptTxt">Do you want to use the Camera?</string>
+    <string name="photoPromptTxt">Do you want to use the Camera? Pictures may be forced into landscape mode.</string>
     <string name="photoYes">Yes</string>
     <string name="photoNo">No</string>
     <string name="photoCancel">Cancel</string>

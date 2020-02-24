@@ -37,7 +37,7 @@ public class NewPhotoFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     private ImageButton photoIbtn;
-    private ImageView imgPreview;
+    public ImageView imgPreview;
 
     Bitmap img;
 
@@ -111,6 +111,13 @@ public class NewPhotoFragment extends Fragment {
             return;
         }
         Glide.with(getActivity()).load(mListener.getTakenPicture()).into(imgPreview);
+    }
+
+    public void loadImage(String picPath){
+        if (mListener.getTakenPicture() == null){
+            return;
+        }
+        Glide.with(getActivity()).load(picPath).into(imgPreview);
     }
 
     private void initFragment(View v) {
