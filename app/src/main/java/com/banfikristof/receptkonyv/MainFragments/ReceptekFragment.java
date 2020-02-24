@@ -1,4 +1,4 @@
-package com.banfikristof.receptkonyv;
+package com.banfikristof.receptkonyv.MainFragments;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +22,11 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.banfikristof.receptkonyv.MainActivity;
+import com.banfikristof.receptkonyv.OpenReceptActivity;
+import com.banfikristof.receptkonyv.R;
+import com.banfikristof.receptkonyv.Recipe;
+import com.banfikristof.receptkonyv.UjReceptActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -69,7 +74,7 @@ public class ReceptekFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Recipe s = (Recipe) lv.getItemAtPosition(position);
-                Intent intent = new Intent(getActivity(),OpenReceptActivity.class);
+                Intent intent = new Intent(getActivity(), OpenReceptActivity.class);
                 intent.putExtra("SelectedRecipe",s);
                 startActivity(intent);
             }
@@ -78,7 +83,7 @@ public class ReceptekFragment extends Fragment {
         ujReceptBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(),UjReceptActivity.class);
+                Intent intent = new Intent(getActivity(), UjReceptActivity.class);
                 startActivity(intent);
             }
         });

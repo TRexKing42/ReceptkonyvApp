@@ -54,4 +54,9 @@
     <string name="newButtonTextQR">New Recipe From QR Code</string>
     <string name="qrUnsuccesful">Unsuccesful scan.</string>
     <string name="qr_share_prompt">You can also hare your recipe with the following QR code!</string>
+    <string name="newRecipeWizard1">Please enter a name and a short description for your new recipe or add a recipe from a QR Code!</string>
+    <string name="next">Next</string>
+    <string name="back">Back</string>
+    <string name="newRecipeWizard2">Please add the ingredients to the list below using the text fields and the button.</string>
+    <string name="get_qr_code">Get QR Code</string>
 </resources>

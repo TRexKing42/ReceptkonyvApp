@@ -1,4 +1,4 @@
-package com.banfikristof.receptkonyv;
+package com.banfikristof.receptkonyv.MainFragments;
 
 
 import android.os.Bundle;
@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.banfikristof.receptkonyv.R;
 import com.google.firebase.auth.FirebaseAuth;
 
 

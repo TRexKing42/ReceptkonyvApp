@@ -54,5 +54,13 @@
     <string name="add_to_favorites">Hozzáadás a Kedvencekhez</string>
     <string name="newButtonTextQR">Betöltés QR Kódból</string>
     <string name="qrUnsuccesful">Sikertelen betöltés.</string>
-    <string name="qr_share_prompt">A recept QR kóddal is könnyedén megosztható!</string>
+    <string name="qr_share_prompt">A recept megosztható más felhasználókkal egy QR kód segítségével!</string>
+    <string name="newRecipeWizard1">Adj meg egy nevet és egy rövid leírást a receptről vagy töltsd be egy másik felhasználó receptjét egy QR kódból!</string>
+    <string name="next">Következő</string>
+    <string name="back">Vissza</string>
+    <string name="newRecipeWizard2">Milyen hozzávalók kellenek a recepthez? A lenti felület segítségével adható meg.</string>
+    <string name="newRecipeWizard3">Kérlek add meg az elkészítés lépéseit.</string>
+    <string name="newRecipeWizard4">Kiválaszthatsz vagy megadhatsz címkéket melyek segítségéel könnyebben kategorizálni tudod receptjeid.</string>
+    <string name="newRecipeWizard5">A lenti gomb használatával készíthetsz képet vagy választhatsz egyet az elkészült ételről.</string>
+    <string name="get_qr_code">QR Kód generálása</string>
 </resources>

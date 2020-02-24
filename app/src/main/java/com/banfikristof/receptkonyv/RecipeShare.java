@@ -1,10 +1,10 @@
 package com.banfikristof.receptkonyv;
 
-public class RecipeQr {
+public class RecipeShare {
     public String uid;
     public String rid;
 
-    public RecipeQr(){
+    public RecipeShare(){
 
     }
 

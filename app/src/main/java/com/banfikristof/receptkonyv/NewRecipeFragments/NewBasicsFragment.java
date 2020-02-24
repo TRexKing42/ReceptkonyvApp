@@ -9,8 +9,11 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.banfikristof.receptkonyv.R;
+import com.banfikristof.receptkonyv.UjReceptActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -22,6 +25,10 @@ public class NewBasicsFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    private Button next, qrBtn;
+    private EditText etNev, etLeiras;
+
+
     public NewBasicsFragment() {
         // Required empty public constructor
     }
@@ -31,15 +38,41 @@ public class NewBasicsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_new_basics, container, false);
+        View v = inflater.inflate(R.layout.fragment_new_basics, container, false);
+
+        initFragment(v);
+
+        UjReceptActivity myActivity = (UjReceptActivity)getActivity();
+        if (myActivity.editmode){
+            etNev.setText(myActivity.recipeToSave.getName());
+            etLeiras.setText(myActivity.recipeToSave.getDescription());
+            qrBtn.setEnabled(false);
+        }
+
+        qrBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.startQrImport();
+            }
+        });
+
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.basicsDone(etNev.getText().toString(), etLeiras.getText().toString());
+            }
+        });
+
+        return v;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+    private void initFragment(View v) {
+        etNev = v.findViewById(R.id.ujReceptNev);
+        etLeiras = v.findViewById(R.id.ujReceptLeiras);
+        next = v.findViewById(R.id.nextBtn1);
+        qrBtn = v.findViewById(R.id.fromQRbtn);
     }
+
 
     @Override
     public void onAttach(Context context) {
@@ -69,7 +102,8 @@ public class NewBasicsFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void basicsDone(String name, String desc);
+
+        void startQrImport();
     }
 }

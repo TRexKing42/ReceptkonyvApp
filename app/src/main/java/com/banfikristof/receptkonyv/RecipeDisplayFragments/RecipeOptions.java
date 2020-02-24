@@ -34,7 +34,7 @@ public class RecipeOptions extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private Button share, delete, update, favourite;
+    private Button share, delete, update, favourite, qrBtn;
     private ImageView qrKod;
 
 
@@ -50,6 +50,13 @@ public class RecipeOptions extends Fragment {
         View v = inflater.inflate(R.layout.fragment_recipe_options, container, false);
 
         initFragment(v);
+
+        qrBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                newQRCodeFromRecipe(mListener.onGetJSON());
+            }
+        });
 
         share.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,10 +94,9 @@ public class RecipeOptions extends Fragment {
         delete = v.findViewById(R.id.deleteButtonSelectedRecept);
         update = v.findViewById(R.id.editButtonSelectedRecept);
         favourite = v.findViewById(R.id.favButtonSelectedRecept);
+        qrBtn = v.findViewById(R.id.qrButtonSelectedRecept);
 
         qrKod = v.findViewById(R.id.generatedQRcode);
-
-        newQRCodeFromRecipe(mListener.onGetJSON());
     }
 
     public void newQRCodeFromRecipe(String recipeInJson){

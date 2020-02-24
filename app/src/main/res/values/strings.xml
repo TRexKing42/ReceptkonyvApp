@@ -38,9 +38,6 @@
     <string name="photoNo">No</string>
     <string name="photoCancel">Cancel</string>
     <string name="capture_photo">Photo:</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="shoppingMenuText">Shopping Lists</string>
     <string name="allRecipes">All</string>
     <string name="favRecipes">Favourites</string>
@@ -57,5 +54,13 @@
     <string name="add_to_favorites">Add to Favorites</string>
     <string name="newButtonTextQR">New Recipe From QR Code</string>
     <string name="qrUnsuccesful">Unsuccesful scan.</string>
-    <string name="qr_share_prompt">You can also hare your recipe with the following QR code!</string>
+    <string name="qr_share_prompt">You share your recipe with other users, using a QR code!</string>
+    <string name="newRecipeWizard1">Please enter a name and a short description for your new recipe or add a recipe from a QR Code!</string>
+    <string name="next">Next</string>
+    <string name="back">Back</string>
+    <string name="newRecipeWizard2">Please add the ingredients to the list below using the text fields and the button.</string>
+    <string name="newRecipeWizard3">Please add the steps of preparing this meal using the text field and the button below.</string>
+    <string name="newRecipeWizard4">You can select tags to categorise your recipes and find them easier. Tap on your desired tags to add them or write in your own tag.</string>
+    <string name="newRecipeWizard5">You can take a photo of this meal if you want using the button below.</string>
+    <string name="get_qr_code">Get QR Code</string>
 </resources>

@@ -51,8 +51,6 @@ public class OverviewFragment extends Fragment {
     private void initFragment(View v) {
         recipeImage = v.findViewById(R.id.recipeImage);
         receptLeiras = v.findViewById(R.id.receptLeirasSelected);
-
-        Glide.with(this).load("https://baconmockup.com/400/200/").into(recipeImage);
     }
 
     @Override

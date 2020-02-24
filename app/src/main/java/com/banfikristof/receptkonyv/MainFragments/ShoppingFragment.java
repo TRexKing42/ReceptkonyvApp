@@ -1,8 +1,7 @@
-package com.banfikristof.receptkonyv;
+package com.banfikristof.receptkonyv.MainFragments;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,6 +15,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.banfikristof.receptkonyv.OpenListActivity;
+import com.banfikristof.receptkonyv.R;
+import com.banfikristof.receptkonyv.ShoppingList;
+import com.banfikristof.receptkonyv.UjListaActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -57,7 +60,7 @@ public class ShoppingFragment extends Fragment {
         ujListaButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(),UjListaActivity.class);
+                Intent intent = new Intent(getActivity(), UjListaActivity.class);
                 startActivity(intent);
             }
         });
@@ -66,7 +69,7 @@ public class ShoppingFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ShoppingList s = (ShoppingList) lv.getItemAtPosition(position);
-                Intent intent = new Intent(getActivity(),OpenListActivity.class);
+                Intent intent = new Intent(getActivity(), OpenListActivity.class);
                 intent.putExtra("SelectedList",s);
                 startActivity(intent);
             }

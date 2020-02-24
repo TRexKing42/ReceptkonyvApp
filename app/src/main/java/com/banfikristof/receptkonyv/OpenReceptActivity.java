@@ -6,12 +6,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,19 +17,14 @@ import com.banfikristof.receptkonyv.RecipeDisplayFragments.OverviewFragment;
 import com.banfikristof.receptkonyv.RecipeDisplayFragments.PreparationFragment;
 import com.banfikristof.receptkonyv.RecipeDisplayFragments.RecipeOptions;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.Rotate;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import org.json.JSONObject;
 
 public class OpenReceptActivity extends AppCompatActivity implements
         OverviewFragment.OnFragmentInteractionListener,
@@ -134,7 +125,7 @@ public class OpenReceptActivity extends AppCompatActivity implements
     //Preparations Fragmentt
     @Override
     public void onPrepFragmentDisplayed(TextView tv) {
-        tv.setText(r.getPreparation());
+        tv.setText(r.preparationAsString());
     }
 
 
@@ -184,6 +175,7 @@ public class OpenReceptActivity extends AppCompatActivity implements
         Intent intent = new Intent(OpenReceptActivity.this, UjReceptActivity.class);
         intent.putExtra("RecipeEdit", r);
         startActivity(intent);
+        finish();
     }
 
     @Override
@@ -194,8 +186,8 @@ public class OpenReceptActivity extends AppCompatActivity implements
     @Override
     public String onGetJSON() {
         Gson gson = new Gson();
-        RecipeQr recipeToShare = new RecipeQr();
-        recipeToShare.setUid(r.getUid());
+        RecipeShare recipeToShare = new RecipeShare();
+        recipeToShare.setUid(FirebaseAuth.getInstance().getCurrentUser().getUid());
         recipeToShare.setRid(r.key);
         String result = gson.toJson(recipeToShare);
         return result;

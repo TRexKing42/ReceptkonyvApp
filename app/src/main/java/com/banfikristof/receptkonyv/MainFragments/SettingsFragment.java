@@ -1,24 +1,16 @@
-package com.banfikristof.receptkonyv;
+package com.banfikristof.receptkonyv.MainFragments;
 
 import android.content.Context;
-import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.core.os.ConfigurationCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Spinner;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import com.banfikristof.receptkonyv.R;
 
 
 /**

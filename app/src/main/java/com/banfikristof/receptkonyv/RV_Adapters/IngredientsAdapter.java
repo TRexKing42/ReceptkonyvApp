@@ -1,4 +1,4 @@
-package com.banfikristof.receptkonyv;
+package com.banfikristof.receptkonyv.RV_Adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +8,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.banfikristof.receptkonyv.R;
+import com.banfikristof.receptkonyv.UjReceptActivity;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -19,7 +22,6 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView tvIngName,tvIngAmount,tvIngUnit;
         public Button btnIngDel;
-        private WeakReference<UjReceptActivity.RvClickListener> listenerWeakReference;
 
         public ViewHolder(View v) {
             super(v);

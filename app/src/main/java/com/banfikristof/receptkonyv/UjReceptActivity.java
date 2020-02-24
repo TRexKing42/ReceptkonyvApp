@@ -3,40 +3,33 @@ package com.banfikristof.receptkonyv;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.banfikristof.receptkonyv.NewRecipeFragments.NewBasicsFragment;
+import com.banfikristof.receptkonyv.NewRecipeFragments.NewIngFragment;
+import com.banfikristof.receptkonyv.NewRecipeFragments.NewPhotoFragment;
+import com.banfikristof.receptkonyv.NewRecipeFragments.NewPrepFragment;
+import com.banfikristof.receptkonyv.NewRecipeFragments.NewTagsFragment;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -49,52 +42,49 @@ import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import com.skyhope.materialtagview.TagView;
-import com.skyhope.materialtagview.enums.TagSeparator;
-import com.skyhope.materialtagview.interfaces.TagItemListener;
 import com.skyhope.materialtagview.model.TagModel;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
-public class UjReceptActivity extends AppCompatActivity {
+public class UjReceptActivity extends AppCompatActivity implements
+        NewBasicsFragment.OnFragmentInteractionListener,
+        NewIngFragment.OnFragmentInteractionListener,
+        NewPrepFragment.OnFragmentInteractionListener,
+        NewTagsFragment.OnFragmentInteractionListener,
+        NewPhotoFragment.OnFragmentInteractionListener {
 
     private static final int GALLERY_REQUEST = 9999;
     private static final int CAMERA_REQUEST = 9998;
 
+    public int currentFrame = 0;
+
+    public Recipe recipeToSave;
+
     private String pushId;
-    private boolean editmode = false;
+    public boolean editmode = false;
 
-    private Button saveBtn,fromQRbtn;
-    private EditText etNev, etLeiras, etElkeszites;
+    private FrameLayout frameLayout;
 
-    private ChipGroup recipeTags, currentTags;
-    private List<String> tagList;
-    private List<String> selectedTagList;
+    private boolean succesfullPhoto = false;
 
-    private EditText ingNev, ingMennyiseg, ingMertek, tagSearchEt;
-    private Button ingHozzaad;
-    private ImageButton photoIbtn;
-    private ImageView imgPreview;
+
+
+
+
 
     private AlertDialog alertDialog;
     private AlertDialog.Builder adBuilder;
 
     private Recipe QRrecipe;
 
-    private RecyclerView rvIngredients;
-    IngredientsAdapter ingredientsAdapter;
+    public List<Map<String,String>> ingredients;
 
     Bitmap img;
     StorageReference imgRef;
-    List<Map<String,String>> ingredients;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,122 +93,40 @@ public class UjReceptActivity extends AppCompatActivity {
 
         init();
 
-        /*tv.initTagListener(new TagItemListener() {
-            @Override
-            public void onGetAddedItem(TagModel tagModel) {
-                //TODO: Hozzáadni fájlhoz
-            }
+        changeToCorrectFrame();
 
-            @Override
-            public void onGetRemovedItem(TagModel model) {
-                //...
-            }
-        });*/
+        if (currentFrame == 0){ //Varázsló indítása
+            changeToCorrectFrame();
+        }
+    }
 
-        ingHozzaad.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int adapterSize = ingredientsAdapter.getItemCount();
+    private void changeToCorrectFrame() {
+        Fragment selectedFragment = null;
+        switch (currentFrame){
+            case 0:
+                selectedFragment = new NewBasicsFragment();
+                break;
+            case 1:
+                selectedFragment = new NewIngFragment();
+                break;
+            case 2:
+                selectedFragment = new NewPrepFragment();
+                break;
+            case 3:
+                selectedFragment = new NewTagsFragment();
+                break;
+            case 4:
+                selectedFragment = new NewPhotoFragment();
+                break;
+            default:
+                break;
+        }
 
-                Map<String, String> hozzavalo = new HashMap<>();
-                hozzavalo.put("name",ingNev.getText().toString());
-                hozzavalo.put("amount",ingMennyiseg.getText().toString());
-                hozzavalo.put("unit",ingMertek.getText().toString());
-                ingredients.add(hozzavalo);
-                loadIngredients();
-                ingredientsAdapter.notifyItemRangeChanged(adapterSize,ingredients.size());
-
-
-                ingNev.setText("");
-                ingMennyiseg.setText("");
-                ingMertek.setText("");
-            }
-        });
-
-        saveBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Recipe recipe = formToRecipe(true);
-                List<String> images = new ArrayList<>();
-                if (!editmode) {
-                    pushId = FirebaseDatabase.getInstance().getReference().child("recipes")
-                            .child(FirebaseAuth.getInstance().getUid()).push().getKey();
-                }
-                if (recipe == null) return;
-                if (img != null){
-                    uploadImg(FirebaseStorage.getInstance().getReference()
-                            .child(FirebaseAuth.getInstance().getUid())
-                            .child(pushId)
-                            .child("main_img.jpg"));
-                    images.add("main_img.jpg");
-                    recipe.setPictures(images);
-                    recipe.setHasMainImg(true);
-
-                    //Update images list for easy delete
-                    User usr = new User();
-                    usr.setDisplayName(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
-                    usr.addImgList(images,pushId);
-                    DatabaseReference db = FirebaseDatabase.getInstance().getReference("users");
-                    db.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(usr);
-                } else {
-                    recipe.setHasMainImg(false);
-                }
-                DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-                db.child("recipes").child(FirebaseAuth.getInstance().getUid()).child(pushId).setValue(recipe).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(UjReceptActivity.this, "Sikeres mentés!",Toast.LENGTH_SHORT).show();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(UjReceptActivity.this, "Sikertelen mentés!",Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        });
-
-        photoIbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createPhotoDialog();
-            }
-        });
-
-        tagSearchEt.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (tagSearchEt.getText().toString().isEmpty()){
-                    loadTags(tagList);
-                } else {
-                    loadTags(tagList,tagSearchEt.getText().toString());
-                }
-            }
-        });
-
-        fromQRbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                IntentIntegrator integrator = new IntentIntegrator(UjReceptActivity.this);
-                integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
-                integrator.setPrompt("QR Code Scannelés");
-                integrator.setCameraId(0);
-                integrator.setBeepEnabled(false);
-                integrator.setBarcodeImageEnabled(false);
-                integrator.initiateScan();
-            }
-        });
-
+        if (selectedFragment != null) {
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.NewRecipeFrame, selectedFragment);
+            fragmentTransaction.commit();
+        }
     }
 
     private void uploadImg(final StorageReference reference) {
@@ -235,96 +143,138 @@ public class UjReceptActivity extends AppCompatActivity {
         });
     }
 
-    public interface RvClickListener {
-        void onDeleteClicked(int position);
+    @Override
+    public void basicsDone(String name, String desc) {
+        if (name.isEmpty() || desc.isEmpty()) {
+            Toast.makeText(this,"A név és a leírás nem lehet üres!",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        recipeToSave.setName(name);
+        recipeToSave.setDescription(desc);
+        currentFrame = 1;
+
+        changeToCorrectFrame();
     }
 
-    private Recipe formToRecipe(boolean setUid) {
-        if (TextUtils.isEmpty(etNev.getText())){
-            Toast.makeText(UjReceptActivity.this, "Étel neve nem lehet üres!",Toast.LENGTH_SHORT).show();
-            return null;
-        }
-        if (TextUtils.isEmpty(etElkeszites.getText())){
-            Toast.makeText(UjReceptActivity.this, "Étel elkészítése nem lehet üres!",Toast.LENGTH_SHORT).show();
-            return null;
-        }
-        if (ingredients.isEmpty()) {
-            Toast.makeText(UjReceptActivity.this, "Válassz ki legalább egy hozzávalót!",Toast.LENGTH_SHORT).show();
-            return null;
-        }
-        Recipe recipe;
-        if (TextUtils.isEmpty(etLeiras.getText())){
-            recipe = new Recipe(etNev.getText().toString(),etElkeszites.getText().toString(),ingredients);
-        } else {
-            recipe = new Recipe(etNev.getText().toString(),etLeiras.getText().toString(),etElkeszites.getText().toString(),ingredients);
-        }
-        if (selectedTagList.isEmpty()){
-            selectedTagList.add(""); //Fixing Bugs
-        }
-       recipe.setTags(selectedTagList);
-        if (setUid) {
-            recipe.setUid(FirebaseAuth.getInstance().getCurrentUser().getUid());
-            recipe.setHasMainImg(true);
-        }
-        return recipe;
+    @Override
+    public void startQrImport() {
+        IntentIntegrator integrator = new IntentIntegrator(UjReceptActivity.this);
+        integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
+        integrator.setPrompt("QR Code Scannelés");
+        integrator.setCameraId(0);
+        integrator.setBeepEnabled(false);
+        integrator.setBarcodeImageEnabled(false);
+        integrator.initiateScan();
     }
 
-    private void init() {
-        //tv = findViewById(R.id.tagView);
-        recipeTags = findViewById(R.id.tagsNewRecipe);
-        currentTags = findViewById(R.id.tagsSelectedNewRecipe);
-        //tv.addTagSeparator(TagSeparator.COMMA_SEPARATOR);
-        tagSearchEt = findViewById(R.id.searchForTags);
-        tagList = new ArrayList<String>(Arrays.asList("Gluténmentes", "Laktózmentes", "Vegetáriánus", "Vegán", "Olcsó", "Leves", "Előétel", "Reggeli"));
-        selectedTagList = new ArrayList<>();
-        loadTags(tagList);
-        //tv.setTagList(tagList);
+    @Override
+    public void ingDone(List<Map<String, String>> ingredients) {
+        if (ingredients.size() < 1) {
+            Toast.makeText(this,"Szükséges legalább egy hozzávaló!",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        recipeToSave.setIngredients(ingredients);
+        currentFrame = 2;
 
-        rvIngredients = findViewById(R.id.ingredientsListRv);
-        ingredients = new ArrayList<>();
-        loadIngredients();
-        rvIngredients.setLayoutManager(new LinearLayoutManager(this));
+        changeToCorrectFrame();
+    }
 
-        fromQRbtn = findViewById(R.id.fromQRbtn);
+    @Override
+    public void backToBasics() {
+        currentFrame = 0;
 
-        saveBtn = findViewById(R.id.ujReceptMentes);
-        photoIbtn = findViewById(R.id.newRecipePhotoIbtn);
-        imgPreview = findViewById(R.id.newRecipeImgPreview);
+        changeToCorrectFrame();
+    }
 
-        etNev = findViewById(R.id.ujReceptNev);
-        etLeiras = findViewById(R.id.ujReceptLeiras);
-        etElkeszites = findViewById(R.id.ujReceptElkeszites);
+    @Override
+    public void prepDone(List<String> prep) {
+        if (prep.size() < 1) {
+            Toast.makeText(this,"Szükséges legalább egy elkészítési lépés!",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        recipeToSave.setPreparation(prep);
+        currentFrame = 3;
 
-        ingNev = findViewById(R.id.ujReceptIngNameEt);
-        ingMennyiseg = findViewById(R.id.ujReceptIngAmountEt);
-        ingMertek = findViewById(R.id.ujReceptIngUnitEt);
-        ingHozzaad = findViewById(R.id.ujReceptIngButtonNew);
+        changeToCorrectFrame();
+    }
 
-        if (getIntent().hasExtra("RecipeEdit")){
-            Recipe r = (Recipe) getIntent().getSerializableExtra("RecipeEdit");
-            etNev.setText(r.getName());
-            etLeiras.setText(r.getDescription());
-            etElkeszites.setText(r.getPreparation());
-            selectedTagList = r.getTags();
-            loadTagsToSelected(selectedTagList);
-            pushId = r.key;
+    @Override
+    public void backToIng() {
+        currentFrame = 1;
 
-            fromQRbtn.setEnabled(false);
+        changeToCorrectFrame();
+    }
 
-            int adapterSize = ingredientsAdapter.getItemCount();
-            int ingNumber = r.getIngredients().size();
-            Map<String, String> hozzavalo = new HashMap<>();
-            for (int i = 0; i < ingNumber; i++) {
-                ingredients.add(r.getIngredients().get(i));
-            }
-            loadIngredients();
-            ingredientsAdapter.notifyItemRangeChanged(adapterSize,ingredients.size());
+    @Override
+    public void tagsDone(List<String> selectedTagList) {
+        recipeToSave.setTags(selectedTagList);
+        currentFrame = 4;
 
-            imgRef = FirebaseStorage.getInstance().getReference()
+        changeToCorrectFrame();
+    }
+
+    @Override
+    public void backToPrep() {
+        currentFrame = 2;
+
+        changeToCorrectFrame();
+    }
+
+    @Override
+    public Bitmap takePicture() {
+        createPhotoDialog();
+        return img;
+    }
+
+    @Override
+    public void backToPrepTags() {
+        currentFrame = 3;
+
+        changeToCorrectFrame();
+    }
+
+    @Override
+    public void recipeDone() {
+        List<String> images = new ArrayList<>();
+        if (!editmode) {
+            pushId = FirebaseDatabase.getInstance().getReference().child("recipes")
+                    .child(FirebaseAuth.getInstance().getUid()).push().getKey();
+        }
+        if (recipeToSave == null) return;
+        if (img != null){
+            uploadImg(FirebaseStorage.getInstance().getReference()
                     .child(FirebaseAuth.getInstance().getUid())
-                    .child(r.key)
-                    .child("main_img.jpg");
-            Glide.with(this).load(imgRef).into(imgPreview);
+                    .child(pushId)
+                    .child("main_img.jpg"));
+            images.add("main_img.jpg");
+            recipeToSave.setPictures(images);
+            recipeToSave.setHasMainImg(true);
+
+            //Update images list for easy delete
+            User usr = new User();
+            usr.setDisplayName(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+            usr.addImgList(images,pushId);
+            DatabaseReference db = FirebaseDatabase.getInstance().getReference("users");
+            db.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(usr);
+        }
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+        db.child("recipes").child(FirebaseAuth.getInstance().getUid()).child(pushId).setValue(recipeToSave).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(UjReceptActivity.this, "Sikeres mentés!",Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(UjReceptActivity.this, "Sikertelen mentés!",Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public Bitmap getTakenPicture() {
+        if (editmode && recipeToSave.isHasMainImg()){
             Glide.with(this).asBitmap().load(imgRef).into(new CustomTarget<Bitmap>(){
                 @Override
                 public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
@@ -336,133 +286,29 @@ public class UjReceptActivity extends AppCompatActivity {
 
                 }
             });
+        } else if (editmode && !recipeToSave.isHasMainImg()){
+            return null;
+        }
+
+        return img;
+    }
+
+    private void init() {
+        frameLayout = findViewById(R.id.NewRecipeFrame);
+
+        recipeToSave = new Recipe();
+        recipeToSave.setHasMainImg(false);
+
+        if (getIntent().hasExtra("RecipeEdit")){
+            recipeToSave = (Recipe) getIntent().getSerializableExtra("RecipeEdit");
+            pushId = recipeToSave.key;
+            imgRef = FirebaseStorage.getInstance().getReference()
+                    .child(FirebaseAuth.getInstance().getUid())
+                    .child(recipeToSave.key)
+                    .child("main_img.jpg");
 
             editmode = true;
         }
-
-    }
-
-    private void loadTags(final List<String> tags) {
-        recipeTags.removeAllViews();
-        for (int i = 0; i < tags.size(); i++) {
-            if (!selectedTagList.contains(tagList.get(i))) {
-                final Chip tChip = new Chip(UjReceptActivity.this);
-                final String chipTxt = tags.get(i);
-                tChip.setText(tags.get(i));
-
-                tChip.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (tChip.getParent() == recipeTags) {
-                            recipeTags.removeView(tChip);
-                            currentTags.addView(tChip);
-                            selectedTagList.add(chipTxt);
-                        } else if (tChip.getParent() == currentTags){
-                            selectedTagList.remove(chipTxt);
-                            currentTags.removeView(tChip);
-                            recipeTags.addView(tChip);
-                        }
-                    }
-                });
-
-                recipeTags.addView(tChip);
-            }
-        }
-    }
-
-    private void loadTagsToSelected(final List<String> tags) {
-        currentTags.removeAllViews();
-        for (int i = 0; i < tags.size(); i++) {
-            if (!selectedTagList.contains(tagList.get(i))) {
-                final Chip tChip = new Chip(UjReceptActivity.this);
-                final String chipTxt = tags.get(i);
-                tChip.setText(tags.get(i));
-
-                tChip.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (tChip.getParent() == recipeTags) {
-                            recipeTags.removeView(tChip);
-                            currentTags.addView(tChip);
-                            selectedTagList.add(chipTxt);
-                        } else if (tChip.getParent() == currentTags){
-                            selectedTagList.remove(chipTxt);
-                            currentTags.removeView(tChip);
-                            recipeTags.addView(tChip);
-                        }
-                    }
-                });
-
-                currentTags.addView(tChip);
-            }
-        }
-    }
-
-    private void loadTags(List<String> tags, final String search) {
-        recipeTags.removeAllViews();
-        final Chip customChip = new Chip(UjReceptActivity.this);
-        customChip.setText(search);
-        customChip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (customChip.getParent() == recipeTags) {
-                    recipeTags.removeView(customChip);
-                    currentTags.addView(customChip);
-                    selectedTagList.add(search);
-                } else if (customChip.getParent() == currentTags){
-                    selectedTagList.remove(search);
-                    currentTags.removeView(customChip);
-                }
-            }
-        });
-        recipeTags.addView(customChip);
-
-        for (int i = 0; i < tags.size(); i++) {
-            if (tags.get(i).toLowerCase().contains(search.toLowerCase()) && !selectedTagList.contains(tagList.get(i))) {
-                final Chip tChip = new Chip(UjReceptActivity.this);
-                final String chipTxt = tags.get(i);
-                tChip.setText(tags.get(i));
-
-                tChip.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (tChip.getParent() == recipeTags) {
-                            recipeTags.removeView(tChip);
-                            currentTags.addView(tChip);
-                            selectedTagList.add(chipTxt);
-                        } else if (tChip.getParent() == currentTags){
-                            selectedTagList.remove(chipTxt);
-                            currentTags.removeView(tChip);
-                            recipeTags.addView(tChip);
-                        }
-                    }
-                });
-
-                recipeTags.addView(tChip);
-            }
-        }
-    }
-
-    public void loadRecipe(){
-
-    }
-
-    private void loadIngredients() {
-        ingredientsAdapter = new IngredientsAdapter(ingredients);
-        rvIngredients.setAdapter(ingredientsAdapter);
-    }
-
-    private List<String> tagsToString(List<TagModel> tags) {
-
-        List<String> result = new ArrayList<>();
-        if (tags.isEmpty()){
-            result.add("Nincs címke");
-        } else {
-            for (TagModel item : tags) {
-                result.add(item.getTagText());
-            }
-        }
-        return result;
     }
 
     @Override
@@ -477,7 +323,8 @@ public class UjReceptActivity extends AppCompatActivity {
                         img = MediaStore.Images.Media.getBitmap(this.getContentResolver(),imgUri);
                         img = Bitmap.createScaledBitmap(img,500,500,true);
 
-                        Glide.with(this).load(img).into(imgPreview);
+                        NewPhotoFragment fragment = (NewPhotoFragment) getSupportFragmentManager().findFragmentById(R.id.NewRecipeFrame);
+                        fragment.loadImage();
                     } catch (IOException e) {
                         Toast.makeText(this,getResources().getString(R.string.imgLoadErrorNew),Toast.LENGTH_SHORT).show();
                     }
@@ -485,45 +332,64 @@ public class UjReceptActivity extends AppCompatActivity {
                 case CAMERA_REQUEST:
                     img = (Bitmap) data.getExtras().get("data");
                     img = Bitmap.createScaledBitmap(img,500,500,true);
-                    Glide.with(this).load(img).into(imgPreview);
+                    NewPhotoFragment fragment = (NewPhotoFragment) getSupportFragmentManager().findFragmentById(R.id.NewRecipeFrame);
+                    fragment.loadImage();
                     break;
                 case IntentIntegrator.REQUEST_CODE:
                     IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
-                    if (result == null){
-                        return;
-                    }
-                    if (result.getContents() == null){
-                        Toast.makeText(UjReceptActivity.this,getResources().getString(R.string.qrUnsuccesful),Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    else {
-                        //try {
+                    if (result != null){
+                        if (result.getContents() != null) {
                             Gson gson = new Gson();
-                            RecipeQr r = gson.fromJson(result.getContents(),RecipeQr.class);
-                            Toast.makeText(UjReceptActivity.this,r.getUid() + "\\" + r.getRid(),Toast.LENGTH_SHORT).show();
-                            saveFromQR(r);
-                        /*} catch (Exception e){
-                            Toast.makeText(UjReceptActivity.this,getResources().getString(R.string.qrUnsuccesful),Toast.LENGTH_SHORT).show();
-                        }*/
+                            RecipeShare share = gson.fromJson(result.getContents(),RecipeShare.class);
+                            saveFromQR(share);
+                        }
                     }
                     break;
             }
         }
     }
 
-    private void saveFromQR(final RecipeQr r) {
-        /*final List<Recipe> listOfRecipes = new ArrayList<>();
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("recipes").child(r.getUid());
+    private void saveFromQR(final RecipeShare r) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("recipes").child(r.getUid()).child(r.getRid());
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Recipe recipe;
-                for (DataSnapshot item : dataSnapshot.getChildren()) {
-                    recipe = item.getValue(Recipe.class);
-                    if (item.getKey() == r.getRid()) {
-                        QRrecipe = recipe;
-                    }
+
+                //Recept letöltése
+                try {
+                    recipe = dataSnapshot.getValue(Recipe.class);
+                }catch (Exception eee){
+                    Toast.makeText(UjReceptActivity.this,"HIBA az importálás közben.",Toast.LENGTH_SHORT).show();
+                    return;
                 }
+
+                //Kép letöltése ha van
+                if (recipe.isHasMainImg()){
+                    imgRef = FirebaseStorage.getInstance().getReference()
+                            .child(r.getUid())
+                            .child(r.getRid())
+                            .child("main_img.jpg");
+                    Glide.with(UjReceptActivity.this).asBitmap().load(imgRef).into(new CustomTarget<Bitmap>(){
+                        @Override
+                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                            img = resource;
+                        }
+
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                        }
+                    });
+                }
+
+                //Egyéb beállítások
+                recipe.setUid(FirebaseAuth.getInstance().getUid());
+                recipe.setFavourite(false);
+
+                //Recept feltötése a jelenlegi userhez
+                recipeToSave = recipe;
+                recipeDone();
             }
 
             @Override
@@ -531,47 +397,6 @@ public class UjReceptActivity extends AppCompatActivity {
                 System.out.println(databaseError.getMessage());
             }
         });
-
-
-        Recipe recipeToShare = QRrecipe;
-        if (recipeToShare == null) {
-            Toast.makeText(UjReceptActivity.this,"This recipe no longer exists",Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        List<String> images = new ArrayList<>();
-        pushId = FirebaseDatabase.getInstance().getReference().child("recipes")
-                .child(FirebaseAuth.getInstance().getUid()).push().getKey();
-
-        if (recipeToShare.isHasMainImg()){
-            StorageReference storageReference = FirebaseStorage.getInstance().getReference()
-                    .child(r.getUid())
-                    .child(r.getRid())
-                    .child("main_img.jpg");
-            Glide.with(this).load(storageReference).into(imgPreview);
-            img = ((BitmapDrawable) imgPreview.getDrawable()).getBitmap();
-
-            //Update images list for easy delete
-            User usr = new User();
-            usr.setDisplayName(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
-            usr.addImgList(images,pushId);
-            DatabaseReference db = FirebaseDatabase.getInstance().getReference("users");
-            db.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(usr);
-        }
-
-        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-        db.child("recipes").child(FirebaseAuth.getInstance().getUid()).child(pushId).setValue(recipeToShare).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Toast.makeText(UjReceptActivity.this, "Sikeres mentés!",Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(UjReceptActivity.this, "Sikertelen mentés!",Toast.LENGTH_SHORT).show();
-            }
-        });*/
     }
 
     public void createPhotoDialog(){

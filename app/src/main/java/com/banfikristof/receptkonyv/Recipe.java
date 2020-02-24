@@ -18,9 +18,10 @@ public class Recipe implements Serializable {
     public Bitmap mainImg;
 
     private String id, uid;
-    private String name, description, preparation;
+    private String name, description;
     private List<Map<String, String>> ingredients;
     private List<String> tags;
+    private List<String> preparation;
     private List<String> pictures;
     private boolean hasMainImg;
     private boolean favourite;
@@ -34,21 +35,21 @@ public class Recipe implements Serializable {
         this.hasMainImg = true;
     }
 
-    public Recipe(String name, String preparation, List<Map<String,String>> ingredients) {
+    public Recipe(String name, List<String> preparation, List<Map<String,String>> ingredients) {
         this.name = name;
         this.description = " ";
         this.preparation = preparation;
         this.ingredients = ingredients;
     }
 
-    public Recipe(String name, String description, String preparation, List<Map<String,String>> ingredients) {
+    public Recipe(String name, String description, List<String> preparation, List<Map<String,String>> ingredients) {
         this.name = name;
         this.description = description;
         this.preparation = preparation;
         this.ingredients = ingredients;
     }
 
-    public Recipe(String id, String name, String description, String preparation, List<Map<String,String>> ingredients) {
+    public Recipe(String id, String name, String description, List<String> preparation, List<Map<String,String>> ingredients) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -56,7 +57,7 @@ public class Recipe implements Serializable {
         this.ingredients = ingredients;
     }
 
-    public Recipe(String id, String name, String description, String preparation, List<Map<String,String>> ingredients, String uid, List<String> tags) {
+    public Recipe(String id, String name, String description, List<String> preparation, List<Map<String,String>> ingredients, String uid, List<String> tags) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -82,12 +83,19 @@ public class Recipe implements Serializable {
         this.description = description;
     }
 
-    public String getPreparation() {
+    public List<String> getPreparation() {
         return preparation;
     }
 
-    public void setPreparation(String preparation) {
+    public void setPreparation(List<String> preparation) {
         this.preparation = preparation;
+    }
+
+    public String preparationAsString() {
+        if (preparation.size() == 1){
+            return preparation.get(0);
+        }
+        return TextUtils.join("\n",preparation);
     }
 
     public String getId() {

@@ -3,12 +3,71 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NewRecipeFragments.NewBasicsFragment">
+    tools:context=".NewRecipeFragments.NewBasicsFragment"
+    >
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="5dp"
+                android:id="@+id/basicsLayout">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="25sp"
+                    android:text="@string/newRecipeWizard1"
+                    android:textAlignment="center"
+                    android:paddingBottom="15dp"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/foodNameHint"
+                    android:textSize="25dp"
+                    android:id="@+id/ujReceptNev"
+                    android:inputType="text"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/descriptionHint"
+                    android:textSize="25dp"
+                    android:inputType="textMultiLine"
+                    android:id="@+id/ujReceptLeiras"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_margin="5dp"
+                    android:background="@color/colorPrimaryDark" />
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Load From QR Code"
+                    android:maxLines="1"
+                    android:id="@+id/fromQRbtn"/>
+
+            </LinearLayout>
+
+        <Button
+            android:id="@+id/nextBtn1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="15dp"
+            android:text="@string/next" />
+
+    </RelativeLayout>
 
 </FrameLayout>
