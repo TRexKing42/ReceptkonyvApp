@@ -8,10 +8,12 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.banfikristof.receptkonyv.NewRecipeFragments.NewPhotoFragment;
 import com.banfikristof.receptkonyv.RecipeDisplayFragments.IngredientsFragment;
 import com.banfikristof.receptkonyv.RecipeDisplayFragments.OverviewFragment;
 import com.banfikristof.receptkonyv.RecipeDisplayFragments.PreparationFragment;
@@ -32,9 +34,9 @@ public class OpenReceptActivity extends AppCompatActivity implements
         PreparationFragment.OnFragmentInteractionListener,
         RecipeOptions.OnFragmentInteractionListener {
 
-    private TextView receptNev, receptCimkek;
+    private TextView receptNev;
     private BottomNavigationView bottomNavigationView;
-
+    private ImageView bigImage;
     private StorageReference img;
 
     private Recipe r;
@@ -45,6 +47,15 @@ public class OpenReceptActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_open_recept);
 
         init();
+
+        bigImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bigImage.setVisibility(View.INVISIBLE);
+                OverviewFragment fragment = (OverviewFragment) getSupportFragmentManager().findFragmentById(R.id.receptFrame);
+                fragment.visibleImage(true);
+            }
+        });
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -84,9 +95,8 @@ public class OpenReceptActivity extends AppCompatActivity implements
 
     private void init(){
         receptNev = findViewById(R.id.receptNevSelected);
-        receptCimkek = findViewById(R.id.receptTagsSelected);
         bottomNavigationView = findViewById(R.id.bottomNavView);
-
+        bigImage = findViewById(R.id.overviewBigImageView);
         r = (Recipe) getIntent().getSerializableExtra("SelectedRecipe");
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -97,7 +107,6 @@ public class OpenReceptActivity extends AppCompatActivity implements
     public void displayRecipe(){
         //Recipe r = (Recipe) getIntent().getSerializableExtra("SelectedRecipe");
         receptNev.setText(r.getName());
-        receptCimkek.setText(r.tagsToString());
         img = FirebaseStorage.getInstance().getReference()
                 .child(FirebaseAuth.getInstance().getUid())
                 .child(r.key)
@@ -107,13 +116,20 @@ public class OpenReceptActivity extends AppCompatActivity implements
 
     //Overview Fragment
     @Override
-    public void onFragmentDisplayed(TextView desc, ImageView imageView) {
+    public void onFragmentDisplayed(TextView desc, ImageView imageView, TextView receptTags) {
         desc.setText(r.getDescription());
+        receptTags.setText(r.tagsToString());
         if (!r.isHasMainImg()){
             Glide.with(this).load(FirebaseStorage.getInstance().getReference().child("no_picture.png")).into(imageView);
         } else {
-            Glide.with(this).load(img).into(imageView);
+            Glide.with(this).load(img).centerCrop().into(imageView);
         }
+    }
+
+    @Override
+    public void showBigImage() {
+        Glide.with(this).load(img).into(bigImage);
+        bigImage.setVisibility(View.VISIBLE);
     }
 
     //Ingredients Fragment

@@ -1,8 +1,6 @@
 package com.banfikristof.receptkonyv.RecipeDisplayFragments;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -10,14 +8,11 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.banfikristof.receptkonyv.R;
-import com.bumptech.glide.Glide;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.storage.FirebaseStorage;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,9 +22,9 @@ import com.google.firebase.storage.FirebaseStorage;
  */
 public class OverviewFragment extends Fragment {
 
-    private TextView receptLeiras;
+    private TextView receptLeiras, receptTags;
     private ImageView recipeImage;
-
+    private ScrollView sv;
     private OnFragmentInteractionListener mListener;
 
     public OverviewFragment() {
@@ -44,13 +39,26 @@ public class OverviewFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_overview, container, false);
 
         initFragment(v);
-        mListener.onFragmentDisplayed(receptLeiras, recipeImage);
+        mListener.onFragmentDisplayed(receptLeiras, recipeImage, receptTags);
+
+        recipeImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.showBigImage();
+                visibleImage(false);
+            }
+        });
+
+
         return v;
     }
 
     private void initFragment(View v) {
         recipeImage = v.findViewById(R.id.recipeImage);
         receptLeiras = v.findViewById(R.id.receptLeirasSelected);
+
+        sv = v.findViewById(R.id.overviewScrollView);
+        receptTags = v.findViewById(R.id.receptTagsSelected);
     }
 
     @Override
@@ -70,6 +78,14 @@ public class OverviewFragment extends Fragment {
         mListener = null;
     }
 
+    public void visibleImage(boolean visible) {
+        if (visible){
+            sv.setVisibility(View.VISIBLE);
+        } else {
+            sv.setVisibility(View.INVISIBLE);
+        }
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -81,6 +97,8 @@ public class OverviewFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onFragmentDisplayed(TextView desc, ImageView imageView);
+        void onFragmentDisplayed(TextView desc, ImageView imageView, TextView receptTags);
+
+        void showBigImage();
     }
 }

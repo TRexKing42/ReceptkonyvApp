@@ -30,21 +30,15 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/receptFrame"/>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:background="@color/colorPrimaryDark" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/receptTagsSelected"
-                android:padding="5dp"
-                android:textAlignment="center"
-                android:text="tagek, Lorem, Ipsum, Dolor, Sit amet"
-                android:textSize="20dp"/>
         </LinearLayout>
     </ScrollView>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/overviewBigImageView"
+        android:visibility="invisible" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:layout_width="match_parent"

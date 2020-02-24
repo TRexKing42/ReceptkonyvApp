@@ -159,7 +159,7 @@ public class UjReceptActivity extends AppCompatActivity implements
     @Override
     public void startQrImport() {
         IntentIntegrator integrator = new IntentIntegrator(UjReceptActivity.this);
-        integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
+        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
         integrator.setPrompt("QR Code Scannelés");
         integrator.setCameraId(0);
         integrator.setBeepEnabled(false);
@@ -251,11 +251,11 @@ public class UjReceptActivity extends AppCompatActivity implements
             recipeToSave.setHasMainImg(true);
 
             //Update images list for easy delete
-            User usr = new User();
+            /*User usr = new User();
             usr.setDisplayName(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
             usr.addImgList(images,pushId);
             DatabaseReference db = FirebaseDatabase.getInstance().getReference("users");
-            db.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(usr);
+            db.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(usr);*/
         }
         DatabaseReference db = FirebaseDatabase.getInstance().getReference();
         db.child("recipes").child(FirebaseAuth.getInstance().getUid()).child(pushId).setValue(recipeToSave).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -321,7 +321,7 @@ public class UjReceptActivity extends AppCompatActivity implements
                         Uri imgUri = data.getData();
 
                         img = MediaStore.Images.Media.getBitmap(this.getContentResolver(),imgUri);
-                        img = Bitmap.createScaledBitmap(img,500,500,true);
+                        //img = Bitmap.createScaledBitmap(img,500,500,true);
 
                         NewPhotoFragment fragment = (NewPhotoFragment) getSupportFragmentManager().findFragmentById(R.id.NewRecipeFrame);
                         fragment.loadImage();
@@ -331,7 +331,7 @@ public class UjReceptActivity extends AppCompatActivity implements
                     break;
                 case CAMERA_REQUEST:
                     img = (Bitmap) data.getExtras().get("data");
-                    img = Bitmap.createScaledBitmap(img,500,500,true);
+                    //img = Bitmap.createScaledBitmap(img,500,500,true);
                     NewPhotoFragment fragment = (NewPhotoFragment) getSupportFragmentManager().findFragmentById(R.id.NewRecipeFrame);
                     fragment.loadImage();
                     break;
