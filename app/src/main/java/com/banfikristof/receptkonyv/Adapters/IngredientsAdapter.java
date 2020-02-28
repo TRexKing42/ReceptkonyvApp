@@ -1,4 +1,4 @@
-package com.banfikristof.receptkonyv.RV_Adapters;
+package com.banfikristof.receptkonyv.Adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.banfikristof.receptkonyv.R;
-import com.banfikristof.receptkonyv.UjReceptActivity;
 
-import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Map;
 

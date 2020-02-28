@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.banfikristof.receptkonyv.RV_Adapters.IngredientsAdapter;
+import com.banfikristof.receptkonyv.Adapters.IngredientsAdapter;
 import com.banfikristof.receptkonyv.R;
 import com.banfikristof.receptkonyv.UjReceptActivity;
 

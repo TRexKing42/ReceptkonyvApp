@@ -128,8 +128,11 @@ public class OpenReceptActivity extends AppCompatActivity implements
 
     @Override
     public void showBigImage() {
-        Glide.with(this).load(img).into(bigImage);
-        bigImage.setVisibility(View.VISIBLE);
+        //Glide.with(this).load(img).into(bigImage);
+        //bigImage.setVisibility(View.VISIBLE);
+        Intent intent = new Intent(OpenReceptActivity.this,BigImageActivity.class);
+        intent.putExtra("key",r.key);
+        startActivity(intent);
     }
 
     @Override
@@ -212,5 +215,13 @@ public class OpenReceptActivity extends AppCompatActivity implements
         recipeToShare.setRid(r.key);
         String result = gson.toJson(recipeToShare);
         return result;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.receptFrame, new OverviewFragment());
+        fragmentTransaction.commit();
     }
 }

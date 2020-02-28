@@ -1,4 +1,4 @@
-package com.banfikristof.receptkonyv.RV_Adapters;
+package com.banfikristof.receptkonyv.Adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;

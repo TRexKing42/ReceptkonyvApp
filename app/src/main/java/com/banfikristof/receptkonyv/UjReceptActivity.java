@@ -107,7 +107,7 @@ public class UjReceptActivity extends AppCompatActivity implements
         changeToCorrectFrame();
 
         if (currentFrame == 0){ //Varázsló indítása
-            //currentFrame = 4;
+            currentFrame = 4;
             changeToCorrectFrame();
         }
     }

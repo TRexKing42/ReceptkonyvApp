@@ -1,11 +1,9 @@
 package com.banfikristof.receptkonyv.NewRecipeFragments;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -26,6 +24,8 @@ import com.banfikristof.receptkonyv.UjReceptActivity;
 import com.bumptech.glide.Glide;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.List;
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -39,6 +39,7 @@ public class NewPhotoFragment extends Fragment {
     private ImageButton photoIbtn;
     public ImageView imgPreview;
 
+    private List<StorageReference> images;
     Bitmap img;
 
     private Button next, back;
@@ -111,13 +112,6 @@ public class NewPhotoFragment extends Fragment {
             return;
         }
         Glide.with(getActivity()).load(mListener.getTakenPicture()).into(imgPreview);
-    }
-
-    public void loadImage(String picPath){
-        if (mListener.getTakenPicture() == null){
-            return;
-        }
-        Glide.with(getActivity()).load(picPath).into(imgPreview);
     }
 
     private void initFragment(View v) {
