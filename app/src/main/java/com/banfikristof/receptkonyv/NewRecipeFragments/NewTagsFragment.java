@@ -32,6 +32,8 @@ public class NewTagsFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    private final int TAGS_MAX_NUMBER = 7;
+
     private ChipGroup recipeTags, currentTags;
     private List<String> tagList;
     private List<String> selectedTagList;
@@ -131,7 +133,7 @@ public class NewTagsFragment extends Fragment {
         });
         recipeTags.addView(customChip);
 
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < TAGS_MAX_NUMBER; i++) {
             if (tags.get(i).toLowerCase().contains(search.toLowerCase()) && !selectedTagList.contains(tagList.get(i))) {
                 final Chip tChip = new Chip(getActivity(),null, R.style.Widget_MaterialComponents_Chip_Entry);
                 final String chipTxt = tags.get(i);
@@ -159,7 +161,7 @@ public class NewTagsFragment extends Fragment {
 
     private void loadTags(final List<String> tags) {
         recipeTags.removeAllViews();
-        for (int i = 0; i < tags.size(); i++) {
+        for (int i = 0; i < TAGS_MAX_NUMBER; i++) {
             if (!selectedTagList.contains(tagList.get(i))) {
                 final Chip tChip = new Chip(getActivity(),null, R.style.Widget_MaterialComponents_Chip_Entry);
                 final String chipTxt = tags.get(i);

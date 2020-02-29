@@ -55,7 +55,6 @@ public class OpenReceptActivity extends AppCompatActivity implements
     private static final int CAMERA_REQUEST = 4321;
     private TextView receptNev;
     private BottomNavigationView bottomNavigationView;
-    private ImageView bigImage;
     private StorageReference img;
 
     private Recipe r;
@@ -68,15 +67,6 @@ public class OpenReceptActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_open_recept);
 
         init();
-
-        bigImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bigImage.setVisibility(View.INVISIBLE);
-                OverviewFragment fragment = (OverviewFragment) getSupportFragmentManager().findFragmentById(R.id.receptFrame);
-                fragment.visibleImage(true);
-            }
-        });
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -120,7 +110,6 @@ public class OpenReceptActivity extends AppCompatActivity implements
     private void init(){
         receptNev = findViewById(R.id.receptNevSelected);
         bottomNavigationView = findViewById(R.id.bottomNavView);
-        bigImage = findViewById(R.id.overviewBigImageView);
         r = (Recipe) getIntent().getSerializableExtra("SelectedRecipe");
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -156,6 +145,7 @@ public class OpenReceptActivity extends AppCompatActivity implements
         //bigImage.setVisibility(View.VISIBLE);
         Intent intent = new Intent(OpenReceptActivity.this, BigImageActivity.class);
         intent.putExtra("key",r.key);
+        intent.putExtra("mainImg", true);
         startActivity(intent);
     }
 
@@ -244,9 +234,35 @@ public class OpenReceptActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.receptFrame, new OverviewFragment());
-        fragmentTransaction.commit();
+
+        Fragment selectedFragment = null;
+        switch(bottomNavigationView.getSelectedItemId())
+        {
+            case R.id.recipeMenu_overview:
+                selectedFragment = new OverviewFragment();
+                break;
+            case R.id.recipeMenu_ingredients:
+                selectedFragment = new IngredientsFragment();
+                break;
+            case R.id.recipeMenu_preparation:
+                selectedFragment = new PreparationFragment();
+                break;
+            case R.id.recipeMenu_options:
+                selectedFragment = new RecipeOptions();
+                break;
+            case R.id.recipeMenu_camera:
+                selectedFragment = new PicturesFragment();
+                break;
+            default:
+                Toast.makeText(OpenReceptActivity.this, "Még nem",Toast.LENGTH_SHORT).show();
+                break;
+        }
+
+        if (selectedFragment != null) {
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.receptFrame, selectedFragment);
+            fragmentTransaction.commit();
+        }
     }
 
     @Override

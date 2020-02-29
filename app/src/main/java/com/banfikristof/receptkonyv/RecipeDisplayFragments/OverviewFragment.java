@@ -46,7 +46,6 @@ public class OverviewFragment extends Fragment {
             public void onClick(View v) {
                 if (mListener.recipeHasMainImg()) {
                     mListener.showBigImage();
-                    visibleImage(false);
                 }
             }
         });
@@ -78,14 +77,6 @@ public class OverviewFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    public void visibleImage(boolean visible) {
-        if (visible){
-            sv.setVisibility(View.VISIBLE);
-        } else {
-            sv.setVisibility(View.INVISIBLE);
-        }
     }
 
     /**

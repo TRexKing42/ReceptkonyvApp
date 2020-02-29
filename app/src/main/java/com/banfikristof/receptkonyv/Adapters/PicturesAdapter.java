@@ -1,6 +1,7 @@
 package com.banfikristof.receptkonyv.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Path;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.banfikristof.receptkonyv.BigImageActivity;
 import com.banfikristof.receptkonyv.OpenReceptActivity;
 import com.banfikristof.receptkonyv.R;
 import com.banfikristof.receptkonyv.Recipe;
@@ -59,9 +61,19 @@ public class PicturesAdapter extends RecyclerView.Adapter<PicturesAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(PicturesAdapter.ViewHolder holder, final int position) {
-        StorageReference pic = pictures.get(position);
+        final StorageReference pic = pictures.get(position);
         ImageView picView = holder.picIv;
-        Glide.with(holder.picIv.getContext()).load(pic).thumbnail(0.3f).into(picView);
+        Glide.with(holder.picIv.getContext()).load(pic).thumbnail(0.2f).into(picView);
+        picView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, BigImageActivity.class);
+                intent.putExtra("key",recipeKey);
+                intent.putExtra("mainImg", false);
+                intent.putExtra("picRef",pic.getName());
+                context.startActivity(intent);
+            }
+        });
 
         Button btnDelete = holder.btnPicDel;
         btnDelete.setOnClickListener(new View.OnClickListener() {

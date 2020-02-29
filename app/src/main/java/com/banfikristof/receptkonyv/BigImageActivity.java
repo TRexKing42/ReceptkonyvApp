@@ -22,7 +22,8 @@ public class BigImageActivity extends AppCompatActivity {
 
     private ImageView bigImage;
     private StorageReference img;
-    private String key;
+    private String key, imgPath;
+    private boolean mainImg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,12 +46,22 @@ public class BigImageActivity extends AppCompatActivity {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         bigImage = findViewById(R.id.bigImageIv);
         key = getIntent().getStringExtra("key");
+        mainImg = getIntent().getBooleanExtra("mainImg",true);
 
-        img = FirebaseStorage.getInstance().getReference()
-                .child(FirebaseAuth.getInstance().getUid())
-                .child(key)
-                .child("main_img.jpg");
-        Glide.with(this).load(img).into(bigImage);
+        if (mainImg) {
+            img = FirebaseStorage.getInstance().getReference()
+                    .child(FirebaseAuth.getInstance().getUid())
+                    .child(key)
+                    .child("main_img.jpg");
+            Glide.with(this).load(img).into(bigImage);
+        } else {
+            imgPath = getIntent().getStringExtra("picRef");
+            img = FirebaseStorage.getInstance().getReference()
+                    .child(FirebaseAuth.getInstance().getUid())
+                    .child(key)
+                    .child(imgPath);
+            Glide.with(this).load(img).into(bigImage);
+        }
     }
 
     @Override
