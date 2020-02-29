@@ -67,4 +67,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="welcomePageMsg">Welcome! To start using this application, please log in or register with the button below!</string>
+    <string name="continueC">Continue</string>
+    <string name="chefsRecommendation">Mai ajánlat:</string>
 </resources>

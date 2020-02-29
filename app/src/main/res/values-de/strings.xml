@@ -60,4 +60,7 @@
     <string name="newRecipeWizard2">Please add the ingredients to the list below using the text fields and the button.</string>
     <string name="get_qr_code">Get QR Code</string>
     <string name="recipePicturesText">Pictrues</string>
+    <string name="welcomePageMsg">Welcome! To start using this application, please log in or register with the button below!</string>
+    <string name="continueC">Continue</string>
+    <string name="chefsRecommendation">Mai ajánlat:</string>
 </resources>
