@@ -2,16 +2,16 @@
 <resources>
     <string-array name="tags_array">
         <!-- Az első 7 cimke rögtön ajánlva van !-->
-        <item>Glutenfree</item>
-        <item>Lactosefree</item>
-        <item>Vegetarian</item>
-        <item>Cheap</item>
-        <item>Soup</item>
-        <item>Dinner</item>
-        <item>Appetizer</item>
+        <item>Glutenfrei</item>
+        <item>Lactosefrei</item>
+        <item>Vegetarier</item>
+        <item>Billig</item>
+        <item>Suppe</item>
+        <item>Abendessen</item>
+        <item>Vorspeise</item>
         <!-- Ezek már nem lesznek rögtön láthatók, hanem csak ha rákeresnek !-->
         <item>Vegan</item>
-        <item>Breakfast</item>
-        <item>Lunch</item>
+        <item>Frühstück</item>
+        <item>Mittagessen</item>
     </string-array>
 </resources>

@@ -1,21 +1,28 @@
 package com.banfikristof.receptkonyv;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.banfikristof.receptkonyv.NewRecipeFragments.NewPhotoFragment;
 import com.banfikristof.receptkonyv.RecipeDisplayFragments.IngredientsFragment;
 import com.banfikristof.receptkonyv.RecipeDisplayFragments.OverviewFragment;
+import com.banfikristof.receptkonyv.RecipeDisplayFragments.PicturesFragment;
 import com.banfikristof.receptkonyv.RecipeDisplayFragments.PreparationFragment;
 import com.banfikristof.receptkonyv.RecipeDisplayFragments.RecipeOptions;
 import com.bumptech.glide.Glide;
@@ -23,23 +30,37 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class OpenReceptActivity extends AppCompatActivity implements
         OverviewFragment.OnFragmentInteractionListener,
         IngredientsFragment.OnFragmentInteractionListener,
         PreparationFragment.OnFragmentInteractionListener,
-        RecipeOptions.OnFragmentInteractionListener {
+        RecipeOptions.OnFragmentInteractionListener,
+        PicturesFragment.OnFragmentInteractionListener{
 
+    private static final int CAMERA_REQUEST = 4321;
     private TextView receptNev;
     private BottomNavigationView bottomNavigationView;
     private ImageView bigImage;
     private StorageReference img;
 
     private Recipe r;
+    private String picPath;
+    private Uri picUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +96,9 @@ public class OpenReceptActivity extends AppCompatActivity implements
                         break;
                     case R.id.recipeMenu_options:
                         selectedFragment = new RecipeOptions();
+                        break;
+                    case R.id.recipeMenu_camera:
+                        selectedFragment = new PicturesFragment();
                         break;
                     default:
                         Toast.makeText(OpenReceptActivity.this, "Még nem",Toast.LENGTH_SHORT).show();
@@ -130,7 +154,7 @@ public class OpenReceptActivity extends AppCompatActivity implements
     public void showBigImage() {
         //Glide.with(this).load(img).into(bigImage);
         //bigImage.setVisibility(View.VISIBLE);
-        Intent intent = new Intent(OpenReceptActivity.this,BigImageActivity.class);
+        Intent intent = new Intent(OpenReceptActivity.this, BigImageActivity.class);
         intent.putExtra("key",r.key);
         startActivity(intent);
     }
@@ -223,5 +247,109 @@ public class OpenReceptActivity extends AppCompatActivity implements
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.receptFrame, new OverviewFragment());
         fragmentTransaction.commit();
+    }
+
+    @Override
+    public void onLoadAllPictures() {
+        if (r.getPictures() != null) {
+            PicturesFragment fragment = (PicturesFragment) getSupportFragmentManager().findFragmentById(R.id.receptFrame);
+            fragment.pictures.clear();
+            for (String item : r.getPictures()) {
+                StorageReference reference = FirebaseStorage.getInstance().getReference()
+                        .child(FirebaseAuth.getInstance().getUid())
+                        .child(r.key)
+                        .child(item);
+
+                fragment.pictures.add(reference);
+            }
+        }
+    }
+
+    @Override
+    public void onTakePicture() {
+        Intent photoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        File f = null;
+        try {
+            f = File.createTempFile(new SimpleDateFormat("yyyyMMdd_HHmmss_").format(new Date()) + r.getName(),
+                    ".jpg",
+                    getExternalFilesDir(Environment.DIRECTORY_PICTURES));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (photoIntent.resolveActivity(getPackageManager()) != null) {
+            if (f != null) {
+                picPath = f.getAbsolutePath();
+                picUri = FileProvider.getUriForFile(OpenReceptActivity.this, "com.banfikristof.receptkonyv.provider", f);
+                photoIntent.putExtra(MediaStore.EXTRA_OUTPUT, picUri);
+                photoIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startActivityForResult(photoIntent, CAMERA_REQUEST);
+            } else {
+
+            }
+        }
+    }
+
+    @Override
+    public String onGetKey() {
+        return r.key;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.receptFrame, new PicturesFragment());
+        fragmentTransaction.commit();
+
+        if (resultCode == Activity.RESULT_OK){
+            if (requestCode == CAMERA_REQUEST){
+                if (picUri != null) {
+                    try {
+                        Bitmap thisImg = MediaStore.Images.Media.getBitmap(this.getContentResolver(),picUri);
+                        String picName = createPicName();
+                        uploadImg(FirebaseStorage.getInstance().getReference()
+                                .child(FirebaseAuth.getInstance().getUid())
+                                .child(r.key)
+                                .child(picName),
+                                thisImg);
+                        r.getPictures().add(picName);
+
+
+                        //Online is frissíteni
+                        FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getUid()).child(r.key).child("pictures").setValue(r.getPictures());
+                        onLoadAllPictures();
+
+                    } catch (IOException e) {
+                        Toast.makeText(OpenReceptActivity.this,"Hiba a kép betöltésénél!",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    private void uploadImg(final StorageReference reference, Bitmap image) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG,100,byteArrayOutputStream);
+        byte[] data = byteArrayOutputStream.toByteArray();
+
+        UploadTask task = reference.putBytes(data);
+        task.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(OpenReceptActivity.this, "Sikertelen képfeltöltés!",Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public String createPicName(){
+        String name = new SimpleDateFormat("yyyyMMdd_HHmmss_").format(new Date());
+        name += r.getName() + ".jpg";
+        return name;
+    }
+
+    public void removeDeletedPic(int i){
+        r.getPictures().remove(i);
     }
 }

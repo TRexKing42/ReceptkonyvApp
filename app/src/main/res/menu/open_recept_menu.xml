@@ -15,8 +15,14 @@
         android:title="@string/recipePreparationText" />
 
     <item
+        android:id="@+id/recipeMenu_camera"
+        android:icon="@drawable/ic_camera_icon"
+        android:title="@string/recipePicturesText" />
+
+    <item
         android:id="@+id/recipeMenu_options"
         android:icon="@drawable/ic_settings_icon"
         android:title="@string/recipeOptionsText" />
+
 
 </menu>

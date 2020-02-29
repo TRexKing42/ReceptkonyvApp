@@ -12,15 +12,11 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -34,8 +30,6 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -48,7 +42,6 @@ import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import com.skyhope.materialtagview.model.TagModel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -107,7 +100,7 @@ public class UjReceptActivity extends AppCompatActivity implements
         changeToCorrectFrame();
 
         if (currentFrame == 0){ //Varázsló indítása
-            currentFrame = 4;
+            //currentFrame = 4;
             changeToCorrectFrame();
         }
     }
@@ -248,6 +241,7 @@ public class UjReceptActivity extends AppCompatActivity implements
     @Override
     public void recipeDone() {
         List<String> images = new ArrayList<>();
+        recipeToSave.setPictures(images); //Egyéb képeknek
         if (!editmode) {
             pushId = FirebaseDatabase.getInstance().getReference().child("recipes")
                     .child(FirebaseAuth.getInstance().getUid()).push().getKey();
@@ -258,8 +252,6 @@ public class UjReceptActivity extends AppCompatActivity implements
                     .child(FirebaseAuth.getInstance().getUid())
                     .child(pushId)
                     .child("main_img.jpg"));
-            images.add("main_img.jpg");
-            recipeToSave.setPictures(images);
             recipeToSave.setHasMainImg(true);
 
             //Update images list for easy delete

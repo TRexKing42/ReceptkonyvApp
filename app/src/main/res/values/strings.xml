@@ -3,7 +3,7 @@
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
     <string name="welcomeMsg">Welcome!</string>
-    <string name="loginMenuText">Login</string>
+    <string name="loginMenuText">Switch Account</string>
     <string name="homepageMenuText">Homepage</string>
     <string name="recipesMenuText">Recipes</string>
     <string name="shoppinglistsMenuText">Shopping Lists</string>
@@ -63,4 +63,8 @@
     <string name="newRecipeWizard4">You can select tags to categorise your recipes and find them easier. Tap on your desired tags to add them or write in your own tag.</string>
     <string name="newRecipeWizard5">You can take a photo of this meal if you want using the button below.</string>
     <string name="get_qr_code">Get QR Code</string>
+    <string name="recipePicturesText">Pictrues</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

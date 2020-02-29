@@ -21,7 +21,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Hozzávalók"
+                android:text="@string/recipeIngredientsText"
                 android:textSize="35dp"
                 android:textAlignment="center" />
 

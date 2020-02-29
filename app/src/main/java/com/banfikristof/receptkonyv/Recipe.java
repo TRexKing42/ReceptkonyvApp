@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.google.firebase.database.Exclude;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -143,6 +144,9 @@ public class Recipe implements Serializable {
     }
 
     public List<String> getPictures() {
+        if (pictures == null) {
+            pictures = new ArrayList<>(); //Ha nincs akkor mostmár van
+        }
         return pictures;
     }
 

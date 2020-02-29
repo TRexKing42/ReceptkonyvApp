@@ -59,4 +59,5 @@
     <string name="back">Back</string>
     <string name="newRecipeWizard2">Please add the ingredients to the list below using the text fields and the button.</string>
     <string name="get_qr_code">Get QR Code</string>
+    <string name="recipePicturesText">Pictrues</string>
 </resources>

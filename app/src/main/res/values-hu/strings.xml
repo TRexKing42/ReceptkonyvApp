@@ -3,7 +3,7 @@
     <string name="welcomeMsg">Üdv!</string>
     <string name="drawer_close">Bezárás</string>
     <string name="drawer_open">Kinyitás</string>
-    <string name="loginMenuText">Bejelentkezés</string>
+    <string name="loginMenuText">Fiókváltás</string>
     <string name="homepageMenuText">Kezdőlap</string>
     <string name="recipesMenuText">Receptek</string>
     <string name="shoppinglistsMenuText">Bevásárlólisták</string>
@@ -63,4 +63,5 @@
     <string name="newRecipeWizard4">Kiválaszthatsz vagy megadhatsz címkéket melyek segítségéel könnyebben kategorizálni tudod receptjeid.</string>
     <string name="newRecipeWizard5">A lenti gomb használatával készíthetsz képet vagy választhatsz egyet az elkészült ételről.</string>
     <string name="get_qr_code">QR Kód generálása</string>
+    <string name="recipePicturesText">Képek</string>
 </resources>

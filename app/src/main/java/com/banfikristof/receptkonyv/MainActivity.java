@@ -103,19 +103,13 @@ public class MainActivity extends AppCompatActivity implements
 
     private void userLoginChanged() {
         MenuItem loginMenu = nv.getMenu().findItem(R.id.menu_login);
-        MenuItem logoutMenu = nv.getMenu().findItem(R.id.menu_logout);
-        loginMenu.setEnabled(false);
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            loginMenu.setEnabled(true);
-            logoutMenu.setEnabled(false);
 
             headerName.setText(getResources().getString(R.string.plsLogin));
             headerEmail.setText("");
 
             headerPicture.setImageDrawable(null);
         } else {
-            loginMenu.setEnabled(false);
-            logoutMenu.setEnabled(true);
 
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             headerName.setText(user.getDisplayName());
@@ -158,12 +152,11 @@ public class MainActivity extends AppCompatActivity implements
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
 
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 userLoginChanged();
 
 
                 MenuItem loginMenu = nv.getMenu().findItem(R.id.menu_login);
-                loginMenu.setEnabled(false);
 
                 // Save user data
                 User usr = new User();
@@ -172,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements
                 db.child(user.getUid()).setValue(usr).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(MainActivity.this,"Sikeres regisztráció!",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this,"Üdv, " + user.getDisplayName(),Toast.LENGTH_SHORT).show();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -181,10 +174,7 @@ public class MainActivity extends AppCompatActivity implements
                     }
                 });
             } else {
-                // Sign in failed. If response is null the user canceled the
-                // sign-in flow using the back button. Otherwise check
-                // response.getError().getErrorCode() and handle the error.
-                // ...
+                // Sign in failed.
                 Toast.makeText(MainActivity.this,"Sikertelen!",Toast.LENGTH_SHORT).show();
             }
         }
@@ -208,6 +198,7 @@ public class MainActivity extends AppCompatActivity implements
                 MainActivity.favRecipes = true;
                 break;
             case R.id.menu_login:
+                FirebaseAuth.getInstance().signOut();
                 firebaseSignInIntent();
                 userLoginChanged();
                 break;
@@ -216,10 +207,6 @@ public class MainActivity extends AppCompatActivity implements
                 break;
             case R.id.menu_shoppinglists:
                 selectedFragment = new ShoppingFragment();
-                break;
-            case R.id.menu_logout:
-                FirebaseAuth.getInstance().signOut();
-                userLoginChanged();
                 break;
             default:
                 Toast.makeText(MainActivity.this, "Még nem",Toast.LENGTH_SHORT).show();

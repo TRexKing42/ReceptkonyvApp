@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.banfikristof.receptkonyv.R;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
