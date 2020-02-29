@@ -15,7 +15,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,10 +30,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -57,7 +54,7 @@ public class OpenReceptActivity extends AppCompatActivity implements
     private BottomNavigationView bottomNavigationView;
     private StorageReference img;
 
-    private Recipe r;
+    public Recipe r;
     private String picPath;
     private Uri picUri;
 
@@ -133,7 +130,7 @@ public class OpenReceptActivity extends AppCompatActivity implements
         desc.setText(r.getDescription());
         receptTags.setText(r.tagsToString());
         if (!r.isHasMainImg()){
-            Glide.with(this).load(FirebaseStorage.getInstance().getReference().child("no_picture.png")).into(imageView);
+            Glide.with(this).load(FirebaseStorage.getInstance().getReference().child("no_picture.png")).centerCrop().into(imageView);
         } else {
             Glide.with(this).load(img).centerCrop().into(imageView);
         }
@@ -217,8 +214,14 @@ public class OpenReceptActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onFavorite() {
-        FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getUid()).child(r.key).child("favourite").setValue(true);
+    public void onFavorite(Button favourite) {
+        FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getUid()).child(r.key).child("favourite").setValue(!r.isFavourite());
+        r.setFavourite(!r.isFavourite());
+        if (r.isFavourite()) {
+            favourite.setText(getResources().getText(R.string.unfavourite));
+        } else {
+            favourite.setText(getResources().getText(R.string.add_to_favorites));
+        }
     }
 
     @Override

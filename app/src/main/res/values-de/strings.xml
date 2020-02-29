@@ -63,4 +63,5 @@
     <string name="welcomePageMsg">Welcome! To start using this application, please log in or register with the button below!</string>
     <string name="continueC">Continue</string>
     <string name="chefsRecommendation">Mai ajánlat:</string>
+    <string name="unfavourite">Remove From Favourites</string>
 </resources>

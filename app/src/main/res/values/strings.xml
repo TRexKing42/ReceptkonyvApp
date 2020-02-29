@@ -3,6 +3,7 @@
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
     <string name="welcomeMsg">Welcome!</string>
+    <string name="welcomeMsgLong">Üdv!</string>
     <string name="loginMenuText">Switch Account</string>
     <string name="homepageMenuText">Homepage</string>
     <string name="recipesMenuText">Recipes</string>
@@ -70,4 +71,5 @@
     <string name="welcomePageMsg">Welcome! To start using this application, please log in or register with the button below!</string>
     <string name="continueC">Continue</string>
     <string name="chefsRecommendation">Mai ajánlat:</string>
+    <string name="unfavourite">Remove From Favourites</string>
 </resources>

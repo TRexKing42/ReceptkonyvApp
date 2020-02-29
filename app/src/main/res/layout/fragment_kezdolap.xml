@@ -6,76 +6,113 @@
     tools:context=".MainFragments.KezdolapFragment"
     >
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:background="@drawable/gradient_bg_light"
-        android:padding="10dp">
-
-        <TextView
+        android:layout_height="match_parent">
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/welcomeMsg"
-            android:id="@+id/homepageWelcomeText"
-            android:textAlignment="center"
-            android:textSize="30sp"/>
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:background="@drawable/gradient_bg_light"
+            android:padding="10dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Mai ajánlat:"
-            android:textSize="30sp"
-            android:textStyle="bold"
-            android:textAlignment="center"
-            android:visibility="invisible"/>
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:id="@+id/dailyRecommendation"
-            android:visibility="invisible">
-            <LinearLayout
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:layout_gravity="center_horizontal">
+                android:layout_height="wrap_content"
+                android:text="@string/welcomeMsg"
+                android:id="@+id/homepageWelcomeText"
+                android:textAlignment="center"
+                android:textSize="30sp"/>
 
-                <ImageView
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mai ajánlat:"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:visibility="invisible"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:id="@+id/dailyRecommendation"
+                android:visibility="invisible"
+
+                >
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:id="@+id/recommendationImg"/>
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_gravity="center_horizontal">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:background="@color/colorPrimaryDark" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Recept Cím"
-                    android:textSize="25sp"
-                    android:textStyle="bold"
-                    android:paddingLeft="5dp"
-                    android:id="@+id/recommendationTitle"/>
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:id="@+id/recommendationImg"/>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Tökéletes étel akkor ha éhesek vagyunk. Más alkalomra nem ajánljuk."
-                    android:textSize="20sp"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp"
-                    android:id="@+id/recommendationDesc"/>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@color/colorPrimaryDark" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Recept Cím"
+                        android:textSize="25sp"
+                        android:textStyle="bold"
+                        android:paddingLeft="5dp"
+                        android:id="@+id/recommendationTitle"/>
 
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Tökéletes étel akkor ha éhesek vagyunk. Más alkalomra nem ajánljuk."
+                        android:textSize="20sp"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:id="@+id/recommendationDesc"/>
 
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ingredientsC"
+                        android:textStyle="bold|italic"
+                        android:textSize="20sp"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"/>
 
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="1 db valami\n1 db másik  valami"
+                        android:textStyle="italic"
+                        android:textSize="20sp"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:id="@+id/recommendationIng" />
 
-        </com.google.android.material.card.MaterialCardView>
-    </LinearLayout>
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:text="@string/add_to_favorites"
+                        android:layout_margin="3dp"
+                        android:id="@+id/recommendedToFavBtn" />
 
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Új ajánlat"
+                android:id="@+id/newRecommendationBtn"
+                android:visibility="invisible"/>
+        </LinearLayout>
+
+    </ScrollView>
 
 </FrameLayout>

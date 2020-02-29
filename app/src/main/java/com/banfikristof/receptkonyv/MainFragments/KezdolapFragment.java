@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,7 +40,8 @@ public class KezdolapFragment extends Fragment {
     private MaterialCardView recRecipe;
     private List<Recipe> listOfRecipes;
     private ImageView recImg;
-    private TextView recTitle, recDesc;
+    private TextView recTitle, recDesc, recIng;
+    private Button favorite, newRecommendation;
 
     Recipe recipe;
 
@@ -56,12 +58,37 @@ public class KezdolapFragment extends Fragment {
 
         initFragment(v);
 
+        newRecommendation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recRecipe.setVisibility(View.INVISIBLE);
+                newRecommendation.setVisibility(View.INVISIBLE);
+                listOfRecipes = new ArrayList<>();
+                fillRecipesList();
+            }
+        });
+
         recRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), OpenReceptActivity.class);
                 intent.putExtra("SelectedRecipe",recipe);
                 startActivity(intent);
+            }
+        });
+
+        favorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!recipe.isFavourite()) {
+                    FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getUid()).child(recipe.key).child("favourite").setValue(true);
+                    favorite.setText(getResources().getText(R.string.unfavourite));
+                    recipe.setFavourite(true);
+                } else {
+                    FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getUid()).child(recipe.key).child("favourite").setValue(false);
+                    favorite.setText(getResources().getText(R.string.add_to_favorites));
+                    recipe.setFavourite(false);
+                }
             }
         });
 
@@ -74,6 +101,9 @@ public class KezdolapFragment extends Fragment {
         recImg = v.findViewById(R.id.recommendationImg);
         recTitle = v.findViewById(R.id.recommendationTitle);
         recDesc = v.findViewById(R.id.recommendationDesc);
+        recIng = v.findViewById(R.id.recommendationIng);
+        favorite = v.findViewById(R.id.recommendedToFavBtn);
+        newRecommendation = v.findViewById(R.id.newRecommendationBtn);
 
         listOfRecipes = new ArrayList<>();
         fillRecipesList();
@@ -98,6 +128,8 @@ public class KezdolapFragment extends Fragment {
                 }
                 if (listOfRecipes.size() > 0){
                     recipeToRecommended(listOfRecipes.get(new Random().nextInt(listOfRecipes.size())));
+                } else {
+                    failedToRecommend();
                 }
             }
 
@@ -108,20 +140,29 @@ public class KezdolapFragment extends Fragment {
         });
     }
 
+    public void failedToRecommend(){
+        welcomeText.setText(getResources().getString(R.string.welcomeMsgLong));
+    }
+
     private void recipeToRecommended(Recipe r){
         recipe = r;
         recTitle.setText(r.getName());
         recDesc.setText(r.getDescription());
+        recIng.setText(r.ingredientsToString());
+        if (r.isFavourite()){
+            favorite.setText(getResources().getText(R.string.unfavourite));
+        }
         if (!r.isHasMainImg()){
-            Glide.with(this).load(FirebaseStorage.getInstance().getReference().child("no_picture.png")).into(recImg);
+            Glide.with(this).load(FirebaseStorage.getInstance().getReference().child("no_picture.png")).centerCrop().into(recImg);
         } else {
             StorageReference img = FirebaseStorage.getInstance().getReference()
                     .child(FirebaseAuth.getInstance().getUid())
                     .child(r.key)
                     .child("main_img.jpg");
-            Glide.with(this).load(img).centerCrop().into(recImg);
+            Glide.with(this).load(img).thumbnail(0.3f).centerCrop().into(recImg);
         }
         recRecipe.setVisibility(View.VISIBLE);
+        newRecommendation.setVisibility(View.VISIBLE);
         welcomeText.setText(getResources().getString(R.string.chefsRecommendation));
     }
 
@@ -129,6 +170,7 @@ public class KezdolapFragment extends Fragment {
     public void onResume() {
         super.onResume();
         recRecipe.setVisibility(View.INVISIBLE);
+        newRecommendation.setVisibility(View.INVISIBLE);
         listOfRecipes = new ArrayList<>();
         fillRecipesList();
     }

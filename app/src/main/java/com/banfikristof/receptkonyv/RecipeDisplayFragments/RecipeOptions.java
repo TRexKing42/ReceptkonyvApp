@@ -1,9 +1,7 @@
 package com.banfikristof.receptkonyv.RecipeDisplayFragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -13,16 +11,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
+import com.banfikristof.receptkonyv.OpenReceptActivity;
 import com.banfikristof.receptkonyv.R;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
-
-import org.json.JSONObject;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -82,7 +78,12 @@ public class RecipeOptions extends Fragment {
         favourite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onFavorite();
+                if (((OpenReceptActivity)getActivity()).r.isFavourite()) {
+                    mListener.onFavorite(favourite);
+                } else {
+                    mListener.onFavorite(favourite);
+                }
+
             }
         });
 
@@ -95,6 +96,12 @@ public class RecipeOptions extends Fragment {
         update = v.findViewById(R.id.editButtonSelectedRecept);
         favourite = v.findViewById(R.id.favButtonSelectedRecept);
         qrBtn = v.findViewById(R.id.qrButtonSelectedRecept);
+
+        if (((OpenReceptActivity)getActivity()).r.isFavourite()) {
+            favourite.setText(getResources().getText(R.string.unfavourite));
+        } else {
+            favourite.setText(getResources().getText(R.string.add_to_favorites));
+        }
 
         qrKod = v.findViewById(R.id.generatedQRcode);
     }
@@ -144,7 +151,7 @@ public class RecipeOptions extends Fragment {
         void onShare();
         void onDelete();
         void onEdit();
-        void onFavorite();
+        void onFavorite(Button favourite);
         String onGetJSON();
     }
 }

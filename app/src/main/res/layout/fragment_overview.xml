@@ -26,6 +26,11 @@
                 android:src="@drawable/ic_back_icon"
                 android:id="@+id/recipeImage"/>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/colorPrimaryDark" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

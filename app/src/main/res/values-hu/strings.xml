@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="welcomeMsg">Üdv!</string>
+    <string name="welcomeMsgLong">Üdv!</string>
     <string name="drawer_close">Bezárás</string>
     <string name="drawer_open">Kinyitás</string>
     <string name="loginMenuText">Fiókváltás</string>
@@ -67,4 +68,5 @@
     <string name="welcomePageMsg">Üdv! Az alkalmazás használatához regisztrálj vagy jelentkezz be a lenti gomb használatával!</string>
     <string name="continueC">Folytatás</string>
     <string name="chefsRecommendation">A séf ajánlata:</string>
+    <string name="unfavourite">Remove From Favourites</string>
 </resources>
