@@ -46,7 +46,7 @@ public class UjListaActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (searchName.getText().toString().isEmpty()){
-                    Toast.makeText(UjListaActivity.this,"Kérlek írj be egy keresendő nevet.",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(UjListaActivity.this,getResources().getText(R.string.search_name),Toast.LENGTH_SHORT).show();
                     return;
                 } else {
                     showRecipes(searchName.getText().toString());
@@ -80,7 +80,7 @@ public class UjListaActivity extends AppCompatActivity {
                             }
                             if (!sameUnit) {
                                 // Nem új de nem ugyanaz a mértékegység
-                                newIng = true; //TODO: Mértékegység átváltás
+                                newIng = true;
                             }
                             break;
                         }
@@ -98,7 +98,7 @@ public class UjListaActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (listName.getText().toString().isEmpty()){
-                    Toast.makeText(UjListaActivity.this,"Kérlek írj be egy nevet a listának.",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(UjListaActivity.this,getResources().getText(R.string.name_list_pls),Toast.LENGTH_SHORT).show();
                     return;
                 } else {
                     ShoppingList s = new ShoppingList();
@@ -109,13 +109,13 @@ public class UjListaActivity extends AppCompatActivity {
                     db.child("shoppinglists").child(FirebaseAuth.getInstance().getUid()).push().setValue(s).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            Toast.makeText(UjListaActivity.this, "Sikeres mentés!",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(UjListaActivity.this, getResources().getText(R.string.save_good),Toast.LENGTH_SHORT).show();
                             finish();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(UjListaActivity.this, "Sikertelen mentés!",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(UjListaActivity.this, getResources().getText(R.string.save_bad),Toast.LENGTH_SHORT).show();
                         }
                     });
                 }

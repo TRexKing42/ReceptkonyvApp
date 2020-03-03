@@ -61,7 +61,7 @@ public class PicturesAdapter extends RecyclerView.Adapter<PicturesAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(PicturesAdapter.ViewHolder holder, final int position) {
-        final StorageReference pic = pictures.get(position);
+        final StorageReference pic = pictures.get(holder.getAdapterPosition());
         ImageView picView = holder.picIv;
         Glide.with(holder.picIv.getContext()).load(pic).thumbnail(0.2f).into(picView);
         picView.setOnClickListener(new View.OnClickListener() {

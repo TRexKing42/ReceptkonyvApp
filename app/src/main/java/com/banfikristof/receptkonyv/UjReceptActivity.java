@@ -143,7 +143,7 @@ public class UjReceptActivity extends AppCompatActivity implements
         task.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(UjReceptActivity.this, "Sikertelen képfeltöltés!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(UjReceptActivity.this, getResources().getText(R.string.pic_unsuccesful),Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -151,7 +151,7 @@ public class UjReceptActivity extends AppCompatActivity implements
     @Override
     public void basicsDone(String name, String desc) {
         if (name.isEmpty() || desc.isEmpty()) {
-            Toast.makeText(this,"A név és a leírás nem lehet üres!",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,getResources().getText(R.string.name_and_desc_empty),Toast.LENGTH_SHORT).show();
             return;
         }
         recipeToSave.setName(name);
@@ -165,7 +165,7 @@ public class UjReceptActivity extends AppCompatActivity implements
     public void startQrImport() {
         IntentIntegrator integrator = new IntentIntegrator(UjReceptActivity.this);
         integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
-        integrator.setPrompt("QR Code Scannelés");
+        integrator.setPrompt(getResources().getText(R.string.qr_prompr).toString());
         integrator.setCameraId(0);
         integrator.setBeepEnabled(false);
         integrator.setBarcodeImageEnabled(false);
@@ -175,7 +175,7 @@ public class UjReceptActivity extends AppCompatActivity implements
     @Override
     public void ingDone(List<Map<String, String>> ingredients) {
         if (ingredients.size() < 1) {
-            Toast.makeText(this,"Szükséges legalább egy hozzávaló!",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,getResources().getText(R.string.empty_ing),Toast.LENGTH_SHORT).show();
             return;
         }
         recipeToSave.setIngredients(ingredients);
@@ -194,7 +194,7 @@ public class UjReceptActivity extends AppCompatActivity implements
     @Override
     public void prepDone(List<String> prep) {
         if (prep.size() < 1) {
-            Toast.makeText(this,"Szükséges legalább egy elkészítési lépés!",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,getResources().getText(R.string.empty_prep),Toast.LENGTH_SHORT).show();
             return;
         }
         recipeToSave.setPreparation(prep);
@@ -265,13 +265,13 @@ public class UjReceptActivity extends AppCompatActivity implements
         db.child("recipes").child(FirebaseAuth.getInstance().getUid()).child(pushId).setValue(recipeToSave).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                Toast.makeText(UjReceptActivity.this, "Sikeres mentés!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(UjReceptActivity.this, getResources().getText(R.string.save_good),Toast.LENGTH_SHORT).show();
                 finish();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(UjReceptActivity.this, "Sikertelen mentés!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(UjReceptActivity.this, getResources().getText(R.string.save_bad),Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -339,7 +339,7 @@ public class UjReceptActivity extends AppCompatActivity implements
                         try {
                             img = MediaStore.Images.Media.getBitmap(this.getContentResolver(),picUri);
                         } catch (IOException e) {
-                            Toast.makeText(UjReceptActivity.this,"Hiba a kép betöltésénél!",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(UjReceptActivity.this,getResources().getText(R.string.img_camera_error),Toast.LENGTH_SHORT).show();
                             return;
                         }
                     }

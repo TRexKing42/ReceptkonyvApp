@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.FirebaseUiException;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -87,24 +88,14 @@ public class WelcomeActivity extends AppCompatActivity {
                 User usr = new User();
                 usr.displayName = user.getDisplayName();
                 DatabaseReference db = FirebaseDatabase.getInstance().getReference("users");
-                db.child(user.getUid()).setValue(usr).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(WelcomeActivity.this,"Sikeres regisztráció!",Toast.LENGTH_SHORT).show();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(WelcomeActivity.this,"Sikertelen regisztráció!",Toast.LENGTH_SHORT).show();
-                    }
-                });
+                db.child(user.getUid()).setValue(usr);
 
                 Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
             } else {
                 // Sign in failed.
-                Toast.makeText(WelcomeActivity.this,"Sikertelen bejelentkezés!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(WelcomeActivity.this,getResources().getText(R.string.login_unsuccessful),Toast.LENGTH_SHORT).show();
             }
         }
     }

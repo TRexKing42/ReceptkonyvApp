@@ -118,7 +118,7 @@ public class NewIngFragment extends Fragment {
         rvIngredients = v.findViewById(R.id.ingredientsListRv);
         ingredients = new ArrayList<>();
         loadIngredients();
-        rvIngredients.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+        rvIngredients.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
     private void loadIngredients() {

@@ -101,7 +101,7 @@ public class NewPhotoFragment extends Fragment {
                     mListener.takePicture();
                     loadImage();
                 } else {
-                    Toast.makeText(getActivity(),"You can't use images if you don't give permission.",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(),getResources().getText(R.string.img_perm_warning),Toast.LENGTH_LONG).show();
                 }
                 break;
         }

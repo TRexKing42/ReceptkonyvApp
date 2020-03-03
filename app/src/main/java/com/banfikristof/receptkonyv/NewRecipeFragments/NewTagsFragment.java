@@ -85,7 +85,7 @@ public class NewTagsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (selectedTagList.size() < 1){
-                    selectedTagList.add("Nincs címke");
+                    selectedTagList.add(getResources().getText(R.string.no_tag).toString());
                 }
                 mListener.tagsDone(selectedTagList);
             }

@@ -43,12 +43,12 @@ public class OpenListActivity extends AppCompatActivity {
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                Toast.makeText(OpenListActivity.this, "Sikeres törlés",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(OpenListActivity.this, getResources().getText(R.string.del_good),Toast.LENGTH_SHORT).show();
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(OpenListActivity.this, "Sikertelen törlés",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(OpenListActivity.this, getResources().getText(R.string.del_bad),Toast.LENGTH_SHORT).show();
                     }
                 });
                 finish();

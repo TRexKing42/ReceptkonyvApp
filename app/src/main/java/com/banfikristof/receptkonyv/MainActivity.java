@@ -165,17 +165,12 @@ public class MainActivity extends AppCompatActivity implements
                 db.child(user.getUid()).setValue(usr).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(MainActivity.this,"Üdv, " + user.getDisplayName(),Toast.LENGTH_SHORT).show();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(MainActivity.this,"Sikertelen regisztráció!",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this,getResources().getText(R.string.welcome_main) + user.getDisplayName(),Toast.LENGTH_SHORT).show();
                     }
                 });
             } else {
                 // Sign in failed.
-                Toast.makeText(MainActivity.this,"Sikertelen!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this,getResources().getText(R.string.just_unsuccesful),Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -209,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements
                 selectedFragment = new ShoppingFragment();
                 break;
             default:
-                Toast.makeText(MainActivity.this, "Még nem",Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getResources().getText(R.string.error_notyet),Toast.LENGTH_SHORT).show();
                 break;
         }
 

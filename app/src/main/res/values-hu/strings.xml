@@ -69,4 +69,23 @@
     <string name="continueC">Folytatás</string>
     <string name="chefsRecommendation">A séf ajánlata:</string>
     <string name="unfavourite">Remove From Favourites</string>
+    <string name="login_unsuccessful">Sikertelen!</string>
+    <string name="pic_unsuccesful">Image upload unsuccesful!</string>
+    <string name="name_and_desc_empty">Name and description can\'t be empty.</string>
+    <string name="qr_prompr">Please look at the QR Code!</string>
+    <string name="empty_ing">You need at least one ingredient!</string>
+    <string name="empty_prep">You need at least one step.</string>
+    <string name="save_good">Save successful!</string>
+    <string name="save_bad">Save unsuccesful!</string>
+    <string name="img_camera_error">Photo unsuccesful!</string>
+    <string name="search_name">Search by name...</string>
+    <string name="name_list_pls">Please name your list!</string>
+    <string name="error_notyet">Not Implemented.</string>
+    <string name="del_good">Delete successful!</string>
+    <string name="del_bad">Delete unsuccesful!</string>
+    <string name="img_load_error">Error loading the image!</string>
+    <string name="welcome_main">Welcome,</string>
+    <string name="just_unsuccesful">Unsuccesful</string>
+    <string name="no_tag">No tag</string>
+    <string name="img_perm_warning">You can\'t use images if you don\'t give permission.</string>
 </resources>

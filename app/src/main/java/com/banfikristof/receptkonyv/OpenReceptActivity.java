@@ -88,7 +88,7 @@ public class OpenReceptActivity extends AppCompatActivity implements
                         selectedFragment = new PicturesFragment();
                         break;
                     default:
-                        Toast.makeText(OpenReceptActivity.this, "Még nem",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(OpenReceptActivity.this, getResources().getText(R.string.error_notyet),Toast.LENGTH_SHORT).show();
                         break;
                 }
 
@@ -176,7 +176,7 @@ public class OpenReceptActivity extends AppCompatActivity implements
                         r.ingredientsToString() +
                         "\n" + getResources().getString(R.string.recipePreparationText) + "\n" +
                         r.getPreparation());
-        startActivity(Intent.createChooser(intent,"Megosztás"));
+        startActivity(Intent.createChooser(intent,getResources().getText(R.string.share)));
     }
 
     @Override
@@ -194,12 +194,12 @@ public class OpenReceptActivity extends AppCompatActivity implements
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(OpenReceptActivity.this, "Sikeres törlés",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(OpenReceptActivity.this, getResources().getText(R.string.del_good),Toast.LENGTH_SHORT).show();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(OpenReceptActivity.this, "Sikertelen törlés",Toast.LENGTH_SHORT).show();
+                Toast.makeText(OpenReceptActivity.this, getResources().getText(R.string.del_bad),Toast.LENGTH_SHORT).show();
             }
         });
         finish();
@@ -257,7 +257,7 @@ public class OpenReceptActivity extends AppCompatActivity implements
                 selectedFragment = new PicturesFragment();
                 break;
             default:
-                Toast.makeText(OpenReceptActivity.this, "Még nem",Toast.LENGTH_SHORT).show();
+                Toast.makeText(OpenReceptActivity.this, getResources().getText(R.string.error_notyet),Toast.LENGTH_SHORT).show();
                 break;
         }
 
@@ -340,7 +340,7 @@ public class OpenReceptActivity extends AppCompatActivity implements
                         onLoadAllPictures();
 
                     } catch (IOException e) {
-                        Toast.makeText(OpenReceptActivity.this,"Hiba a kép betöltésénél!",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(OpenReceptActivity.this,getResources().getText(R.string.img_load_error),Toast.LENGTH_SHORT).show();
                         return;
                     }
                 }
@@ -357,7 +357,7 @@ public class OpenReceptActivity extends AppCompatActivity implements
         task.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(OpenReceptActivity.this, "Sikertelen képfeltöltés!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(OpenReceptActivity.this, getResources().getText(R.string.pic_unsuccesful),Toast.LENGTH_SHORT).show();
             }
         });
     }

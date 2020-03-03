@@ -7,9 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -108,7 +106,7 @@ public class ReceptekFragment extends Fragment {
                         listOfRecipes.add(r);
                     }
                 }
-                ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1,listOfRecipes);
+                ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1,listOfRecipes);
                 lv.setAdapter(arrayAdapter);
             }
 
@@ -181,37 +179,5 @@ public class ReceptekFragment extends Fragment {
     public void onResume() {
         super.onResume();
         recipesToList();
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        menu.setHeaderTitle("Egyéb Opciók");
-        menu.add(0,v.getId(),0,"Megnyitás");
-        menu.add(0,v.getId(),0,"Törlés");
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info;
-        Recipe s;
-        switch (item.getTitle().toString()){
-            case "Megnyitás":
-                info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-                s = (Recipe) lv.getItemAtPosition(info.position);
-                Intent intent = new Intent(getActivity(),OpenReceptActivity.class);
-                intent.putExtra("SelectedRecipe",s);
-                startActivity(intent);
-                break;
-            case "Törlés":
-                info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-                s = (Recipe) lv.getItemAtPosition(info.position);
-                listener.onRecipeDelete(s);
-                recipesToList();
-                break;
-            default:
-                return false;
-        }
-        return true;
     }
 }
