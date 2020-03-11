@@ -325,7 +325,7 @@ public class UjReceptActivity extends AppCompatActivity implements
                         Uri imgUri = data.getData();
 
                         img = MediaStore.Images.Media.getBitmap(this.getContentResolver(),imgUri);
-                        img = Bitmap.createScaledBitmap(img,500,500,true);
+                        //img = Bitmap.createScaledBitmap(img,500,500,true);
 
                         NewPhotoFragment fragment = (NewPhotoFragment) getSupportFragmentManager().findFragmentById(R.id.NewRecipeFrame);
                         fragment.loadImage();
@@ -351,8 +351,14 @@ public class UjReceptActivity extends AppCompatActivity implements
                     if (result != null){
                         if (result.getContents() != null) {
                             Gson gson = new Gson();
-                            RecipeShare share = gson.fromJson(result.getContents(),RecipeShare.class);
-                            saveFromQR(share);
+                            try {
+                                RecipeShare share = gson.fromJson(result.getContents(),RecipeShare.class);
+                                saveFromQR(share);
+                            } catch (Exception ee){
+                                ee.printStackTrace();
+                                Toast.makeText(UjReceptActivity.this,getResources().getText(R.string.qr_error),Toast.LENGTH_SHORT).show();
+                            }
+
                         }
                     }
                     break;

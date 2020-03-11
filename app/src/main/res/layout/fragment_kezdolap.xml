@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainFragments.KezdolapFragment"
+    android:background="@drawable/gradient_bg_upside_down"
     >
 
     <ScrollView
@@ -11,10 +12,9 @@
         android:layout_height="match_parent">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_horizontal"
-            android:background="@drawable/gradient_bg_light"
             android:padding="10dp">
 
             <TextView
@@ -23,7 +23,9 @@
                 android:text="@string/welcomeMsg"
                 android:id="@+id/homepageWelcomeText"
                 android:textAlignment="center"
-                android:textSize="30sp"/>
+                android:textSize="35sp"
+                android:textColor="@color/white"
+                android:textStyle="bold"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -102,15 +104,18 @@
                         android:layout_margin="3dp"
                         android:id="@+id/recommendedToFavBtn" />
 
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/new_recommendation"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:id="@+id/newRecommendationBtn"
+                        android:visibility="invisible"/>
+
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Új ajánlat"
-                android:id="@+id/newRecommendationBtn"
-                android:visibility="invisible"/>
+
         </LinearLayout>
 
     </ScrollView>

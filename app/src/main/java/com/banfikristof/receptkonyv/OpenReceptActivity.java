@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -169,13 +170,13 @@ public class OpenReceptActivity extends AppCompatActivity implements
     public void onShare() {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_SUBJECT,r.getName() + " recept");
+        intent.putExtra(Intent.EXTRA_SUBJECT,r.getName());
         intent.putExtra(Intent.EXTRA_TEXT,
                 r.getDescription() +
                         "\n"+ getResources().getString(R.string.ingredientsC) + "\n" +
                         r.ingredientsToString() +
                         "\n" + getResources().getString(R.string.recipePreparationText) + "\n" +
-                        r.getPreparation());
+                        r.preparationAsString());
         startActivity(Intent.createChooser(intent,getResources().getText(R.string.share)));
     }
 
@@ -274,12 +275,14 @@ public class OpenReceptActivity extends AppCompatActivity implements
             PicturesFragment fragment = (PicturesFragment) getSupportFragmentManager().findFragmentById(R.id.receptFrame);
             fragment.pictures.clear();
             for (String item : r.getPictures()) {
-                StorageReference reference = FirebaseStorage.getInstance().getReference()
-                        .child(FirebaseAuth.getInstance().getUid())
-                        .child(r.key)
-                        .child(item);
+                if (item != null) {
+                    StorageReference reference = FirebaseStorage.getInstance().getReference()
+                            .child(FirebaseAuth.getInstance().getUid())
+                            .child(r.key)
+                            .child(item);
 
-                fragment.pictures.add(reference);
+                    fragment.pictures.add(reference);
+                }
             }
         }
     }

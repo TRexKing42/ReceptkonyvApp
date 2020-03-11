@@ -153,13 +153,13 @@ public class KezdolapFragment extends Fragment {
             favorite.setText(getResources().getText(R.string.unfavourite));
         }
         if (!r.isHasMainImg()){
-            Glide.with(this).load(FirebaseStorage.getInstance().getReference().child("no_picture.png")).centerCrop().into(recImg);
+            Glide.with(getActivity()).load(FirebaseStorage.getInstance().getReference().child("no_picture.png")).centerCrop().into(recImg);
         } else {
             StorageReference img = FirebaseStorage.getInstance().getReference()
                     .child(FirebaseAuth.getInstance().getUid())
                     .child(r.key)
                     .child("main_img.jpg");
-            Glide.with(this).load(img).thumbnail(0.3f).centerCrop().into(recImg);
+            Glide.with(getActivity()).load(img).thumbnail(0.3f).centerCrop().into(recImg);
         }
         recRecipe.setVisibility(View.VISIBLE);
         newRecommendation.setVisibility(View.VISIBLE);

@@ -13,5 +13,9 @@
         <item>Vegán</item>
         <item>Reggeli</item>
         <item>Ebéd</item>
+        <item>Csípős</item>
+        <item>Tészta</item>
+        <item>Desszert</item>
+        <item>Ital</item>
     </string-array>
 </resources>

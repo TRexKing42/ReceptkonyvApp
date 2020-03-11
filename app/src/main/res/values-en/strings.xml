@@ -56,6 +56,9 @@
     <string name="qrUnsuccesful">Unsuccesful scan.</string>
     <string name="qr_share_prompt">You can also share your recipe with the following QR code!</string>
     <string name="newRecipeWizard1">Please enter a name and a short description for your new recipe or add a recipe from a QR Code!</string>
+    <string name="newRecipeWizard3">Please add the steps of preparing this meal using the text field and the button below.</string>
+    <string name="newRecipeWizard4">You can select tags to categorise your recipes and find them easier. Tap on your desired tags to add them or write in your own tag.</string>
+    <string name="newRecipeWizard5">You can take a photo of this meal if you want using the button below.</string>
     <string name="next">Next</string>
     <string name="back">Back</string>
     <string name="newRecipeWizard2">Please add the ingredients to the list below using the text fields and the button.</string>
@@ -68,7 +71,7 @@
     <string name="login_unsuccessful">Sikertelen!</string>
     <string name="pic_unsuccesful">Image upload unsuccesful!</string>
     <string name="name_and_desc_empty">Name and description can\'t be empty.</string>
-    <string name="qr_prompr">Please look at the QR Code!</string>
+    <string name="qr_prompr">Scanning QR Code</string>
     <string name="empty_ing">You need at least one ingredient!</string>
     <string name="empty_prep">You need at least one step.</string>
     <string name="save_good">Save successful!</string>
@@ -84,4 +87,12 @@
     <string name="just_unsuccesful">Unsuccesful</string>
     <string name="no_tag">No tag</string>
     <string name="img_perm_warning">You can\'t use images if you don\'t give permission.</string>
+    <string name="no_result">The search gave no results</string>
+    <string name="still_no_network">Failed to connect to the network</string>
+    <string name="new_recommendation">Recommend another</string>
+    <string name="load_from_qr_code">Load From QR Code</string>
+    <string name="you_are_offline">You are offline!</string>
+    <string name="click_here_to_try_again">Click here to try again</string>
+    <string name="qr_error">QR Scanning Unsuccesful!</string>
+    <string name="del_profile_succesfull">Profile Delete Successful!</string>
 </resources>

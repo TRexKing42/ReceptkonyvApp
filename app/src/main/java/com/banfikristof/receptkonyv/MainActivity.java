@@ -8,8 +8,12 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -48,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
         ReceptekFragment.ReceptekFragmentListener,
         SettingsFragment.OnFragmentInteractionListener,
-        ShoppingFragment.OnShoppingFragmentInteractionListener{
+        ShoppingFragment.OnShoppingFragmentInteractionListener {
 
     public static boolean favRecipes = false;
     private static final int RC_SIGN_IN = 123;
@@ -65,6 +69,12 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (!isConnectedToNetwork()) {
+            Intent intent = new Intent(MainActivity.this, NoConnectionActivity.class);
+            startActivity(intent);
+            finish();
+        }
 
         init();
 
@@ -88,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements
 
         fbDatabase = FirebaseDatabase.getInstance();
 
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this,dl,toolbar,R.string.drawer_open,R.string.drawer_close);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, dl, toolbar, R.string.drawer_open, R.string.drawer_close);
         dl.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
 
@@ -101,6 +111,12 @@ public class MainActivity extends AppCompatActivity implements
         userLoginChanged();
     }
 
+    public boolean isConnectedToNetwork() {
+        ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = manager.getActiveNetworkInfo();
+        return info != null;
+    }
+
     private void userLoginChanged() {
         MenuItem loginMenu = nv.getMenu().findItem(R.id.menu_login);
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
@@ -109,6 +125,10 @@ public class MainActivity extends AppCompatActivity implements
             headerEmail.setText("");
 
             headerPicture.setImageDrawable(null);
+
+            Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);
+            startActivity(intent);
+            finish();
         } else {
 
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -116,8 +136,8 @@ public class MainActivity extends AppCompatActivity implements
             headerEmail.setText(user.getEmail());
 
 
-            if (user.getPhotoUrl() == null){
-                Glide.with(this).load("https://eu.ui-avatars.com/api/?size=60&uppercase=true&name="+user.getDisplayName().replace(' ','+')).apply(RequestOptions.circleCropTransform()).into(headerPicture);
+            if (user.getPhotoUrl() == null) {
+                Glide.with(this).load("https://eu.ui-avatars.com/api/?size=60&uppercase=true&name=" + user.getDisplayName().replace(' ', '+')).apply(RequestOptions.circleCropTransform()).into(headerPicture);
             } else {
                 Glide.with(this).load(user.getPhotoUrl()).apply(RequestOptions.circleCropTransform()).into(headerPicture);
             }
@@ -134,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements
         startActivityForResult(
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
-                        .setIsSmartLockEnabled(!BuildConfig.DEBUG,true)
+                        .setIsSmartLockEnabled(!BuildConfig.DEBUG, true)
                         .setAvailableProviders(providers)
                         .build(),
                 RC_SIGN_IN);
@@ -165,12 +185,12 @@ public class MainActivity extends AppCompatActivity implements
                 db.child(user.getUid()).setValue(usr).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(MainActivity.this,getResources().getText(R.string.welcome_main) + user.getDisplayName(),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, getResources().getText(R.string.welcome_main) + user.getDisplayName(), Toast.LENGTH_SHORT).show();
                     }
                 });
             } else {
                 // Sign in failed.
-                Toast.makeText(MainActivity.this,getResources().getText(R.string.just_unsuccesful),Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getResources().getText(R.string.just_unsuccesful), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -179,8 +199,7 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         Fragment selectedFragment = null;
 
-        switch(menuItem.getItemId())
-        {
+        switch (menuItem.getItemId()) {
             case R.id.menu_fooldal:
                 selectedFragment = new KezdolapFragment();
                 break;
@@ -204,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements
                 selectedFragment = new ShoppingFragment();
                 break;
             default:
-                Toast.makeText(MainActivity.this, getResources().getText(R.string.error_notyet),Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getResources().getText(R.string.error_notyet), Toast.LENGTH_SHORT).show();
                 break;
         }
 
@@ -235,39 +254,119 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onDeleteProfile() {
-        FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).removeValue();
-        FirebaseDatabase.getInstance().getReference().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).removeValue();
-
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("users").child(FirebaseAuth.getInstance().getUid());
+        final List<String> keys = new ArrayList<>();
+        Log.w("User Delete", " - Started");
+        Log.w("User Delete", " - Getting UID...");
+        final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        Log.w("User Delete", " - UID= " + uid);
+        Log.w("User Delete", " - Collecting Keys...");
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getUid());
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                List<User> users = new ArrayList<>();
-                User u;
                 for (DataSnapshot item : dataSnapshot.getChildren()) {
-                    u = item.getValue(User.class);
-                    users.add(u);
+                    Recipe r = item.getValue(Recipe.class);
+                    r.key = item.getKey();
+                    keys.add(r.key);
+                    Log.w("User Delete", " - Key Collected: " + r.key);
                 }
+                Log.w("User Delete", " - All keys collected!");
 
+                Log.w("User Delete", " - Deleting Recipes...");
+                FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.w("User Delete", " - Recipes Deleted");
+                        Log.w("User Delete", " - Deleting User DB...");
+                        FirebaseDatabase.getInstance().getReference().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.w("User Delete", " - User DB Deleted");
+                                Log.w("User Delete", " - Deleting Pictures...");
+                                for (String key : keys) {
+                                    Log.w("User Delete", " - Current Key: " + key);
+                                    FirebaseStorage.getInstance().getReference().child(uid).child(key).listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
+                                        @Override
+                                        public void onSuccess(ListResult listResult) {
+                                            for (StorageReference item : listResult.getItems()) {
+                                                //FirebaseStorage.getInstance().getReference().child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(item.getPath()).delete();
 
+                                                Log.w("User Delete", " - Current Picture Path: " + item.getPath());
+                                                Log.w("User Delete", " - Current Picture Name: " + item.getName());
+                                                item.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+
+                                                        Log.w("User Delete", " - Picture deleted!");
+                                                    }
+                                                }).addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+
+                                                        Log.e("User Delete", " - Picture Delete Error");
+                                                    }
+                                                });
+                                            }
+
+                                            Log.w("User Delete", " - Deleting pictures is done!");
+                                            Log.w("User Delete", " - Deleting user from Auth...");
+                                            FirebaseAuth.getInstance().getCurrentUser().delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+
+                                                    Log.w("User Delete", " - Done!");
+                                                    userLoginChanged();
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+
+                                                    Log.w("User Delete", " - Failed!");
+                                                }
+                                            });
+
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w("User Delete", " - ERROR while listing pictures");
+                                        }
+                                    });
+                                }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e("User Delete", " - ERROR while deleting user from DB");
+                            }
+                        });
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("User Delete", " - ERROR while deleting recipes");
+                    }
+                });
 
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                Log.w("User Delete", " - Error while collecting keys!");
+                Log.w("User Delete", databaseError.getMessage());
             }
         });
 
-        FirebaseStorage.getInstance().getReference().child(FirebaseAuth.getInstance().getCurrentUser().getUid()).listAll().addOnCompleteListener(new OnCompleteListener<ListResult>() {
-            @Override
-            public void onComplete(@NonNull Task<ListResult> task) {
-                for (StorageReference item : task.getResult().getItems()) {
-                    FirebaseStorage.getInstance().getReference().child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(item.getPath()).delete();
-                }
-            }
-        });
+    }
 
-        FirebaseAuth.getInstance().getCurrentUser().delete();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!isConnectedToNetwork()){
+            Intent intent = new Intent(MainActivity.this,NoConnectionActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 }

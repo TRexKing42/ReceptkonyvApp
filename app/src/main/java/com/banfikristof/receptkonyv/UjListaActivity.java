@@ -97,7 +97,7 @@ public class UjListaActivity extends AppCompatActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (listName.getText().toString().isEmpty()){
+                if (listName.getText().toString().isEmpty() || ingredients.isEmpty()){
                     Toast.makeText(UjListaActivity.this,getResources().getText(R.string.name_list_pls),Toast.LENGTH_SHORT).show();
                     return;
                 } else {

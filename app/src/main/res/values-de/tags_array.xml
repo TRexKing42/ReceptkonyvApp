@@ -13,5 +13,9 @@
         <item>Vegan</item>
         <item>Frühstück</item>
         <item>Mittagessen</item>
+        <item>Heiß</item>
+        <item>Pasta</item>
+        <item>Dessert</item>
+        <item>Getränk</item>
     </string-array>
 </resources>

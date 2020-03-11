@@ -65,9 +65,6 @@
     <string name="newRecipeWizard5">You can take a photo of this meal if you want using the button below.</string>
     <string name="get_qr_code">Get QR Code</string>
     <string name="recipePicturesText">Pictrues</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="welcomePageMsg">Welcome! To start using this application, please log in or register with the button below!</string>
     <string name="continueC">Continue</string>
     <string name="chefsRecommendation">Mai ajánlat:</string>
@@ -91,4 +88,12 @@
     <string name="just_unsuccesful">Unsuccesful</string>
     <string name="no_tag">No tag</string>
     <string name="img_perm_warning">You can\'t use images if you don\'t give permission.</string>
+    <string name="no_result">The search gave no results</string>
+    <string name="still_no_network">Failed to connect to the network</string>
+    <string name="new_recommendation">Recommend another</string>
+    <string name="load_from_qr_code">Load From QR Code</string>
+    <string name="you_are_offline">You are offline!</string>
+    <string name="click_here_to_try_again">Try Again</string>
+    <string name="qr_error">QR Scanning Unsuccesful!</string>
+    <string name="del_profile_succesfull">Profile Delete Successful!</string>
 </resources>

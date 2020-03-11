@@ -52,7 +52,7 @@
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Load From QR Code"
+                    android:text="@string/load_from_qr_code"
                     android:maxLines="1"
                     android:id="@+id/fromQRbtn"/>
 

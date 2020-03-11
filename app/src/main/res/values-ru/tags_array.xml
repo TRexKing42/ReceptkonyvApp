@@ -2,16 +2,20 @@
 <resources>
     <string-array name="tags_array">
         <!-- Az első 7 cimke rögtön ajánlva van !-->
-        <item>Gluténmentes</item>
-        <item>Laktózmentes</item>
-        <item>Vegetáriánus</item>
-        <item>Olcsó</item>
-        <item>Leves</item>
-        <item>Vacsora</item>
-        <item>Előétel</item>
+        <item>глютен</item>
+        <item>лактозы</item>
+        <item>вегетарианец</item>
+        <item>дешево</item>
+        <item>суп</item>
+        <item>ужин</item>
+        <item>закуска</item>
         <!-- Ezek már nem lesznek rögtön láthatók, hanem csak ha rákeresnek !-->
-        <item>Vegán</item>
-        <item>Reggeli</item>
-        <item>Ebéd</item>
+        <item>вегетарианский</item>
+        <item>завтрак</item>
+        <item>обед</item>
+        <item>горячий</item>
+        <item>макароны</item>
+        <item>Десерт</item>
+        <item>Пить</item>
     </string-array>
 </resources>

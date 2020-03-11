@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.banfikristof.receptkonyv.MainActivity;
 import com.banfikristof.receptkonyv.OpenReceptActivity;
@@ -142,8 +143,11 @@ public class ReceptekFragment extends Fragment {
                     }
                 }
                 if (!listOfRecipes.isEmpty()) {
-                    ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1,listOfRecipes);
+                    ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1,listOfRecipes);
                     lv.setAdapter(arrayAdapter);
+                }
+                else {
+                    Toast.makeText(getActivity(),getResources().getText(R.string.no_result),Toast.LENGTH_SHORT).show();
                 }
             }
 
