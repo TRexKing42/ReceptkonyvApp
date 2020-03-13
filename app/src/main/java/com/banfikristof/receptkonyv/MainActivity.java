@@ -282,54 +282,73 @@ public class MainActivity extends AppCompatActivity implements
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Log.w("User Delete", " - User DB Deleted");
-                                Log.w("User Delete", " - Deleting Pictures...");
-                                for (String key : keys) {
-                                    Log.w("User Delete", " - Current Key: " + key);
-                                    FirebaseStorage.getInstance().getReference().child(uid).child(key).listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
-                                        @Override
-                                        public void onSuccess(ListResult listResult) {
-                                            for (StorageReference item : listResult.getItems()) {
-                                                //FirebaseStorage.getInstance().getReference().child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(item.getPath()).delete();
+                                if (!keys.isEmpty()) {
+                                    Log.w("User Delete", " - Deleting Pictures...");
+                                    for (String key : keys) {
+                                        Log.w("User Delete", " - Current Key: " + key);
+                                        FirebaseStorage.getInstance().getReference().child(uid).child(key).listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
+                                            @Override
+                                            public void onSuccess(ListResult listResult) {
+                                                for (StorageReference item : listResult.getItems()) {
+                                                    //FirebaseStorage.getInstance().getReference().child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(item.getPath()).delete();
 
-                                                Log.w("User Delete", " - Current Picture Path: " + item.getPath());
-                                                Log.w("User Delete", " - Current Picture Name: " + item.getName());
-                                                item.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    Log.w("User Delete", " - Current Picture Path: " + item.getPath());
+                                                    Log.w("User Delete", " - Current Picture Name: " + item.getName());
+                                                    item.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+
+                                                            Log.w("User Delete", " - Picture deleted!");
+                                                        }
+                                                    }).addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+
+                                                            Log.e("User Delete", " - Picture Delete Error");
+                                                        }
+                                                    });
+                                                }
+
+                                                Log.w("User Delete", " - Deleting pictures is done!");
+                                                Log.w("User Delete", " - Deleting user from Auth...");
+                                                FirebaseAuth.getInstance().getCurrentUser().delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
 
-                                                        Log.w("User Delete", " - Picture deleted!");
+                                                        Log.w("User Delete", " - Done!");
+                                                        userLoginChanged();
                                                     }
                                                 }).addOnFailureListener(new OnFailureListener() {
                                                     @Override
                                                     public void onFailure(@NonNull Exception e) {
 
-                                                        Log.e("User Delete", " - Picture Delete Error");
+                                                        Log.w("User Delete", " - Failed!");
                                                     }
                                                 });
+
                                             }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.w("User Delete", " - ERROR while listing pictures");
+                                            }
+                                        });
+                                    }
+                                } else {
+                                    Log.w("User Delete", " - No Pictures to Delete");
+                                    Log.w("User Delete", " - Deleting user from Auth...");
+                                    FirebaseAuth.getInstance().getCurrentUser().delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
 
-                                            Log.w("User Delete", " - Deleting pictures is done!");
-                                            Log.w("User Delete", " - Deleting user from Auth...");
-                                            FirebaseAuth.getInstance().getCurrentUser().delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-
-                                                    Log.w("User Delete", " - Done!");
-                                                    userLoginChanged();
-                                                }
-                                            }).addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-
-                                                    Log.w("User Delete", " - Failed!");
-                                                }
-                                            });
-
+                                            Log.w("User Delete", " - Done!");
+                                            userLoginChanged();
                                         }
                                     }).addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
-                                            Log.w("User Delete", " - ERROR while listing pictures");
+
+                                            Log.w("User Delete", " - Failed!");
                                         }
                                     });
                                 }
@@ -337,7 +356,8 @@ public class MainActivity extends AppCompatActivity implements
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Log.e("User Delete", " - ERROR while deleting user from DB");
+                                Log.w("User Delete", " - ERROR while deleting user from DB");
+
                             }
                         });
 

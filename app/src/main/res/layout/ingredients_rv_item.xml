@@ -4,29 +4,27 @@
     android:layout_height="wrap_content">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/ingredientAmountRv"
         android:text="5"
+        android:layout_weight="2"
         android:paddingRight="5dp"/>
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/ingredientUnitRv"
         android:text="@string/exampleUnit"
+        android:layout_weight="3"
         android:paddingRight="5dp"/>
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/ingredientNameRv"
-        android:text="@string/exampleIngredient"/>
-
-    <Space
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:text="@string/exampleIngredient"
+        android:layout_weight="5"/>
 
     <Button
         android:layout_width="wrap_content"

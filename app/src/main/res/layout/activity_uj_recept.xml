@@ -21,4 +21,13 @@
             android:layout_height="match_parent"
             android:id="@+id/NewRecipeFrame"
             android:layout_below="@id/newRecipeText"/>
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:lottie_fileName="loading1.json"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            android:id="@+id/ujReceptAnim"
+            android:visibility="invisible"/>
 </RelativeLayout>

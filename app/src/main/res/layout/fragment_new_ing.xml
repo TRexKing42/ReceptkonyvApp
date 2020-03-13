@@ -46,8 +46,9 @@
 
 
                 <EditText
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="2"
                     android:hint="1"
                     android:paddingLeft="5dp"
                     android:textSize="20dp"
@@ -55,17 +56,19 @@
                     android:inputType="number"/>
 
                 <EditText
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:hint="@string/unitHint"
+                    android:layout_weight="3"
                     android:paddingLeft="5dp"
                     android:textSize="20dp"
                     android:id="@+id/ujReceptIngUnitEt"/>
 
                 <EditText
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:hint="@string/ingredientHint"
+                    android:layout_weight="5"
                     android:paddingLeft="5dp"
                     android:textSize="20dp"
                     android:id="@+id/ujReceptIngNameEt" />

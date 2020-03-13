@@ -4,16 +4,12 @@
     android:layout_height="wrap_content">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/prepNameTv"
+        android:layout_weight="10"
         android:text="5"
         android:paddingRight="5dp"/>
-
-    <Space
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
 
     <Button
         android:layout_width="wrap_content"

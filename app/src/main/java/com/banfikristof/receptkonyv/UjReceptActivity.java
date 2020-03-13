@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -89,6 +90,7 @@ public class UjReceptActivity extends AppCompatActivity implements
     StorageReference imgRef;
     private Uri picUri = null;
     private String picPath = "";
+    private View ujReceptAnim;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,13 +136,30 @@ public class UjReceptActivity extends AppCompatActivity implements
         }
     }
 
-    private void uploadImg(final StorageReference reference) {
+    private void uploadRecipe(final StorageReference reference) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         img.compress(Bitmap.CompressFormat.JPEG,100,byteArrayOutputStream);
         byte[] data = byteArrayOutputStream.toByteArray();
 
         UploadTask task = reference.putBytes(data);
-        task.addOnFailureListener(new OnFailureListener() {
+        task.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+                db.child("recipes").child(FirebaseAuth.getInstance().getUid()).child(pushId).setValue(recipeToSave).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(UjReceptActivity.this, getResources().getText(R.string.save_good),Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(UjReceptActivity.this, getResources().getText(R.string.save_bad),Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Toast.makeText(UjReceptActivity.this, getResources().getText(R.string.pic_unsuccesful),Toast.LENGTH_SHORT).show();
@@ -240,6 +259,8 @@ public class UjReceptActivity extends AppCompatActivity implements
 
     @Override
     public void recipeDone() {
+        frameLayout.setVisibility(View.INVISIBLE);
+        ujReceptAnim.setVisibility(View.VISIBLE);
         List<String> images = new ArrayList<>();
         recipeToSave.setPictures(images); //Egyéb képeknek
         if (!editmode) {
@@ -248,32 +269,30 @@ public class UjReceptActivity extends AppCompatActivity implements
         }
         if (recipeToSave == null) return;
         if (img != null){
-            uploadImg(FirebaseStorage.getInstance().getReference()
+            uploadRecipe(FirebaseStorage.getInstance().getReference()
                     .child(FirebaseAuth.getInstance().getUid())
                     .child(pushId)
                     .child("main_img.jpg"));
             recipeToSave.setHasMainImg(true);
-
-            //Update images list for easy delete
-            /*User usr = new User();
-            usr.setDisplayName(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
-            usr.addImgList(images,pushId);
-            DatabaseReference db = FirebaseDatabase.getInstance().getReference("users");
-            db.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(usr);*/
+        } else {
+            DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+            db.child("recipes").child(FirebaseAuth.getInstance().getUid()).child(pushId).setValue(recipeToSave).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Toast.makeText(UjReceptActivity.this, getResources().getText(R.string.save_good), Toast.LENGTH_SHORT).show();
+                    ujReceptAnim.setVisibility(View.INVISIBLE);
+                    frameLayout.setVisibility(View.VISIBLE);
+                    finish();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(UjReceptActivity.this, getResources().getText(R.string.save_bad), Toast.LENGTH_SHORT).show();
+                    ujReceptAnim.setVisibility(View.INVISIBLE);
+                    frameLayout.setVisibility(View.VISIBLE);
+                }
+            });
         }
-        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-        db.child("recipes").child(FirebaseAuth.getInstance().getUid()).child(pushId).setValue(recipeToSave).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Toast.makeText(UjReceptActivity.this, getResources().getText(R.string.save_good),Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(UjReceptActivity.this, getResources().getText(R.string.save_bad),Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     @Override
@@ -299,7 +318,7 @@ public class UjReceptActivity extends AppCompatActivity implements
 
     private void init() {
         frameLayout = findViewById(R.id.NewRecipeFrame);
-
+        ujReceptAnim = findViewById(R.id.ujReceptAnim);
         recipeToSave = new Recipe();
         recipeToSave.setHasMainImg(false);
 
