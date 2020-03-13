@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+import androidx.exifinterface.media.ExifInterface;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -12,6 +13,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -342,7 +345,6 @@ public class UjReceptActivity extends AppCompatActivity implements
                 case GALLERY_REQUEST:
                     try {
                         Uri imgUri = data.getData();
-
                         img = MediaStore.Images.Media.getBitmap(this.getContentResolver(),imgUri);
                         //img = Bitmap.createScaledBitmap(img,500,500,true);
 
@@ -356,7 +358,8 @@ public class UjReceptActivity extends AppCompatActivity implements
                     //img = (Bitmap) data.getExtras().get("data");
                     if (picUri != null) {
                         try {
-                            img = MediaStore.Images.Media.getBitmap(this.getContentResolver(),picUri);
+                            img = fixPicRotation(picPath);
+                            //img = MediaStore.Images.Media.getBitmap(this.getContentResolver(),picUri);
                         } catch (IOException e) {
                             Toast.makeText(UjReceptActivity.this,getResources().getText(R.string.img_camera_error),Toast.LENGTH_SHORT).show();
                             return;
@@ -383,6 +386,44 @@ public class UjReceptActivity extends AppCompatActivity implements
                     break;
             }
         }
+    }
+
+    private Bitmap fixPicRotation(String p) throws IOException {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        BitmapFactory.Options options2 = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(p,options);
+
+        Bitmap bitmap = BitmapFactory.decodeFile(p,options2);
+        ExifInterface exifInterface = new ExifInterface(p);
+        String s = exifInterface.getAttribute(ExifInterface.TAG_ORIENTATION);
+
+        int o;
+        if (s != null){
+            o = Integer.parseInt(s);
+        } else {
+            o = ExifInterface.ORIENTATION_NORMAL;
+        }
+
+        int r;
+        switch (o){
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                r = 90;
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                r = 180;
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                r = 270;
+                break;
+            default:
+                r = 0;
+                break;
+        }
+
+        Matrix m = new Matrix();
+        m.setRotate(r, (float) bitmap.getWidth() / 2, (float) bitmap.getHeight() / 2);
+        return Bitmap.createBitmap(bitmap,0,0,options.outWidth,options.outHeight,m,true);
     }
 
     private void saveFromQR(final RecipeShare r) {
