@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,17 +30,13 @@ import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
@@ -253,128 +250,103 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onDeleteProfile() {
-        final List<String> keys = new ArrayList<>();
-        Log.w("User Delete", " - Started");
-        Log.w("User Delete", " - Getting UID...");
+    public void onDeleteProfile(final Button deleteProfile) {
+        deleteProfile.setEnabled(false);
+        Log.w("USER_DELETE","Started...");
         final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        Log.w("User Delete", " - UID= " + uid);
-        Log.w("User Delete", " - Collecting Keys...");
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getUid());
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        final List<StorageReference> pics = new ArrayList<>();
+        Log.w("USER_DELETE","UID="+uid);
+        FirebaseStorage.getInstance().getReference().child(uid).listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot item : dataSnapshot.getChildren()) {
-                    Recipe r = item.getValue(Recipe.class);
-                    r.key = item.getKey();
-                    keys.add(r.key);
-                    Log.w("User Delete", " - Key Collected: " + r.key);
-                }
-                Log.w("User Delete", " - All keys collected!");
-
-                Log.w("User Delete", " - Deleting Recipes...");
-                FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.w("User Delete", " - Recipes Deleted");
-                        Log.w("User Delete", " - Deleting User DB...");
-                        FirebaseDatabase.getInstance().getReference().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+            public void onSuccess(ListResult listResult) {
+                Log.w("USER_DELETE","Pics of current user:");
+                if (!listResult.getPrefixes().isEmpty()) {
+                    for (StorageReference i : listResult.getPrefixes()) {
+                        i.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
                             @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.w("User Delete", " - User DB Deleted");
-                                if (!keys.isEmpty()) {
-                                    Log.w("User Delete", " - Deleting Pictures...");
-                                    for (String key : keys) {
-                                        Log.w("User Delete", " - Current Key: " + key);
-                                        FirebaseStorage.getInstance().getReference().child(uid).child(key).listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
-                                            @Override
-                                            public void onSuccess(ListResult listResult) {
-                                                for (StorageReference item : listResult.getItems()) {
-                                                    //FirebaseStorage.getInstance().getReference().child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(item.getPath()).delete();
-
-                                                    Log.w("User Delete", " - Current Picture Path: " + item.getPath());
-                                                    Log.w("User Delete", " - Current Picture Name: " + item.getName());
-                                                    item.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                        @Override
-                                                        public void onSuccess(Void aVoid) {
-
-                                                            Log.w("User Delete", " - Picture deleted!");
-                                                        }
-                                                    }).addOnFailureListener(new OnFailureListener() {
-                                                        @Override
-                                                        public void onFailure(@NonNull Exception e) {
-
-                                                            Log.e("User Delete", " - Picture Delete Error");
-                                                        }
-                                                    });
-                                                }
-
-                                                Log.w("User Delete", " - Deleting pictures is done!");
-                                                Log.w("User Delete", " - Deleting user from Auth...");
-                                                FirebaseAuth.getInstance().getCurrentUser().delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void aVoid) {
-
-                                                        Log.w("User Delete", " - Done!");
-                                                        userLoginChanged();
-                                                    }
-                                                }).addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-
-                                                        Log.w("User Delete", " - Failed!");
-                                                    }
-                                                });
-
-                                            }
-                                        }).addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Log.w("User Delete", " - ERROR while listing pictures");
-                                            }
-                                        });
-                                    }
-                                } else {
-                                    Log.w("User Delete", " - No Pictures to Delete");
-                                    Log.w("User Delete", " - Deleting user from Auth...");
-                                    FirebaseAuth.getInstance().getCurrentUser().delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            public void onSuccess(ListResult listResult) {
+                                for (StorageReference i : listResult.getItems()) {
+                                    pics.add(i);
+                                    Log.w("USER_DELETE", i.toString());
+                                    i.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
-
-                                            Log.w("User Delete", " - Done!");
-                                            userLoginChanged();
-                                        }
-                                    }).addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-
-                                            Log.w("User Delete", " - Failed!");
+                                            Log.w("USER_DELETE", "Deleted");
                                         }
                                     });
                                 }
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w("User Delete", " - ERROR while deleting user from DB");
 
+                                Log.w("USER_DELETE", "Deleting from database...");
+                                FirebaseDatabase.getInstance().getReference().child("recipes").child(uid).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.w("USER_DELETE", "Recipes deleted");
+                                        FirebaseDatabase.getInstance().getReference().child("shoppinglists").child(uid).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.w("USER_DELETE", "Shopping Lists deleted");
+                                                FirebaseDatabase.getInstance().getReference().child("users").child(uid).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.w("USER_DELETE", "User data deleted");
+                                                        Log.w("USER_DELETE", "Deleting from auth...");
+
+                                                        AuthUI.getInstance().delete(getApplicationContext()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                if (task.isSuccessful()) {
+                                                                    Log.w("USER_DELETE", "Profile delete done!");
+                                                                } else {
+                                                                    Log.w("USER_DELETE", "Profile delete failed!");
+                                                                }
+                                                                deleteProfile.setEnabled(true);
+                                                                userLoginChanged();
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
                             }
                         });
-
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e("User Delete", " - ERROR while deleting recipes");
-                    }
-                });
+                } else {
+                    Log.w("USER_DELETE","User has no pictures.");
+                    Log.w("USER_DELETE", "Deleting from database...");
+                    FirebaseDatabase.getInstance().getReference().child("recipes").child(uid).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.w("USER_DELETE", "Recipes deleted");
+                            FirebaseDatabase.getInstance().getReference().child("shoppinglists").child(uid).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.w("USER_DELETE", "Shopping Lists deleted");
+                                    FirebaseDatabase.getInstance().getReference().child("users").child(uid).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.w("USER_DELETE", "User data deleted");
+                                            Log.w("USER_DELETE", "Deleting from auth...");
 
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w("User Delete", " - Error while collecting keys!");
-                Log.w("User Delete", databaseError.getMessage());
+                                            AuthUI.getInstance().delete(getApplicationContext()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        Log.w("USER_DELETE", "Profile delete done!");
+                                                    } else {
+                                                        Log.w("USER_DELETE", "Profile delete failed!");
+                                                    }
+                                                    userLoginChanged();
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
             }
         });
 

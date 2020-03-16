@@ -41,7 +41,7 @@ public class SettingsFragment extends Fragment {
         deleteProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onDeleteProfile();
+                mListener.onDeleteProfile(deleteProfile);
             }
         });
 
@@ -80,6 +80,6 @@ public class SettingsFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onDeleteProfile();
+        void onDeleteProfile(Button deleteProfile);
     }
 }
