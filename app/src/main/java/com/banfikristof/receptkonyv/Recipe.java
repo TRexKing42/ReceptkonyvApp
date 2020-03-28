@@ -97,7 +97,11 @@ public class Recipe implements Serializable {
         if (preparation.size() == 1){
             return preparation.get(0);
         }
-        return TextUtils.join("\n",preparation);
+        String string = "";
+        for (int i = 0; i < preparation.size(); i++) {
+            string += (i+1)+". "+preparation.get(i)+"\n";
+        }
+        return string;
     }
 
     public String getId() {
