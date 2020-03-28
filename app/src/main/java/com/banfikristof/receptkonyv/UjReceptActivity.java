@@ -460,6 +460,9 @@ public class UjReceptActivity extends AppCompatActivity implements
                     });
                 }
 
+                //Csak egy kép
+                recipe.getPictures().clear();
+
                 //Egyéb beállítások
                 recipe.setUid(FirebaseAuth.getInstance().getUid());
                 recipe.setFavourite(false);

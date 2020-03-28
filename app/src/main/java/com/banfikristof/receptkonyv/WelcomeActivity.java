@@ -65,6 +65,8 @@ public class WelcomeActivity extends AppCompatActivity {
         startActivityForResult(
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
+                        .setLogo(R.drawable.ic_logo)
+                        .setTheme(R.style.Theme_AppCompat_Light)
                         .setIsSmartLockEnabled(!BuildConfig.DEBUG,true)
                         .setAvailableProviders(providers)
                         .build(),
