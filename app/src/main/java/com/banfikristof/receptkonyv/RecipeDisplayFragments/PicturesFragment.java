@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.banfikristof.receptkonyv.Adapters.PicturesAdapter;
+import com.banfikristof.receptkonyv.PictureEntry;
 import com.banfikristof.receptkonyv.R;
 import com.google.firebase.storage.StorageReference;
 
@@ -39,7 +40,7 @@ public class PicturesFragment extends Fragment {
     private PicturesAdapter picturesAdapter;
     private Button newBtn;
 
-    public List<StorageReference> pictures;
+    public List<PictureEntry> pictures;
 
     public PicturesFragment() {
         // Required empty public constructor

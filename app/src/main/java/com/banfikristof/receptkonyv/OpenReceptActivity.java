@@ -32,8 +32,10 @@ import com.banfikristof.receptkonyv.RecipeDisplayFragments.PicturesFragment;
 import com.banfikristof.receptkonyv.RecipeDisplayFragments.PreparationFragment;
 import com.banfikristof.receptkonyv.RecipeDisplayFragments.RecipeOptions;
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
@@ -47,6 +49,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 public class OpenReceptActivity extends AppCompatActivity implements
         OverviewFragment.OnFragmentInteractionListener,
@@ -190,28 +193,42 @@ public class OpenReceptActivity extends AppCompatActivity implements
 
     @Override
     public void onDelete() {
-        if (r.getPictures() != null) {
-            for (int i = 0; i < r.getPictures().size(); i++) {
-                FirebaseStorage.getInstance().getReference()
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .child(r.key)
-                        .child(r.getPictures().get(i))
-                        .delete();
-            }
-        }
-        FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getUid()).child(r.key).removeValue()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(OpenReceptActivity.this, getResources().getText(R.string.del_good),Toast.LENGTH_SHORT).show();
+
+        if (r.isHasMainImg()){
+            FirebaseStorage.getInstance().getReference()
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(r.key)
+                    .child("main_img.jpg")
+                    .delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (r.getPictures() != null) {
+                        for (Map.Entry item:r.getPictures().entrySet()){
+                            FirebaseStorage.getInstance().getReference()
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .child(r.key)
+                                    .child((String) item.getValue())
+                                    .delete();
+                        }
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(OpenReceptActivity.this, getResources().getText(R.string.del_bad),Toast.LENGTH_SHORT).show();
-            }
-        });
-        finish();
+                    FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getUid()).child(r.key).removeValue()
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toast.makeText(OpenReceptActivity.this, getResources().getText(R.string.del_good),Toast.LENGTH_SHORT).show();
+                                    finish();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(OpenReceptActivity.this, getResources().getText(R.string.del_bad),Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    });
+                }
+            });
+        }
+
     }
 
     @Override
@@ -283,14 +300,17 @@ public class OpenReceptActivity extends AppCompatActivity implements
             if (r.getPictures() != null) {
                 PicturesFragment fragment = (PicturesFragment) getSupportFragmentManager().findFragmentById(R.id.receptFrame);
                 fragment.pictures.clear();
-                for (String item : r.getPictures()) {
+                int ind = 0;
+                for (Map.Entry item : r.getPictures().entrySet()) {
                     if (item != null) {
                         StorageReference reference = FirebaseStorage.getInstance().getReference()
                                 .child(FirebaseAuth.getInstance().getUid())
                                 .child(r.key)
-                                .child(item);
+                                .child((String) item.getValue());
 
-                        fragment.pictures.add(reference);
+                        PictureEntry pictureEntry = new PictureEntry(reference, (String) item.getKey());
+                        fragment.pictures.add(pictureEntry);
+                        ind++;
                     }
                 }
             }
@@ -389,11 +409,19 @@ public class OpenReceptActivity extends AppCompatActivity implements
                                 .child(r.key)
                                 .child(picName),
                                 thisImg);
-                        r.getPictures().add(picName);
+                        String pID = FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getUid()).child(r.key).child("pictures").child("pictures").push().getKey();
+                        r.getPictures().put(pID,picName);
+
 
 
                         //Online is frissíteni
-                        FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getUid()).child(r.key).child("pictures").setValue(r.getPictures());
+                        FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getUid()).child(r.key).child("pictures").setValue(r.getPictures())
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        onLoadAllPictures();
+                                    }
+                                });
 
 
                     } catch (IOException e) {
@@ -415,6 +443,11 @@ public class OpenReceptActivity extends AppCompatActivity implements
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 onLoadAllPictures();
+                Intent intent = new Intent(OpenReceptActivity.this, BigImageActivity.class);
+                intent.putExtra("key",r.key);
+                intent.putExtra("mainImg", false);
+                intent.putExtra("picRef",reference.getName());
+                startActivity(intent);
 
             }
         });
@@ -432,7 +465,7 @@ public class OpenReceptActivity extends AppCompatActivity implements
         return name;
     }
 
-    public void removeDeletedPic(int i){
+    public void removeDeletedPic(String i){
         r.getPictures().remove(i);
     }
 }

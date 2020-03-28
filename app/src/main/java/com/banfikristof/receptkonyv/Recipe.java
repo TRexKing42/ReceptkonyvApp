@@ -7,6 +7,7 @@ import com.google.firebase.database.Exclude;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +24,7 @@ public class Recipe implements Serializable {
     private List<Map<String, String>> ingredients;
     private List<String> tags;
     private List<String> preparation;
-    private List<String> pictures;
+    private Map<String,String> pictures;
     private boolean hasMainImg;
     private boolean favourite;
 
@@ -143,14 +144,14 @@ public class Recipe implements Serializable {
         return uid;
     }
 
-    public List<String> getPictures() {
+    public Map<String,String> getPictures() {
         if (pictures == null) {
-            pictures = new ArrayList<>(); //Ha nincs akkor mostmár van
+            pictures = new HashMap<>(); //Ha nincs akkor mostmár van
         }
         return pictures;
     }
 
-    public void setPictures(List<String> pictures) {
+    public void setPictures(Map<String,String> pictures) {
         this.pictures = pictures;
     }
 
@@ -166,7 +167,7 @@ public class Recipe implements Serializable {
         this.hasMainImg = hasMainImg;
     }
 
-    public void addIngredient(Map<String,String> ingredient) {
+    /*public void addIngredient(Map<String,String> ingredient) {
         this.ingredients.add(ingredient);
     }
 
@@ -178,7 +179,7 @@ public class Recipe implements Serializable {
             this.ingredients.remove(i);
             return true;
         }
-    }
+    }*/
 
     @Override
     public String toString() {

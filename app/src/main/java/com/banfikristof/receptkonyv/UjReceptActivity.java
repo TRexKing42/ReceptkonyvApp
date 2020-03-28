@@ -53,6 +53,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -264,7 +265,7 @@ public class UjReceptActivity extends AppCompatActivity implements
     public void recipeDone() {
         frameLayout.setVisibility(View.INVISIBLE);
         ujReceptAnim.setVisibility(View.VISIBLE);
-        List<String> images = new ArrayList<>();
+        Map<String,String> images = new HashMap<>();
         recipeToSave.setPictures(images); //Egyéb képeknek
         if (!editmode) {
             pushId = FirebaseDatabase.getInstance().getReference().child("recipes")
@@ -375,6 +376,9 @@ public class UjReceptActivity extends AppCompatActivity implements
                             Gson gson = new Gson();
                             try {
                                 RecipeShare share = gson.fromJson(result.getContents(),RecipeShare.class);
+
+                                frameLayout.setVisibility(View.INVISIBLE);
+                                ujReceptAnim.setVisibility(View.VISIBLE);
                                 saveFromQR(share);
                             } catch (Exception ee){
                                 ee.printStackTrace();
@@ -440,6 +444,15 @@ public class UjReceptActivity extends AppCompatActivity implements
                     Toast.makeText(UjReceptActivity.this,"HIBA az importálás közben.",Toast.LENGTH_SHORT).show();
                     return;
                 }
+                //Csak egy kép
+                recipe.getPictures().clear();
+
+                //Egyéb beállítások
+                recipe.setUid(FirebaseAuth.getInstance().getUid());
+                recipe.setFavourite(false);
+
+                //Recept feltötése a jelenlegi userhez
+                recipeToSave = recipe;
 
                 //Kép letöltése ha van
                 if (recipe.isHasMainImg()){
@@ -451,6 +464,8 @@ public class UjReceptActivity extends AppCompatActivity implements
                         @Override
                         public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                             img = resource;
+
+                            recipeDone();
                         }
 
                         @Override
@@ -458,18 +473,9 @@ public class UjReceptActivity extends AppCompatActivity implements
 
                         }
                     });
+                } else {
+                    recipeDone();
                 }
-
-                //Csak egy kép
-                recipe.getPictures().clear();
-
-                //Egyéb beállítások
-                recipe.setUid(FirebaseAuth.getInstance().getUid());
-                recipe.setFavourite(false);
-
-                //Recept feltötése a jelenlegi userhez
-                recipeToSave = recipe;
-                recipeDone();
             }
 
             @Override
