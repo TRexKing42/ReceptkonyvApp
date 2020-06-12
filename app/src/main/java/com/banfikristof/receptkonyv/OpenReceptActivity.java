@@ -194,7 +194,7 @@ public class OpenReceptActivity extends AppCompatActivity implements
     @Override
     public void onDelete() {
 
-        if (r.isHasMainImg()){
+        if (r.isHasMainImg()){/*
             FirebaseStorage.getInstance().getReference()
                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                     .child(r.key)
@@ -225,6 +225,73 @@ public class OpenReceptActivity extends AppCompatActivity implements
                             finish();
                         }
                     });
+                }
+            });*/
+            FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getUid()).child(r.key).removeValue()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+
+
+                            FirebaseStorage.getInstance().getReference()
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .child(r.key)
+                                    .child("main_img.jpg")
+                                    .delete()
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (r.getPictures() != null) {
+                                                for (Map.Entry item:r.getPictures().entrySet()){
+                                                    FirebaseStorage.getInstance().getReference()
+                                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                            .child(r.key)
+                                                            .child((String) item.getValue())
+                                                            .delete();
+                                                }
+                                                Toast.makeText(OpenReceptActivity.this, getResources().getText(R.string.del_good),Toast.LENGTH_SHORT).show();
+                                                finish();
+                                            }
+                                            else {
+                                                Toast.makeText(OpenReceptActivity.this, getResources().getText(R.string.del_good),Toast.LENGTH_SHORT).show();
+                                                finish();
+                                            }
+                                        }
+                                    });
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(OpenReceptActivity.this, getResources().getText(R.string.del_bad),Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            });
+        } else {
+            FirebaseDatabase.getInstance().getReference().child("recipes").child(FirebaseAuth.getInstance().getUid()).child(r.key).removeValue()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            if (r.getPictures() != null) {
+                                for (Map.Entry item:r.getPictures().entrySet()){
+                                    FirebaseStorage.getInstance().getReference()
+                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                            .child(r.key)
+                                            .child((String) item.getValue())
+                                            .delete();
+                                }
+                                Toast.makeText(OpenReceptActivity.this, getResources().getText(R.string.del_good),Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+                            else {
+                                Toast.makeText(OpenReceptActivity.this, getResources().getText(R.string.del_good),Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(OpenReceptActivity.this, getResources().getText(R.string.del_bad),Toast.LENGTH_SHORT).show();
+                    finish();
                 }
             });
         }
